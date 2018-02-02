@@ -6,4 +6,4 @@ CS5500 Project Repository
 * Nikitha Nagaraj: nagaraj.n@husky.neu.edu
 * Ravi Krishnan Iyer: iyer.rav@husky.neu.edu
 ## Course Homepage
-[CS5500] (https://course.ccs.neu.edu/cs5500/)
+[See more info on CS5500](https://course.ccs.neu.edu/cs5500/)
