@@ -18,7 +18,7 @@ public class FileComparator implements IFileComparator {
      * @return similarity score.
      */
     @Override
-    public float compareFiles(IFile file1, IFile file2) {
+    public float compareFiles(IASTGenerator ast1, IASTGenerator ast2) {
         //to be implemented
         return 0;
     }
@@ -30,7 +30,7 @@ public class FileComparator implements IFileComparator {
      * @return similar lines object
      */
     @Override
-    public SimilarLines getSimilarLines(IFile file1, IFile file2) {
+    public SimilarLines getSimilarLines(IASTGenerator ast1, IASTGenerator ast2) {
         //to be implemented later
         return null;
     }
