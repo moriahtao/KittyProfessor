@@ -16,7 +16,7 @@ public class FileComparator implements IFileComparator {
      * @return score details for the two asts passed.
      */
     @Override
-    public ScoreDetails compareFiles(IASTGenerator ast1, IASTGenerator ast2) {
+    public ScoreDetails compareFiles(ASTtree ast1, ASTtree ast2) {
         //to be implemented
         return null;
     }

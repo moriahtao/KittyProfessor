@@ -19,5 +19,5 @@ public interface IFileComparator {
      * @param ast2 another ast to compare
      * @return score indicating whether they are similar or not.
      */
-    public ScoreDetails compareFiles(IASTGenerator ast1, IASTGenerator ast2);
+    public ScoreDetails compareFiles(ASTtree ast1, ASTtree ast2);
 }
