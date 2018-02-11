@@ -3,7 +3,6 @@
 
 # Log file
 *.log
-.DS_Store
 
 # Package Files #
 *.jar
@@ -13,3 +12,13 @@
 *.tar.gz
 *.rar
 
+# Intellij additional files
+*.iml
+*.idea
+out
+
+# ignore all . files and . folders
+.*
+
+# Dont ignore .gitignore
+!/.gitignore
