@@ -1,7 +1,10 @@
 package com.neu.cs5500.team209.assignment;
 
 /**
- * Rename is not supported at file level.
+ * Lowest entity in the assignment category.
+ * We are not providing the functionality of
+ * renaming individual files.
+ * 
  * extends to IFile.
  */
 public class File extends IFile {

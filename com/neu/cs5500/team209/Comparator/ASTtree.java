@@ -17,12 +17,22 @@ public class ASTtree<T> implements Iterable<ASTtree<T>> {
     ASTtree<T> parent;
     List<ASTtree<T>> children;
 
+    /**
+     * Constructor for the class
+     * @param data  object
+     * @param parent parent ASTtree
+     */
     public ASTtree(T data, ASTtree<T> parent) {
         this.data = data;
         this.children = new LinkedList<ASTtree<T>>();
         this.parent = parent;
     }
 
+    /**
+     * provides iterate over ASTtree, required as part of iterable class.
+     * Will be implemented later
+     * @return Iterator
+     */
     @Override
     public Iterator<ASTtree<T>> iterator() {
         // to be implemented
