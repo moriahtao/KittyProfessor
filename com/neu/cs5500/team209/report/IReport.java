@@ -5,6 +5,8 @@ import com.neu.cs5500.team209.assignment.IStudentHomework;
 
 /**
  *
+ * This interface helps in functional testing
+ * using mockito or similar library.
  * @author team-209
  */
 public interface IReport {

@@ -8,8 +8,11 @@ import java.util.List;
  * Implementation can be updated later.
  *
  */
-public class SimilarLines {
-
+public class ScoreDetails {
+    /**
+     * Stores the score between two files.
+     */
+    float score;
     /**
      * Line numbers of similar lines from file1.
      */
@@ -25,7 +28,8 @@ public class SimilarLines {
      * @param sf1 lines in file 1
      * @param sf2 lines in file 2
      */
-    public SimilarLines(List<Integer> sf1, List<Integer>sf2) {
+    public ScoreDetails(float score, List<Integer> sf1, List<Integer>sf2) {
+        this.score = score;
         this.similarInFile1 = sf1;
         this.similarInFile2 = sf2;
     }

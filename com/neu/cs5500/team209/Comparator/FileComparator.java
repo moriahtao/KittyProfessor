@@ -1,7 +1,5 @@
 package com.neu.cs5500.team209.Comparator;
 
-import com.neu.cs5500.team209.assignment.IFile;
-
 /**
  * Implementation of IFileComparator.
  * File comparator helps in comparing files and giving a score for
@@ -13,25 +11,13 @@ public class FileComparator implements IFileComparator {
     /**
      * All the comparisons happen in round robin, so there will
      * never be a case we will need to compare more than two files.
-     * @param file1 file to compare
-     * @param file2 another file to compare
-     * @return similarity score.
+     * @param ast1 ast to compare
+     * @param ast2 another ast to compare
+     * @return score details for the two asts passed.
      */
     @Override
-    public float compareFiles(IASTGenerator ast1, IASTGenerator ast2) {
+    public ScoreDetails compareFiles(IASTGenerator ast1, IASTGenerator ast2) {
         //to be implemented
-        return 0;
-    }
-
-    /**
-     * Compares and returns line numbers of files which are similar.
-     * @param file1 file to compare
-     * @param file2 another file to compare
-     * @return similar lines object
-     */
-    @Override
-    public SimilarLines getSimilarLines(IASTGenerator ast1, IASTGenerator ast2) {
-        //to be implemented later
         return null;
     }
 }

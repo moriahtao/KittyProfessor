@@ -1,8 +1,8 @@
 package com.neu.cs5500.team209.user;
 
 /**
- * All the functionality which can be performed by the user
- * are handled here.
+ * All the functionality which can be performed by the logged
+ * in user are handled here.
  * So Basically this page acts as backend co-ordinates with other
  * classes.
  *
@@ -21,16 +21,16 @@ public class User extends BaseUser {
     public String lastName = null;
 
     /**
-     *
-     * @return
+     * perform the sign in action of the user
+     * @return true if successful, false otherwise
      */
     public boolean signIn() {
         return false;
     }
 
     /**
-     *
-     * @return
+     * performs the sign out action for the user
+     * @return true if successful, false otherwise
      */
 
     public boolean signOut() {
@@ -38,34 +38,22 @@ public class User extends BaseUser {
     }
 
     /**
-     *
-     * @return
+     * User registration is handled here.
+     * @return true if successful, false otherwise
      */
 
     public boolean signUp() {
         return false;
     }
 
-
-
     /**
-     *
-     * @param desc
-     * @return
+     * Saves the report for the user.
+     * @param desc name of the report, desc can contain spaces.
+     * @return true if successful, false otherwise
      */
 
     public boolean saveReport(String desc) {
         return false;
     }
-
-    /**
-     *
-     * @return
-     */
-    public boolean viewSavedReport() {
-        return false;
-    }
-
-
 
 }

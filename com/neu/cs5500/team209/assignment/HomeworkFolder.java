@@ -9,23 +9,23 @@ public class HomeworkFolder implements IHomeworkFolder {
      * There can be a space in the user given name.
      * There will not be any space in the id.
      */
-    private String id;
-    private String name;
-    private List<IFile> files;
+    String id;
+    String name;
+    List<IStudentHomework> shw;
 
     /**
      * @param id id of the homework folder
      * @param name name of the folder can contain space
-     * @param files List of all the files in the folder.
+     * @param shw List of all the files in the folder.
      */
-    public HomeworkFolder(String id, String name, List<IFile> files) {
+    public HomeworkFolder(String id, String name, List<IStudentHomework> shw) {
         this.id = id;
         this.name = name;
-        this.files = files;
+        this.shw = shw;
     }
 
     /**
-     *
+     * changes the name of HomeworkFolder
      * @param name new name to be changed to.
      * @return object with updated folder name.
      */
@@ -46,9 +46,9 @@ public class HomeworkFolder implements IHomeworkFolder {
     }
 
     /**
-     *
+     * here IAssignment will be IStudentHomework
      * @param ad This corresponds to single entity of file or folder.
-     * @return
+     * @return true if successfully added, false otherwise.
      */
     @Override
     public boolean add(IAssignment ad) {
@@ -57,9 +57,9 @@ public class HomeworkFolder implements IHomeworkFolder {
     }
 
     /**
-     *
+     * here IAssignment will be a list of IStudentHomework
      * @param ads This corresponds to multiple entities of files or folders.
-     * @return
+     * @return true if successfully added, false otherwise.
      */
     @Override
     public boolean addMultiple(List<IAssignment> ads) {
