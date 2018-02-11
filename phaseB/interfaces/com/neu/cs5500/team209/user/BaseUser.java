@@ -13,6 +13,10 @@ import java.util.List;
 public class BaseUser implements IBaseUser {
 
     String id;
+
+    public BaseUser(String id) {
+        this.id = id;
+    }
     /**
      * A method for Drag and drop folder is not needed,
      * as the functionality is handled by uploadFolder

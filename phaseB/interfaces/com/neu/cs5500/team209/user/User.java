@@ -20,6 +20,12 @@ public class User extends BaseUser {
     // User lastName will be null for anonymous user
     public String lastName = null;
 
+    public User(String email, String password, String firstName, String lastName) {
+        this.email = email;
+        this.password = password;
+        this.firstName = firstName;
+        this.lastName = lastName;
+    }
     /**
      * perform the sign in action of the user
      * @return true if successful, false otherwise

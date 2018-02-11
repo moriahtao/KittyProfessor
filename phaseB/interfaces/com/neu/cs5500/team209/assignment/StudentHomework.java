@@ -22,7 +22,9 @@ public class StudentHomework implements IStudentHomework {
      * @param files files inside the student homework.
      */
     public StudentHomework(String id, String name, List<IFile> files) {
-
+        this.id = id;
+        this.name = name;
+        this.files = files;
     }
 
     /**

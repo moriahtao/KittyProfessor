@@ -1,7 +1,10 @@
 package com.neu.cs5500.team209.assignment;
 
 import java.util.List;
-
+/**
+ * A folder containing 1 to many students work.
+ * Contains a list of students homework.
+ */
 public class HomeworkFolder implements IHomeworkFolder {
 
     /**
