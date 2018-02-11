@@ -4,7 +4,7 @@ package com.neu.cs5500.team209.assignment;
  * Lowest entity in the assignment category.
  * We are not providing the functionality of
  * renaming individual files.
- * 
+ *
  * extends to IFile.
  */
 public class File extends IFile {
@@ -17,6 +17,7 @@ public class File extends IFile {
     boolean required = true;
     String value;
     String name;
+
 
     /**
      * Constructor

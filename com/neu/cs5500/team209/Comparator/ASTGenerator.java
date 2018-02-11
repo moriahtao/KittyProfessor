@@ -4,7 +4,7 @@ import com.neu.cs5500.team209.assignment.IAssignment;
 
 /**
  * generates AST to be used in File comparator.
- * For generation we might as well any standard library.
+ * For generation we might as well use any standard library.
  */
 public class ASTGenerator implements IASTGenerator {
 
