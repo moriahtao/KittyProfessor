@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -19,6 +20,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private MySavedRequestAwareAuthenticationSuccessHandler authenticationSuccessHandler;
 
+    @Autowired
+    private MyUserDetailService userDetailsService;
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
@@ -29,6 +33,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/currentuser").access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
                 .antMatchers("/greeting").access("hasRole('ROLE_ADMIN')")
+                .antMatchers("/admin/**").access("hasRole('ROLE_ADMIN')")
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()
@@ -40,8 +45,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-        auth
-                .inMemoryAuthentication()
+        auth.authenticationProvider(authenticationProvider()).inMemoryAuthentication()
                 .withUser("user").password("password").roles("USER")
                 .and()
                 .withUser("admin").password("password").roles("ADMIN");
@@ -54,5 +58,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public SimpleUrlAuthenticationFailureHandler myFailureHandler(){
         return new SimpleUrlAuthenticationFailureHandler();
+    }
+
+    @Bean
+    public DaoAuthenticationProvider authenticationProvider() {
+        DaoAuthenticationProvider authProvider
+                = new DaoAuthenticationProvider();
+        authProvider.setUserDetailsService(userDetailsService);
+        return authProvider;
     }
 }

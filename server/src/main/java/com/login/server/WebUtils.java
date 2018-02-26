@@ -14,4 +14,10 @@ public class WebUtils {
         map.put("data", obj);
         return map;
     }
+    public static Map failedMap(String message){
+        Map map = new HashMap<String, Object>();
+        map.put("success", false);
+        map.put("message", message);
+        return map;
+    }
 }
