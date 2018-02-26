@@ -1,4 +1,4 @@
-package com.example.demo;
+package com.login.server;
 
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.RequestMapping;

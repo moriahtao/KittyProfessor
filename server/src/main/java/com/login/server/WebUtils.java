@@ -1,10 +1,10 @@
-package com.example.demo;
+package com.login.server;
 
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by leizhang on 2/25/18.
+ * Created by mengtao on 2/25/18.
  */
 public class WebUtils {
 
