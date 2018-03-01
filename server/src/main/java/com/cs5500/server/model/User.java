@@ -1,6 +1,5 @@
-package com.login.server;
+package com.cs5500.server.model;
 
-import org.springframework.context.annotation.Primary;
 import org.springframework.data.annotation.*;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.security.core.GrantedAuthority;
@@ -13,14 +12,15 @@ import java.util.List;
 /**
  * Created by mengtao on 2/25/18.
  */
-public class User implements UserDetails {
+public class User {
     @Id
     private String id;
 
     @Indexed(unique = true)
     private String username;
     private String password;
-
+    private String firstName;
+    private String lastName;
     private List<Role> roles;
 
 
@@ -53,28 +53,24 @@ public class User implements UserDetails {
         return username;
     }
 
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
     public void setUsername(String username) {
         this.username = username;
     }
 
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return roles;
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
     public String getPassword() {
@@ -85,11 +81,6 @@ public class User implements UserDetails {
         this.password = password;
     }
 
-    @Override
-    public boolean isEnabled() {
-        return true;
-    }
-
     public List<Role> getRoles() {
         return roles;
     }
@@ -97,4 +88,6 @@ public class User implements UserDetails {
     public void setRoles(List<Role> roles) {
         this.roles = roles;
     }
+
+
 }

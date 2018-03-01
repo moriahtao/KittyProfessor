@@ -1,4 +1,4 @@
-package com.login.server;
+package com.cs5500.server;
 
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;

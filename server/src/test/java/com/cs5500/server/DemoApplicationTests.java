@@ -1,4 +1,4 @@
-package com.login.server;
+package com.cs5500.server;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

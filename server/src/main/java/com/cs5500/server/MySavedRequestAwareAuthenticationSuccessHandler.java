@@ -1,19 +1,17 @@
-package com.login.server;
+package com.cs5500.server;
 
+import com.cs5500.server.model.User;
+import com.cs5500.server.model.dto.MyUserPrinciple;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
-import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 import org.springframework.security.web.savedrequest.RequestCache;
-import org.springframework.security.web.savedrequest.SavedRequest;
-import org.springframework.util.StringUtils;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -40,7 +38,7 @@ public class MySavedRequestAwareAuthenticationSuccessHandler extends SavedReques
             HttpServletResponse response,
             Authentication authentication) throws ServletException, IOException {
         HttpSession session = request.getSession();
-        User authUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        MyUserPrinciple authUser = (MyUserPrinciple) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         response.setContentType("application/json");
         Map<String, Object> authSuccessMap = new HashMap<String, Object>();
         authSuccessMap.put("authenticated", true);
@@ -49,21 +47,6 @@ public class MySavedRequestAwareAuthenticationSuccessHandler extends SavedReques
         PrintWriter writer = response.getWriter();
         mapper.writeValue(writer, authSuccessMap);
         writer.flush();
-
-        //super.onAuthenticationSuccess( request, response, authentication );
-        /*SavedRequest savedRequest = requestCache.getRequest(request, response);
-        if (savedRequest == null) {
-            clearAuthenticationAttributes(request);
-            return;
-        }
-        String targetUrlParam = getTargetUrlParameter();
-        if (isAlwaysUseDefaultTargetUrl() || (targetUrlParam != null && StringUtils.hasText(request.getParameter(targetUrlParam)))) {
-            requestCache.removeRequest(request, response);
-            clearAuthenticationAttributes(request);
-            return;
-        }
-        clearAuthenticationAttributes(request);
-        */
     }
 
     public void setRequestCache(RequestCache requestCache) {

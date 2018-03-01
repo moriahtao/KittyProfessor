@@ -1,5 +1,9 @@
-package com.login.server;
+package com.cs5500.server;
 
+import com.cs5500.server.model.Role;
+import com.cs5500.server.model.User;
+import com.cs5500.server.repository.RoleRepository;
+import com.cs5500.server.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;

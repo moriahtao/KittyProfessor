@@ -1,5 +1,8 @@
-package com.login.server;
+package com.cs5500.server.service;
 
+import com.cs5500.server.model.User;
+import com.cs5500.server.model.dto.MyUserPrinciple;
+import com.cs5500.server.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -17,10 +20,10 @@ public class MyUserDetailService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) {
-        com.login.server.User user = userRepository.findByUsername(username);
+        User user = userRepository.findByUsername(username);
         if (user == null) {
             throw new UsernameNotFoundException(username);
         }
-        return user;
+        return new MyUserPrinciple(user);
     }
 }

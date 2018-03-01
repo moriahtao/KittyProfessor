@@ -1,5 +1,6 @@
-package com.login.server;
+package com.cs5500.server.repository;
 
+import com.cs5500.server.model.Role;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.repository.query.Param;
 
