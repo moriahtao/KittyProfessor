@@ -1,4 +1,4 @@
 ## REST APIs
-login: /login__
-register: /api/users__
+* login: /login
+* register: /api/users
 
