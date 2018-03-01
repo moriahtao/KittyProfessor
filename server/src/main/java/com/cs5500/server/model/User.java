@@ -30,7 +30,7 @@ public class User {
         this.username = username;
         this.password = password;
         List<Role> roles = new ArrayList<Role>();
-        roles.add(new Role("ROLE_ADMIN"));
+        roles.add(new Role("ROLE_USER"));
         this.roles = roles;
     }
 
