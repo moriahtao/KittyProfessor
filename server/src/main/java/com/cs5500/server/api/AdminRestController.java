@@ -39,7 +39,7 @@ public class AdminRestController {
     public Object createUser(@RequestBody User user) {
         UpdateUserResult result = userService.createUser(user);
         if (result.isSuccess()) {
-            return WebUtils.successMap(result.getUser());
+            return WebUtils.createSuccessMap(result.getUser());
         } else {
             return WebUtils.failedMap(result.getErrorMessages());
         }
