@@ -20,3 +20,5 @@ out
 
 # Dont ignore .gitignore
 !/.gitignore
+!/*.css
+!/*.js
