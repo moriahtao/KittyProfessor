@@ -1,7 +1,7 @@
 package com.cs5500.team209.astgen;
 
-import antlr.Python3Lexer;
-import antlr.Python3Parser;
+import com.cs5500.team209.antlr.Python3Lexer;
+import com.cs5500.team209.antlr.Python3Parser;
 import org.antlr.v4.gui.TreeViewer;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
