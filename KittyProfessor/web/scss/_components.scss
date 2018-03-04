@@ -1,0 +1,191 @@
+.main--content {
+  padding: 4rem 0;
+}
+
+.inner--heading {
+  color: $pink;
+  margin-left: 5.2rem;
+}
+p, div {
+  font-size: 1.6rem ;
+}
+.close--modal {
+  bottom: 2rem;
+  color: white;
+  top: auto;
+  right: 2.5rem;
+  background-color: $boulder;
+  &:hover,&:focus {
+    color: white;
+    background: $very-dark-gray;
+  }
+}
+.logged--as {
+  text-align: right;
+}
+
+.innerpage--breadcrumbs {
+  font-size: 1.6rem;
+  li{
+    font-size: 1.6rem;
+    a{
+      text-decoration: none;
+    }
+  }
+}
+a{
+  color: $black;
+  text-decoration: underline;
+  &:hover{
+    color: $primary-color;
+  }
+}
+
+//------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------
+
+.login--form{
+  background: $light-gray;
+  border: 1px solid #ddd;
+  margin: 10rem 0;
+  min-height: 27rem;
+  border-radius: 5px;
+  padding: 20px 20px 0 20px;
+  font-size: 1.8rem;
+  h3{
+    font-weight: 600;
+    margin-bottom: 2rem;
+  }
+  .input--field,select {
+    width: 100%;
+    height: 60px;
+    padding-left: 1rem;
+    border: 1px solid #c8c8c8;
+    border-radius: 5px;
+    background-color: #ffffff;
+    font-family: Source Sans Pro;
+    font-size: 16px;
+    color: #000000;
+    text-decoration: none solid rgb(0, 0, 0);
+    line-height: 32px;
+  }
+  a{
+    color: $black;
+    text-decoration: underline;
+    &:hover{
+      color: $primary-color;
+    }
+  }
+  .btn--primary{
+    float: right;
+    margin-top: 2rem;
+  }
+}
+
+
+.login-box{
+  width:90%;
+  margin: 0 auto;
+}
+
+.btn--primary, .close--modal {
+  border-radius: 5px;
+  height: 40px;
+  font-size: 1.6rem;
+  line-height: 1rem;
+}
+
+.top-bar-right {
+  a{
+    font-size: 1.6rem;
+    color: $black;
+    margin-right: 4rem;
+    &:hover{
+      color:$primary-color;
+    }
+  }
+}
+
+
+
+//------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------
+
+
+.add--course {
+  padding: 3rem 0;
+  outline: none;
+  .course--content {
+    background: $light-pink;
+    border-radius: 10px;
+    margin:0 auto;
+    padding: 1rem ;
+    color: $pink;
+    width: 26rem;
+    height: 17rem;
+    font-size: 2rem;
+    vertical-align: middle;
+    border: 0.4rem dashed $pink;
+    text-decoration: none solid rgb(212, 137, 137);
+    box-shadow: 5px 5px 10px rgba(0,0,0,0.2);
+  }
+  &:hover {
+    cursor: pointer;
+  }
+
+}
+
+.course--added{
+  .prompt--add{
+    display: none;
+  }
+  .course--content{
+    padding:0;
+    border-width: 0;
+    border-radius: 10px;
+    background: $light-gray;
+  }
+  .course--heading {
+    border-radius: 10px 10px 0 0 ;
+    padding: 1rem;
+    color: $white;
+    font-size: 2rem;
+    height: 50%;
+    background: $pink;
+    span {
+      font-size: 2rem;
+    }
+  }
+  .course--details {
+    .hw--info {
+      padding: 1rem;
+      p{
+        font-size: 1.6rem;
+        line-height: 1;
+        color: $black;
+
+      }
+    }
+  }
+  &:hover {
+    cursor: default;
+  }
+
+}
+
+
+
+//------------------------------------------------------------------------------------------------
+//------------------------------Reveal------------------------------------------------------------
+//------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------
+
+.course--upload {
+  width: 50rem;
+  border-radius: 5px;
+  .add--coursebtn {
+    float: right;
+    margin-right: 8rem;
+  }
+
+}
