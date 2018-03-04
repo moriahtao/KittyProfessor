@@ -11,6 +11,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import java.util.ArrayList;
 
+/**
+ * Driver program
+ */
 @SpringBootApplication
 public class Driver implements CommandLineRunner {
 	@Autowired
@@ -23,13 +26,18 @@ public class Driver implements CommandLineRunner {
 		SpringApplication.run(Driver.class, args);
 	}
 
+	/**
+	 * run some specific code once the SpringApplication has started
+	 * @param args provides access to application arguments as a simple string array
+	 * @throws Exception
+     */
 	@Override
 	public void run(String... args) throws Exception {
 
 		repository.deleteAll();
 		roleRepository.deleteAll();
 
-		// save a couple of customers
+		// save a couple of users
 		roleRepository.save(new Role("ROLE_ADMIN"));
 		roleRepository.save(new Role("ROLE_USER"));
 		ArrayList<Role> aliceRoles = new ArrayList<>();
@@ -38,7 +46,7 @@ public class Driver implements CommandLineRunner {
 		repository.save(new User("bob", "test123"));
 
 
-		// fetch all customers
+		// fetch all users
 		System.out.println("Customers found with findAll():");
 		System.out.println("-------------------------------");
 		for (User user : repository.findAll()) {
@@ -46,13 +54,10 @@ public class Driver implements CommandLineRunner {
 		}
 		System.out.println();
 
-		// fetch an individual customer
+		// fetch an individual user
 		System.out.println("Users found with findByUsername('alice'):");
 		System.out.println("--------------------------------");
 		System.out.println(repository.findByUsername("alice"));
-
-		System.out.println("Users found with findByUsername('bob'):");
-		System.out.println("--------------------------------");
 
 	}
 }

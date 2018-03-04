@@ -17,6 +17,9 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
+/**
+ * a security solution for Java EE applications
+ */
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
@@ -29,6 +32,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private MyUserDetailService userDetailsService;
 
+    /**
+     * configure which users need to be authenticated
+     * @param http allows configuring web based security for specific http requests
+     * @throws Exception
+     */
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
@@ -59,6 +67,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .withUser("admin").password("password").roles("ADMIN");
     }
 
+
     @Bean
     public MySavedRequestAwareAuthenticationSuccessHandler mySuccessHandler(){
         return new MySavedRequestAwareAuthenticationSuccessHandler(new MappingJackson2HttpMessageConverter());
@@ -68,6 +77,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return new SimpleUrlAuthenticationFailureHandler();
     }
 
+    /**
+     * An AuthenticationProvider implementation that
+     * retrieves user details from a UserDetailsService.
+     * @return DaoAuthenticationProvider
+     */
     @Bean
     public DaoAuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authProvider
@@ -79,7 +93,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     /**
      * add a header to all response
      * tell browser to trust the client
-     * @return
+     * @return Configure cross origin requests processing
      */
     @Bean
     public WebMvcConfigurer corsConfigurer() {
@@ -87,8 +101,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**").allowedOrigins("*");
-                //registry.addMapping("/**");
-
             }
         };
     }

@@ -15,6 +15,8 @@ import java.util.List;
 
 /**
  * Created by mengtao on 2/27/18.
+ *
+ * KittyProfessor defined UserService
  */
 @Service
 public class UserService {
@@ -25,6 +27,11 @@ public class UserService {
     RoleRepository roleRepository;
 
 
+    /**
+     * create user
+     * @param user the user obj to be created
+     * @return the Spring Security
+     */
     public UpdateUserResult createUser(User user) {
         List<String> errorMessages = validateUser(user);
         if (errorMessages == null || errorMessages.size() == 0) {
@@ -40,10 +47,19 @@ public class UserService {
         }
     }
 
+    /**
+     * delete user
+     * @param user the user to be deleted
+     */
     public void deleteUser(User user) {
         userRepository.delete(user);
     }
 
+    /**
+     * get user by username
+     * @param username the username of the user to be got
+     * @return
+     */
     public FetchUserResult getUserByUsername(String username) {
         return new FetchUserResult(userRepository.findByUsername(username));
     }

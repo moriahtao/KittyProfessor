@@ -58,8 +58,8 @@ public class AdminRestController {
     /**
      * rest api for updating a user by username
      * @param username the user to be updated
-     * @param user
-     * @return
+     * @param user the updated user
+     * @return the user updated when success
      */
     @RequestMapping(method=PUT, path="/admin/user/{username}")
     public Object updateUser(@PathVariable("username") String username, @RequestBody User user) {
@@ -79,6 +79,12 @@ public class AdminRestController {
         }
     }
 
+    /**
+     * delete the user by username
+     * @param username the username of the user to be deleted
+     * @param user the user to be deleted
+     * @return success msg when success
+     */
     @RequestMapping(method=DELETE, path="/admin/user/{username}")
     public Object deleteUser(@PathVariable("username") String username, @RequestBody User user) {
         FetchUserResult oldUser = userService.getUserByUsername(username);
