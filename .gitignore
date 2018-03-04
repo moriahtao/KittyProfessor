@@ -5,6 +5,7 @@
 *.log
 
 # Package Files #
+*.jar
 *.ear
 *.zip
 *.tar.gz
