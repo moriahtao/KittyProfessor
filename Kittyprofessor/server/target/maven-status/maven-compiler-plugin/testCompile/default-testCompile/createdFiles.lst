@@ -1,0 +1,15 @@
+com/cs5500/server/api/AdminRestControllerTest.class
+com/cs5500/server/DemoApplicationTests.class
+com/cs5500/server/service/UserServiceTest.class
+com/cs5500/server/model/UserTest.class
+com/cs5500/server/model/RoleTest.class
+com/cs5500/server/service/UserServiceTest$UserServiceTestContextConfiguration.class
+com/cs5500/server/service/MyUserDetailServiceTest$UserServiceTestContextConfiguration.class
+com/cs5500/server/model/dto/MyUserRoleTest.class
+com/cs5500/server/WebUtilsTest.class
+com/cs5500/server/api/UserRestControllerTest.class
+com/cs5500/server/model/dto/UpdateUserResultTest.class
+com/cs5500/server/service/MyUserDetailServiceTest.class
+com/cs5500/server/model/dto/FetchUserResultTest.class
+com/cs5500/server/api/MyRestControllerTest.class
+com/cs5500/server/model/dto/MyUserPrincipleTest.class
