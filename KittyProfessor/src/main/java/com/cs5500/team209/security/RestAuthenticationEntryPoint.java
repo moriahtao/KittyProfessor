@@ -10,11 +10,20 @@ import java.io.IOException;
 
 /**
  * Created by mengtao on 2/25/18.
+ *
+ * the entry point when receiving a request
  */
 @Component( "restAuthenticationEntryPoint" )
 public class RestAuthenticationEntryPoint
         implements AuthenticationEntryPoint {
 
+    /**
+     * the Spring security request evaluation
+     * @param request the request to be evaluated
+     * @param response the server response
+     * @param authException exception
+     * @throws IOException
+     */
     @Override
     public void commence(
             HttpServletRequest request,

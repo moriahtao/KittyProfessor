@@ -10,14 +10,14 @@ pipeline {
        stage('Build') {
            steps {
                echo "Building"
-               sh 'mvn compile'
-               sh 'mvn package’
+               sh 'mvn compile -f KittyProfessor/pom.xml'
+               sh 'mvn package -f KittyProfessor/pom.xml'
            }
        }
        stage('Test'){
            steps {
                echo "Testing"
-               sh 'mvn test'
+               sh 'mvn test -f KittyProfessor/pom.xml'
            }
        }
 	    stage('SonarQube') {

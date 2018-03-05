@@ -25,6 +25,8 @@ import static org.junit.Assert.assertEquals;
 
 /**
  * Created by mengtao on 2/28/18.
+ *
+ * Tests for UserService
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = Driver.class)
@@ -44,6 +46,9 @@ public class UserServiceTest {
     @MockBean
     private UserRepository userRepository;
 
+    /**
+     * setup mock db before testing
+     */
     @Before
     public void setUp() {
         User alex = new User("alex", "1234");
@@ -56,6 +61,10 @@ public class UserServiceTest {
 
     }
 
+    /**
+     * should return user after
+     * successfully get user by username
+     */
     @Test
     public void whenValidName_thenUserShouldBeFound() {
         String name = "alex";
@@ -64,6 +73,9 @@ public class UserServiceTest {
         assertThat(found.getUser().getUsername()).isEqualTo(name);
     }
 
+    /**
+     * should return user after successfully create user
+     */
     @Test
     public void whenValidUser_thenUserShouldBeFound() {
         User user = new User("ann", "1234", "student", "neu", "example@gmail");
@@ -80,6 +92,9 @@ public class UserServiceTest {
         assertEquals("ann", found.getUser().getUsername());
     }
 
+    /**
+     * delete user
+     */
     @Test
     public void whenValidUser_thenUserShouldBeDeleted() {
         User user = new User("ann", "1234", "student", "neu", "example@gmail");

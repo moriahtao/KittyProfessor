@@ -8,6 +8,8 @@ import java.util.List;
 
 /**
  * Created by mengtao on 2/25/18.
+ *
+ * the User class
  */
 public class User {
     @Id
@@ -19,38 +21,20 @@ public class User {
     private String firstName;
     private String lastName;
     private List<Role> roles;
-
-    public String getJoinAs() {
-        return joinAs;
-    }
-
-    public void setJoinAs(String joinAs) {
-        this.joinAs = joinAs;
-    }
-
-    public String getUniversity() {
-        return university;
-    }
-
-    public void setUniversity(String university) {
-        this.university = university;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
     private String joinAs;
     private String university;
     private String email;
 
-
+    /**
+     * default constructor
+     */
     public User() {}
 
+    /**
+     * constructor
+     * @param username username
+     * @param password password
+     */
     public User(String username, String password) {
         this.username = username;
         this.password = password;
@@ -59,6 +43,14 @@ public class User {
         this.roles = roles;
     }
 
+    /**
+     * constructor
+     * @param username username
+     * @param password password
+     * @param joinAs join as identity
+     * @param university university name
+     * @param email email address
+     */
     public User(String username, String password, String joinAs, String university, String email) {
         this.username = username;
         this.password = password;
@@ -70,6 +62,12 @@ public class User {
         this.roles = roles;
     }
 
+    /**
+     * constructor
+     * @param username username
+     * @param password password
+     * @param roles roles of the user
+     */
     public User(String username, String password, List<Role> roles) {
         this.username = username;
         this.password = password;
@@ -78,6 +76,10 @@ public class User {
         this.roles = rolesList;
     }
 
+    /**
+     * toString method
+     * @return String
+     */
     @Override
     public String toString() {
         return String.format(
@@ -85,6 +87,61 @@ public class User {
                 id, username);
     }
 
+    /**
+     * setters and getters
+     */
+    /**
+     * join as "student" or "instructor"
+     * @return the join as identity
+     */
+    public String getJoinAs() {
+        return joinAs;
+    }
+
+    /**
+     * set join as
+     * @param joinAs the identity to join as
+     */
+    public void setJoinAs(String joinAs) {
+        this.joinAs = joinAs;
+    }
+
+    /**
+     * the university of the user went
+     * @return the university name
+     */
+    public String getUniversity() {
+        return university;
+    }
+
+    /**
+     * the university of the user
+     * @param university the university name
+     */
+    public void setUniversity(String university) {
+        this.university = university;
+    }
+
+    /**
+     * get email address
+     * @return the email address
+     */
+    public String getEmail() {
+        return email;
+    }
+
+    /**
+     * set email address
+     * @param email the email address
+     */
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    /**
+     * id
+     * @return id
+     */
     public String getId() {
         return id;
     }

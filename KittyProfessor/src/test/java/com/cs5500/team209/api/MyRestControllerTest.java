@@ -25,6 +25,8 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
 
 /**
  * Created by mengtao on 3/3/18.
+ *
+ * Tests for ROLE_USER REST APIs
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = Driver.class)
@@ -38,11 +40,18 @@ public class MyRestControllerTest {
     @MockBean
     private HttpServletRequest request;
 
+    /**
+     * setup mock mvc before testing
+     * @throws Exception
+     */
     @Before
     public void setup() throws Exception {
         this.mvc = webAppContextSetup(webApplicationContext).build();
     }
 
+    /**
+     * testing for dummy requests
+     */
     @Autowired
     ObjectMapper objectMapper;
     @Test
@@ -57,26 +66,6 @@ public class MyRestControllerTest {
 
         assertEquals(HttpStatus.OK.value(), response.getStatus());
     }
-
-   /* @Test
-    public void testGetCurrentUser() throws Exception {
-        User joe = new User("joe", "1234");
-        Mockito.when(request.getUserPrincipal()).thenReturn(new Principal() {
-            @Override
-            public String getName() {
-                return "joe";
-            }
-        });
-
-        RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .get("/currentuser");
-
-        MvcResult result = mvc.perform(requestBuilder).andReturn();
-
-        MockHttpServletResponse response = result.getResponse();
-
-        assertEquals(HttpStatus.OK.value(), response.getStatus());
-    }*/
 
 
 }

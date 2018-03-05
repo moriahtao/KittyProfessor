@@ -13,6 +13,9 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 /**
  * Created by mengtao on 3/1/18.
+ *
+ * class to implement the REST APIs with
+ * user authority
  */
 @RestController
 public class UserRestController {
@@ -20,6 +23,11 @@ public class UserRestController {
     @Autowired
     UserService userService;
 
+    /**
+     * rest api for creating a user
+     * @param user the User object to be created
+     * @return response with user and http status
+     */
     @RequestMapping(method=POST, path="/api/users")
     public Object createUser(@RequestBody User user) {
         UpdateUserResult result = userService.createUser(user);

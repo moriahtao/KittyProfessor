@@ -12,6 +12,8 @@ import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 /**
  * Created by mengtao on 2/20/18.
+ *
+ * sample apis for validating other RESTful APIs
  */
 @RestController
 public class MyRestController {
@@ -19,12 +21,22 @@ public class MyRestController {
     @Autowired
     private UserRepository repository;
 
+    /**
+     * the sample api
+     * @param name the name sent from client
+     * @return the name and ok status
+     */
     @RequestMapping(method=GET, path="/greeting")
     @Secured("Role_Admin")
     public Object greeting(@RequestParam(value="name", defaultValue="World") String name) {
         return WebUtils.successMap(name);
     }
 
+    /**
+     * api to get current user in session
+     * @param request the request to get current user
+     * @return the current username
+     */
     @RequestMapping(method=GET, path="/currentuser")
     public Object getCurrentUser(HttpServletRequest request) {
         String name = request.getUserPrincipal().getName();

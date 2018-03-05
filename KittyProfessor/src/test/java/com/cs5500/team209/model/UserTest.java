@@ -9,9 +9,14 @@ import static org.junit.Assert.*;
 
 /**
  * Created by mengtao on 2/28/18.
+ *
+ * Tests for User class
  */
 public class UserTest {
 
+    /**
+     * should get user fields after creating user correctly
+     */
     @Test
     public void getUser() {
         User user = new User("joe", "1234", "student", "neu", "example@gmail");

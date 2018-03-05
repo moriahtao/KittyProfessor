@@ -11,9 +11,14 @@ import static org.junit.Assert.*;
 
 /**
  * Created by mengtao on 3/3/18.
+ *
+ * Tests for FetchUserResult
  */
 public class FetchUserResultTest {
 
+    /**
+     * should fetch user after creating user
+     */
     @Test
     public void fetchUser() {
         User user = new User("joe", "1234", "student", "neu", "example@gmail");
@@ -46,6 +51,9 @@ public class FetchUserResultTest {
 
     }
 
+    /**
+     * should fetch user list
+     */
     @Test
     public void fetchUserList() {
         User user = new User("joe", "1234", "student", "neu", "example.@gmail");

@@ -10,8 +10,15 @@ import static org.junit.Assert.*;
 
 /**
  * Created by mengtao on 3/4/18.
+ *
+ * Tests for clas UpdateUserResult
  */
 public class UpdateUserResultTest {
+
+    /**
+     * should fetch corresponding fields after updating
+     * user
+     */
     @Test
     public void testUpdateUserSuccessResult() {
         User user = new User("joe", "1234", "student", "neu", "example@gmail");
@@ -30,6 +37,10 @@ public class UpdateUserResultTest {
         assertEquals(errors, res.getErrorMessages());
     }
 
+    /**
+     * should return error msg
+     * after updating user fails
+     */
     @Test
     public void testUpdateUserFailureResult() {
         List<String> errors = new ArrayList<>();
