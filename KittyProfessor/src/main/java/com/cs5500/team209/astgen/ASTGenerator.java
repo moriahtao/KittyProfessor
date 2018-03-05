@@ -34,6 +34,7 @@ public class ASTGenerator {
         ParseTree tree = parser.file_input();
         explore( parser.file_input(), 0);
 
+        /* Uncomment to view the frame
         JFrame frame = new JFrame("Antlr AST");
         JPanel panel = new JPanel();
         TreeViewer viewr = new TreeViewer(Arrays.asList(
@@ -43,7 +44,7 @@ public class ASTGenerator {
         frame.add(panel);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(600,600);
-        frame.setVisible(visisble);
+        frame.setVisible(visisble);*/
     }
 
     /**
