@@ -30,6 +30,8 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.*;
 
 /**
  * Created by mengtao on 2/28/18.
+ *
+ * Tests for Admin Rest APIs
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = Driver.class)
@@ -47,6 +49,10 @@ public class AdminRestControllerTest {
     @MockBean
     private UserRepository userRepository;
 
+    /**
+     * set up mock db before testing
+     * @throws Exception
+     */
     @Before
     public void setup() throws Exception {
         this.mvc = webAppContextSetup(webApplicationContext).build();
@@ -61,22 +67,11 @@ public class AdminRestControllerTest {
         Mockito.when(userRepository.findByUsername(joe.getUsername())).thenReturn(joe);
         Mockito.when(userRepository.findByUsername(andy.getUsername())).thenReturn(andy);
     }
-    // write test cases here
-    /*@Test
-    public void givenUserByUserName_thenReturnJsonArray()
-            throws Exception {
-        User joe = new User("joe", "1234");
-        User andy = new User("andy", "1234");
 
-        this.mvc.perform(get("/admin/user/joe"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.success", is(true)))
-                .andExpect(jsonPath("$.data.username", is(joe.getUsername())))
-                .andExpect(jsonPath("$.data.password", is(nullValue())));
-        //.andExpect(content().string(containsString("Hello Mock")));
-
-    }*/
-
+    /**
+     * should return status code 201
+     * after creating user successfully
+     */
     @Autowired
     ObjectMapper objectMapper;
     @Test public void givenUser_thenReturnJsonArray() throws Exception {
@@ -100,6 +95,11 @@ public class AdminRestControllerTest {
         assertEquals(HttpStatus.CREATED.value(), response.getStatus());
     }
 
+    /**
+     * should get user and return status code 200
+     * after get user by username successfully
+     * @throws Exception
+     */
     @Test public void givenUserByUsername_thenReturnJsonArray() throws Exception {
         User mockUser = new User("joe", "1234");
 
@@ -143,6 +143,10 @@ public class AdminRestControllerTest {
 
     }
 
+    /**
+     * should delete requested user
+     * @throws Exception
+     */
     @Test public void deleteUser_thenReturnJsonArray() throws Exception {
         User mockUser = new User("joe", "1234");
 
@@ -166,27 +170,5 @@ public class AdminRestControllerTest {
         assertEquals("{\"data\":\"User deleted successfully.\",\"success\":true}", response.getContentAsString());
 
     }
-    /*@Test public void givenUpdatedUser_thenReturnJsonArray() throws Exception {
-        User mockUser = new User("joe", "1234");
-
-        // studentService.addCourse to respond back with mockCourse
-        Mockito.when(
-                userRepository.save(Mockito.any(User.class))).thenReturn(mockUser);
-
-        String exampleUserJson = "{\"username\":\"joe\",\"password\":\"1234\"}";
-
-        // Send user as body to
-        RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .post("/admin/users")
-                .accept(MediaType.APPLICATION_JSON).content(exampleUserJson)
-                .contentType(MediaType.APPLICATION_JSON);
-
-        MvcResult result = mvc.perform(requestBuilder).andReturn();
-
-        MockHttpServletResponse response = result.getResponse();
-
-        assertEquals(HttpStatus.CREATED.value(), response.getStatus());
-    }*/
-
 
 }

@@ -29,6 +29,8 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
 
 /**
  * Created by mengtao on 3/2/18.
+ *
+ * Tests for ROLE_USER REST APIs
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = Driver.class)
@@ -36,7 +38,6 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
 public class UserRestControllerTest {
     private MockMvc mvc;
 
-    //@Autowired
     @MockBean
     private UserService userService;
 
@@ -46,6 +47,10 @@ public class UserRestControllerTest {
     @MockBean
     private UserRepository userRepository;
 
+    /**
+     * setup mock db before testing
+     * @throws Exception
+     */
     @Before
     public void setup() throws Exception {
         this.mvc = webAppContextSetup(webApplicationContext).build();
@@ -58,13 +63,17 @@ public class UserRestControllerTest {
         Mockito.when(userRepository.findByUsername(andy.getUsername())).thenReturn(andy);
     }
 
+    /**
+     * should return requested user
+     * after request of getting user by username
+     */
     @Autowired
     ObjectMapper objectMapper;
     @Test
     public void givenUser_thenReturnJsonArray() throws Exception {
         User mockUser = new User("joe", "1234");
 
-        // studentService.addCourse to respond back with mockCourse
+        // UserService.createUser to respond back with mockCourse
         Mockito.when(userService.createUser(Mockito.any(User.class))).thenReturn(new UpdateUserResult(mockUser));
 
         String exampleUserJson = "{\"username\":\"joe\",\"password\":\"1234\"}";

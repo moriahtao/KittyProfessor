@@ -17,6 +17,8 @@ import static org.junit.Assert.*;
 
 /**
  * Created by mengtao on 3/4/18.
+ *
+ * Tests for UserDetailService
  */
 @RunWith(SpringRunner.class)
 public class MyUserDetailServiceTest {
@@ -35,6 +37,9 @@ public class MyUserDetailServiceTest {
     @MockBean
     private UserRepository userRepository;
 
+    /**
+     * setup mock db before testing
+     */
     @Before
     public void setUp() {
         User alex = new User("alex", "1234");
@@ -42,6 +47,9 @@ public class MyUserDetailServiceTest {
         Mockito.when(userRepository.findByUsername(alex.getUsername())).thenReturn(alex);
     }
 
+    /**
+     * should load user by username
+     */
     @Test
     public void testMyUserDetailService() {
         String name = "alex";

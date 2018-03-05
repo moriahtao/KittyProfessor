@@ -7,8 +7,14 @@ import static org.junit.Assert.*;
 
 /**
  * Created by mengtao on 3/4/18.
+ *
+ * Tests for MyUserRole
  */
 public class MyUserRoleTest {
+
+    /**
+     * should get created roles
+     */
     @Test
     public void testMyUserRole() {
         Role role = new Role("ROLE_ADMIN");

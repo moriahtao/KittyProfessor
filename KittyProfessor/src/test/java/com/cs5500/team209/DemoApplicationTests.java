@@ -9,6 +9,9 @@ import org.springframework.test.context.junit4.SpringRunner;
 @SpringBootTest
 public class DemoApplicationTests {
 
+	/**
+	 * load the security configs of KittyProfessor
+	 */
 	@Test
 	public void contextLoads() {
 	}

@@ -64,6 +64,11 @@ public class UserService {
         return new FetchUserResult(userRepository.findByUsername(username));
     }
 
+    /**
+     * validate user having the required fields
+     * @param user the user to be validated
+     * @return the error messages if any
+     */
     private List<String> validateUser(User user) {
         List<String> errorMessages = new ArrayList<>();
         checkNull(errorMessages, user.getPassword(), "Password");
@@ -71,6 +76,12 @@ public class UserService {
         return errorMessages;
     }
 
+    /**
+     * check if fields are null
+     * @param errorMessages error msg
+     * @param value the value to be checked
+     * @param fieldName the field to be checked
+     */
     private void checkNull(List<String> errorMessages, String value, String fieldName) {
         if (StringUtils.isEmpty(value)) {
             errorMessages.add(fieldName + " can't be null.");

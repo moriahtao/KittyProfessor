@@ -11,8 +11,15 @@ import static org.junit.Assert.*;
 
 /**
  * Created by mengtao on 3/4/18.
+ *
+ * Tests for MyUserPrinciple
  */
 public class MyUserPrincipleTest {
+
+    /**
+     * should fetch corresponding fields after creating
+     * MyUserPrinciple obj
+     */
     @Test
     public void testMyUserPrinciple() {
         User user = new User("joe", "1234", "student", "neu", "example@gmail");
