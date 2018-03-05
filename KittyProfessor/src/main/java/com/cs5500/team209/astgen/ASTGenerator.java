@@ -25,7 +25,7 @@ public class ASTGenerator {
      * @param path path for the file
      * @throws IOException If the file is not available.
      */
-    public void generateAST(String path) throws IOException {
+    public void generateAST(String path, boolean visisble) throws IOException {
 
         CharStream charStream = CharStreams.fromFileName(path);
         Python3Lexer lexer = new Python3Lexer(charStream);
@@ -43,7 +43,7 @@ public class ASTGenerator {
         frame.add(panel);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(600,600);
-        frame.setVisible(true);
+        frame.setVisible(visisble);
     }
 
     /**
