@@ -24,6 +24,12 @@ public class MyUserDetailService implements UserDetailsService {
     @Autowired
     private UserRepository userRepository;
 
+    /**
+     * Core interface which loads user-specific data
+     * in Spring Security to retrieve user-related data
+     * @param username the username of the user to be loaded
+     * @return UserDetails
+     */
     @Override
     public UserDetails loadUserByUsername(String username) {
         User user = userRepository.findByUsername(username);
