@@ -34,8 +34,7 @@ ENV JAVA_VERSION=8 \
     # Mongo https://hub.docker.com/r/mvertes/alpine-mongo/~/dockerfile/
     RUN \
     echo http://dl-4.alpinelinux.org/alpine/edge/testing >> /etc/apk/repositories && \
-    apk add --no-cache mongodb && \
-    rm /usr/bin/mongosniff /usr/bin/mongoperf
+    apk add --no-cache mongodb
 
     VOLUME /data/db
     EXPOSE 27017 28017
