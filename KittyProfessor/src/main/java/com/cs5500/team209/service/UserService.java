@@ -34,8 +34,8 @@ public class UserService {
      */
     public UpdateUserResult createUser(User user) {
         List<String> errorMessages = validateUser(user);
-        if (errorMessages == null || errorMessages.size() == 0) {
-            if (user.getRoles() == null || user.getRoles().size() == 0) {
+        if (errorMessages == null || errorMessages.isEmpty()) {
+            if (user.getRoles() == null || user.getRoles().isEmpty()) {
                 List<Role> roles = new ArrayList<>();
                 roles.add(new Role("ROLE_USER"));
                 user.setRoles(roles);
@@ -58,7 +58,7 @@ public class UserService {
     /**
      * get user by username
      * @param username the username of the user to be got
-     * @return
+     * @return FetchUserResult
      */
     public FetchUserResult getUserByUsername(String username) {
         return new FetchUserResult(userRepository.findByUsername(username));

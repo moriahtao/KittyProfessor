@@ -2,6 +2,8 @@ package com.cs5500.team209;
 
 import com.cs5500.team209.model.Role;
 import com.cs5500.team209.model.User;
+import com.cs5500.team209.repository.AssignmentRepository;
+import com.cs5500.team209.repository.CourseRepository;
 import com.cs5500.team209.repository.RoleRepository;
 import com.cs5500.team209.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +22,12 @@ public class Driver implements CommandLineRunner {
 	private UserRepository repository;
 
 	@Autowired
+	private CourseRepository courseRepository;
+
+	@Autowired
+	private AssignmentRepository assignmentRepository;
+
+	@Autowired
 	private RoleRepository roleRepository;
 
 	public static void main(String[] args) {
@@ -35,6 +43,8 @@ public class Driver implements CommandLineRunner {
 	public void run(String... args) throws Exception {
 
 		repository.deleteAll();
+		courseRepository.deleteAll();
+		assignmentRepository.deleteAll();
 		roleRepository.deleteAll();
 
 		// save a couple of users

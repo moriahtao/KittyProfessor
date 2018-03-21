@@ -1,35 +1,33 @@
 package com.cs5500.team209.model.dto;
 
-import com.cs5500.team209.model.Course;
-import com.cs5500.team209.model.User;
+import com.cs5500.team209.model.Assignment;
+import com.cs5500.team209.model.Submission;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by mengtao on 3/18/18.
- *
- * the updated course obj
+ * Created by mengtao on 3/20/18.
  */
-public class UpdateCourseResult {
+public class UpdateSubmissionResult {
     private boolean success;
 
-    private Course course;
+    private Submission submission;
 
     private List<String> errorMessages;
 
     /**
      * default constructor
      */
-    public UpdateCourseResult() {
+    public UpdateSubmissionResult() {
     }
 
     /**
-     * encapsulate the course inside updateUserResult
-     * @param course the course updated
+     * encapsulate the assignment inside UpdateAssignmentResult
+     * @param submission the assignment updated
      */
-    public UpdateCourseResult(Course course) {
-        if (course != null) {
+    public UpdateSubmissionResult(Submission submission) {
+        if (submission != null) {
             this.success = true;
         } else {
             this.success = false;
@@ -37,14 +35,14 @@ public class UpdateCourseResult {
             errorMessages.add("Error.");
         }
 
-        this.course = course;
+        this.submission = submission;
     }
 
     /**
      * encapsulate the update failure msg
-     * @param errorMessages the update course error msg
+     * @param errorMessages the update assignment error msg
      */
-    public UpdateCourseResult(List<String> errorMessages) {
+    public UpdateSubmissionResult(List<String> errorMessages) {
         this.success = false;
         this.errorMessages = errorMessages;
     }
@@ -66,19 +64,19 @@ public class UpdateCourseResult {
     }
 
     /**
-     * get course updated
-     * @return the updated user
+     * get submission updated
+     * @return the updated submission
      */
-    public Course getCourse() {
-        return course;
+    public Submission getSubmission() {
+        return submission;
     }
 
     /**
-     * set course
-     * @param course set the updated course
+     * set submission
+     * @param submission set the updated submission
      */
-    public void setCourse(Course course) {
-        this.course = course;
+    public void setSubmission(Submission submission) {
+        this.submission = submission;
     }
 
     /**

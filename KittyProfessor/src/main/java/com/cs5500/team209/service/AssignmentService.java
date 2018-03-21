@@ -41,6 +41,7 @@ public class AssignmentService {
     public List<Assignment> getAssignmentsForCourse(String courseId) {
         return assignmentRepository.findAssignmentsForCourse(courseId);
     }
+
     /**
      * validate assignment having the required fields
      * @param assignment the assignment to be validated

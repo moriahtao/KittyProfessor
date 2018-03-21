@@ -50,6 +50,14 @@ public class CourseService {
     }
 
     /**
+     * find all courses
+     * @return a list of courses
+     */
+    public List<Course> getAllCourses() {
+        return courseRepository.findAll();
+    }
+
+    /**
      * validate course having the required fields
      * @param course the user to be validated
      * @return the error messages if any
