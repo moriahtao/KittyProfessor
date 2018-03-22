@@ -24,7 +24,6 @@ public class User {
     private String joinAs;
     private String university;
     private String email;
-
     /**
      * default constructor
      */

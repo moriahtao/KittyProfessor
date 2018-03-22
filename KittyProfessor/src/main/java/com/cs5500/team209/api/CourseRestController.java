@@ -40,6 +40,7 @@ public class CourseRestController {
     public Object createCourse(@RequestBody Course course) {
         UpdateCourseResult result = courseService.createCourse(course);
         if (result.isSuccess()) {
+
             return WebUtils.createSuccessMap(result.getCourse());
         } else {
             return WebUtils.failedMap(result.getErrorMessages());
