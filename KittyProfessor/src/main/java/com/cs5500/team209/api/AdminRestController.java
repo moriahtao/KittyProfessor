@@ -67,7 +67,7 @@ public class AdminRestController {
         if (result != null){
             user.setId(result.getUser().getId());
             UpdateUserResult newUser = userService.createUser(user);
-            if (newUser != null){
+            if (newUser.isSuccess()){
                 return WebUtils.successMap(newUser.getUser());
             }
             else{
