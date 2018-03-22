@@ -8,7 +8,7 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>war</packaging>
 
-	<name>demo</name>
+	<name>CS5500-team209-KittyProfessor</name>
 	<description>CS5500 project</description>
 
 	<parent>
