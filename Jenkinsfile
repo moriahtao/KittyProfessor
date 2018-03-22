@@ -21,8 +21,8 @@ pipeline {
 	    stage('SonarQube') {
             steps {
                 withSonarQubeEnv('SonarQube') {
-                        sh 'mvn clean install'
-                        sh 'mvn sonar:sonar'
+                        sh 'mvn clean install -f KittyProfessor/pom.xml'
+                        sh 'mvn sonar:sonar -f KittyProfessor/pom.xml'
                 }
             }
         }
