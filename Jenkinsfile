@@ -18,7 +18,7 @@ pipeline {
                sh 'mvn test -f KittyProfessor/pom.xml'
            }
        }
-	    stage('SonarQube') {
+	stage('SonarQube') {
             steps {
                 withSonarQubeEnv('SonarQube') {
                         sh 'mvn clean install -f KittyProfessor/pom.xml'
@@ -42,6 +42,5 @@ pipeline {
         }
       }
     }
-
-    }
+  }
 }
