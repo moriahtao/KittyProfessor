@@ -2,13 +2,10 @@ package com.cs5500.team209.api;
 
 import com.cs5500.team209.WebUtils;
 import com.cs5500.team209.model.Course;
-import com.cs5500.team209.model.User;
-import com.cs5500.team209.model.dto.FetchUserResult;
 import com.cs5500.team209.model.dto.UpdateCourseResult;
-import com.cs5500.team209.model.dto.UpdateUserResult;
 import com.cs5500.team209.service.CourseService;
-import com.cs5500.team209.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -38,6 +35,10 @@ public class CourseRestController {
      */
     @RequestMapping(method=POST, path="/api/courses")
     public Object createCourse(@RequestBody Course course) {
+        course.setNumAssignments(0);
+        course.setNumStudents(0);
+        course.setUserName("kittyProfessor");
+
         UpdateCourseResult result = courseService.createCourse(course);
         if (result.isSuccess()) {
             return WebUtils.createSuccessMap(result.getCourse());

@@ -50,11 +50,6 @@ public class AssignmentService {
     private List<String> validateAssignment(Assignment assignment) {
         List<String> errorMessages = new ArrayList<>();
         checkNull(errorMessages, assignment.getName(), "Assignment Name");
-        if (assignment.getCourse() != null) {
-            checkNull(errorMessages, assignment.getCourse().getId(), "Course Id");
-        } else {
-            errorMessages.add("Course field can't be null.");
-        }
         return errorMessages;
     }
 

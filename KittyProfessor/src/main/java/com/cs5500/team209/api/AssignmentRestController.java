@@ -8,6 +8,7 @@ import com.cs5500.team209.service.AssignmentService;
 import com.cs5500.team209.service.CourseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,6 +25,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
  * Assignment related rest apis
  */
 @RestController
+@Controller
 public class AssignmentRestController {
     @Autowired
     AssignmentService assignmentService;
@@ -37,10 +39,10 @@ public class AssignmentRestController {
      * @return response with assignment and http status
      */
     @RequestMapping(method=POST, path="/api/course/{courseId}/assignments")
-    public Object createAssignment(@PathVariable("courseId") String courseId, @RequestBody Assignment assignment) {
-        Course course = courseService.getCourseByCourseId(courseId);
-        if (course != null) {
-            assignment.setCourse(course);
+    public Object createAssignment(@PathVariable("courseId") String courseId,
+                                   @RequestBody Assignment assignment) {
+        if (courseId != null) {
+            assignment.setCourseID(courseId);
             UpdateAssignmentResult result = assignmentService.createAssignment(assignment);
             if (result.isSuccess()) {
                 return WebUtils.createSuccessMap(result.getAssignment());
