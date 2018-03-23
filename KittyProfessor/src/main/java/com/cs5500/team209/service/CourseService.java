@@ -5,6 +5,7 @@ import com.cs5500.team209.model.User;
 import com.cs5500.team209.model.dto.FetchUserResult;
 import com.cs5500.team209.model.dto.UpdateCourseResult;
 import com.cs5500.team209.repository.CourseRepository;
+import com.mongodb.BasicDBObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -57,6 +58,13 @@ public class CourseService {
         return courseRepository.findAll();
     }
 
+    /**
+     *
+     * @return
+     */
+    public List<Course> getAllCourses(String userName) {
+        return courseRepository.findCourseByUserName(userName);
+    }
     /**
      * validate course having the required fields
      * @param course the user to be validated

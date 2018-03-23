@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta charset="utf-8" />
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sign up</title>
+    <link rel="stylesheet" href="css/app.css" />
+</head>
+<body>
+<div class="title-bar" data-responsive-toggle="responsive-menu" data-hide-for="medium">
+    <button class="menu-icon" type="button" data-toggle="responsive-menu"></button>
+    <div class="title-bar-title">Menu</div>
+</div>
+
+<div class="top-bar row expanded" id="responsive-menu">
+    <div class="columns  large-7 large-offset-1 top-bar-left">
+        <ul class="dropdown menu data-dropdown-menu">
+            <li class="menu-text"><h2>Kitty Professor</h2></li>
+        </ul>
+    </div>
+    <div class="top-bar-right columns large-4  ">
+        <ul class="menu">
+            <li><a href="#" class="right">About</a></li>
+            <li><a href="login.html" class="right">Login</a></li>
+            <li><a href="signup.html"><button class=" button btn--primary right">Sign up</button></a></li>
+        </ul>
+    </div>
+</div>
+
+<div class="large-5 large-centered columns">
+    <div class="login-box">
+        <div class="row">
+            <div class="large-12 columns login--form">
+                <h3> Signup</h3>
+                <form id="signup-form" th:object="${newUser}" action="#" th:action="@{/adduser}" method="post" >
+                    <input type="hidden" th:field="*{id}" th:value="someValue"/>
+                    <div class="row">
+                        <div class="large-12 columns">
+                            <p>First Name</p>
+                            <input class="input--field" th:field="*{firstName}" type="text" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="large-12 columns">
+                            <p>Last Name</p>
+                            <input class="input--field" type="text" th:field="*{lastName}" name="lastName" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="large-12 columns">
+                        <p>Email</p>
+                        <input class="input--field" type="text" th:field="*{email}" name="email"  />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="large-12 columns">
+                            <p>Username</p>
+                            <input class="input--field" type="text" th:field="*{username}" name="username"  />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="large-12 columns">
+                            <p>Password</p>
+                            <input class="input--field" type="password" th:field="*{password}" name="password"  />
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="large-12 columns">
+                            <p>University</p>
+                            <input class="input--field" type="text" th:field="*{university}" name="university"  />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="large-12 columns">
+                            <p>Join as</p>
+                            <select th:field="*{joinAs}" name="joinAs">
+                                <option value="instructor" >Instructor</option>
+                                <option value="student">Student</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="large-12 large-centered columns">
+                            <input type="submit" class=" expand button btn--primary" value="Sign up"/>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<footer>
+    <div class="row expanded footer">
+        <div class="columns">
+            <div class="footer--links">
+                <a href="#">
+                    Feedback
+                </a>
+                <a href="">
+                    Contact us
+                </a>
+            </div>
+
+        </div>
+    </div>
+</footer>
+
+<script src="node_modules/jquery/dist/jquery.js"></script>
+<script src="node_modules/what-input/dist/what-input.js"></script>
+<script src="node_modules/foundation-sites/dist/js/foundation.js"></script>
+<script src="static/js/app.js"></script>
+</body>
+</html>

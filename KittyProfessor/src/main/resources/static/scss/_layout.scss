@@ -1,0 +1,23 @@
+
+.footer {
+  height: 8rem;
+  background-color: $light-gray;
+  padding: 2rem;
+  width: 100%;
+  bottom: 0;
+  font-size: 1.6rem;
+  line-height: 4rem;
+  .footer--links{
+    float: right;
+    a{
+      color: $black;
+      margin:0 1rem;
+      text-decoration: none;
+      &:hover{
+        color: $primary-color;
+      }
+    }
+
+  }
+
+}

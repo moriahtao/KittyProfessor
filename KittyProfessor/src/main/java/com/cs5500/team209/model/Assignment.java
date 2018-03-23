@@ -10,42 +10,23 @@ import org.springframework.data.annotation.Id;
 public class Assignment {
 
     @Id
-    private String id;
+    private String assignmentId;
     private String name;
-    private int number;
-
-    private Course course;
+    private String courseID;
+    private int threshold;
+    private String due;
 
     /**
      * Default constructor
      */
     public Assignment(){}
 
-    public Assignment(String name, Course course, int number) {
-        this.name = name;
-        this.course = course;
-        this.number = number;
+    public String getAssignmentId() {
+        return assignmentId;
     }
 
-    public Assignment(String name, int number) {
-        this.name = name;
-        this.number = number;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public int getNumber() {
-        return number;
-    }
-
-    public void setNumber(int number) {
-        this.number = number;
+    public void setAssignmentId(String assignmentId) {
+        this.assignmentId = assignmentId;
     }
 
     public String getName() {
@@ -56,15 +37,28 @@ public class Assignment {
         this.name = name;
     }
 
-    public Course getCourse() {
-        return course;
+    public String getCourseID() {
+        return courseID;
     }
 
-    public void setCourse(Course course) {
-        this.course = course;
+    public void setCourseID(String courseID) {
+        this.courseID = courseID;
     }
 
+    public int getThreshold() {
+        return threshold;
+    }
 
+    public void setThreshold(int threshold) {
+        this.threshold = threshold;
+    }
 
+    public String getDue() {
+        return due;
+    }
+
+    public void setDue(String due) {
+        this.due = due;
+    }
 
 }

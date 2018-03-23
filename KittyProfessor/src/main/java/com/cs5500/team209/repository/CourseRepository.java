@@ -5,6 +5,8 @@ import com.cs5500.team209.model.User;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
+
 /**
  * Created by mengtao on 3/18/18.
  *
@@ -17,4 +19,6 @@ public interface CourseRepository extends MongoRepository<Course, String> {
      * @return the course found
      */
     Course findCourseById(@Param("id") String id);
+
+    List<Course> findCourseByUserName(@Param("userName") String userName);
 }
