@@ -21,6 +21,6 @@ public interface AssignmentRepository extends MongoRepository<Assignment, String
      * @param courseId the courseId for query
      * @return the assignments found
      */
-    @Query("{'course.id' : ?0}")
-    List<Assignment> findAssignmentsForCourse(@Param("id") String courseId);
+
+    List<Assignment> findAssignmentsByCourseID(@Param("courseID") String courseId);
 }

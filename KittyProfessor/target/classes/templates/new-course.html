@@ -55,7 +55,7 @@
             <h2 class="inner--heading"> Courses</h2>
             <div class="row  data-equalizer" th:each="course : ${courses}" data-equalize-by-row="true">
                 <div class="column large-4  add--course course--added
-                data-equalizer-watch"  data-open="exampleModal1" th:onclick="'assignments('+${course.id} + ')'">
+                data-equalizer-watch"  data-open="exampleModal1" >
                     <div class="course--content">
                         <div class="prompt--add">Click here to add a new course</div>
                         <div class="course--heading">
@@ -63,9 +63,10 @@
                         </div>
                         <div class="course--details">
                             <div class="hw--info">
-                                <p th:text="${course.numAssignments} + 'Assignments'" />
+                                <a th:href="'/assignments?courseId='+${course.id}"
+                                   th:text= "${course.numAssignments} + ' Assignments'" />
 
-                                <p th:if="${session.role} == 'instructor'" th:text="${course.numStudents} + 'Students'"/>
+                                <p th:if="${session.role} == 'instructor'" th:text="${course.numStudents} + ' Students'"/>
                             </div>
                         </div>
                     </div>
@@ -79,7 +80,6 @@
                 </div>
             </div>
             <div th:if="${session.role} == 'student'">
-
 
             </div>
         </div>
