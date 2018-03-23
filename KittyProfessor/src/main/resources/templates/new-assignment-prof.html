@@ -15,19 +15,26 @@
             <li class="menu-text"><h2>Kitty Professor</h2></li>
         </ul>
     </div>
-    <div class="top-bar-right columns large-2  ">
+    <div class="top-bar-right columns large-4">
         <ul class="menu">
-            <li> <a href="#" class="logged--as" th:text="${session.userName}" /> </li>
+            <li> <a href="#" class="logged--as" th:text="${session.userName}"/></li>
+            <li>
+                <form action="#" th:action = "@{/logout}" method = "post">
+                    <input type="submit" name="logout" value="logout" class="button btn--primary right" />
+                </form></li>
         </ul>
     </div>
 </div>
 
+<div th:if="${session.role} == 'instructor'">
 <form action="#" th:action="@{/addAssignments}" th:object="${assignment}" method="post">
     <p>Name:      <input type="text" th:field="*{name}" /></p>
     <p>Due:       <input type="datetime-local" th:field="*{due}" /></p>
     <p>Threshold: <input type="text" th:field="*{threshold}" /></p>
+    <input type="hidden" th:field="*{courseID}" />
     <p><input type="submit" value="Submit" /> <input type="reset" value="Reset" /></p>
 </form>
+</div>
 
 <div class="row">
     <div class="columns">
@@ -53,17 +60,14 @@
                         <div class="course--details">
                             <div class="hw--info">
                                 <p th:text="'Due :' + *{assignment.due}"/>
-                                <a href="">View Report</a>
+                                <div th:if="${session.role} == 'student'">
+                                    <form method="POST" enctype="multipart/form-data" action="/upload">
+                                        <input type="file" name="file" />
+                                        <input type="submit" value="Upload" />
+                                    </form>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </div>
-            </div>
-
-            <div th:if="${session.role} == 'instructor'">
-                <div class="column large-4  add--course  data-equalizer-watch"  data-open="exampleModal1">
-                    <div class="course--content">
-                        Click here to add a new assignment
                     </div>
                 </div>
             </div>

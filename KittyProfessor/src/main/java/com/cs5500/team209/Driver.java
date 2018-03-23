@@ -6,10 +6,14 @@ import com.cs5500.team209.repository.AssignmentRepository;
 import com.cs5500.team209.repository.CourseRepository;
 import com.cs5500.team209.repository.RoleRepository;
 import com.cs5500.team209.repository.UserRepository;
+import com.cs5500.team209.storage.StorageProperties;
+import com.cs5500.team209.storage.StorageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Bean;
 
 import java.util.ArrayList;
 
@@ -17,6 +21,7 @@ import java.util.ArrayList;
  * Driver program
  */
 @SpringBootApplication
+@EnableConfigurationProperties(StorageProperties.class)
 public class Driver implements CommandLineRunner {
 	@Autowired
 	private UserRepository repository;

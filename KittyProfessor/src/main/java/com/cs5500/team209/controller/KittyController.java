@@ -10,6 +10,7 @@ import com.cs5500.team209.model.dto.UpdateUserResult;
 import com.cs5500.team209.service.AssignmentService;
 import com.cs5500.team209.service.CourseService;
 import com.cs5500.team209.service.UserService;
+import com.cs5500.team209.storage.StorageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.security.core.Authentication;
@@ -18,9 +19,15 @@ import org.springframework.security.web.authentication.logout.SecurityContextLog
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,6 +45,10 @@ public class KittyController {
 
     @Autowired
     UserService userService;
+
+    @Autowired
+    StorageService storageService;
+
 
     @GetMapping("/")
     public String greeting(Model model) {
@@ -95,7 +106,8 @@ public class KittyController {
         model.addAttribute("course", new Course());
         return "new-course";
     }
-        @GetMapping("/signup")
+
+    @GetMapping("/signup")
     public String signup(Model model) {
         model.addAttribute("newUser", new User());
         return "signup";
@@ -117,23 +129,54 @@ public class KittyController {
     }
 
     @GetMapping("/assignments")
-    public String assignmentsPage(@ModelAttribute String courseId,
+    public String assignmentsPage(@RequestParam("courseId")  String courseId,
                                   Model model) {
-        List<Assignment> assignments = assignmentService.getAssignmentsForCourse(courseId);
+        String newCourseId = courseId.replace("student", "");
+        List<Assignment> assignments = assignmentService.getAssignmentsForCourse(newCourseId);
         model.addAttribute("assignments", assignments);
-        model.addAttribute("assignment", new Assignment());
+        Assignment assignment = new Assignment();
+        assignment.setCourseID(newCourseId);
+        model.addAttribute("assignment", assignment);
+        //model.addAttribute("cId", newCourseId);
+
         return "new-assignment-prof";
     }
 
     @PostMapping("/addAssignments")
     public String addAssignmentsPage(@ModelAttribute Assignment assignment,
                                   Model model) {
+        System.out.println(assignment.getCourseID());
         assignment.setAssignmentId(assignment.getCourseID() +
                 assignment.getName().replaceAll("\\s+",""));
+
+        System.out.println(assignment.getCourseID());
+        System.out.println(assignment.getAssignmentId());
+        System.out.println(assignment.getName());
+        System.out.println(assignment.getDue());
+        System.out.println(assignment.getThreshold());
+
         assignmentService.createAssignment(assignment);
         List<Assignment> assignments = assignmentService.getAssignmentsForCourse(assignment.getCourseID());
+
+        System.out.println(assignments.size());
         model.addAttribute("assignments", assignments);
+        model.addAttribute("assignment", new Assignment());
+        model.addAttribute("cId", assignment.getCourseID());
         return "new-assignment-prof";
+    }
+
+    @PostMapping("/upload")
+    public String handleFileUpload(HttpServletRequest request,
+                                   @RequestParam("file") MultipartFile file) {
+
+        String userName = (String)request.getSession().getAttribute("userName");
+        try {
+            Files.createDirectories(Paths.get("exercise1/"+userName));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        storageService.store(file, Paths.get("exercise1/"+userName));
+        return "redirect:/";
     }
 
     @PostMapping("/adduser")

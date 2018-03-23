@@ -26,8 +26,10 @@ public class AssignmentService {
 
     public UpdateAssignmentResult createAssignment(Assignment assignment) {
         List<String> errorMessages = validateAssignment(assignment);
+        System.out.println(errorMessages);
         if (errorMessages == null || errorMessages.isEmpty()) {
             Assignment createdAssignment = assignmentRepository.save(assignment);
+            System.out.println("Successfully added");
             return new UpdateAssignmentResult(createdAssignment);
         } else {
             return new UpdateAssignmentResult(errorMessages);
@@ -39,7 +41,7 @@ public class AssignmentService {
      * @return a list of assignments
      */
     public List<Assignment> getAssignmentsForCourse(String courseId) {
-        return assignmentRepository.findAssignmentsForCourse(courseId);
+        return assignmentRepository.findAssignmentsByCourseID(courseId);
     }
 
     /**
