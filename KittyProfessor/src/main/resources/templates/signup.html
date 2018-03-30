@@ -35,7 +35,6 @@
             <div class="large-12 columns login--form">
                 <h3> Signup</h3>
                 <form id="signup-form" th:object="${newUser}" action="#" th:action="@{/adduser}" method="post" >
-                    <input type="hidden" th:field="*{id}" th:value="someValue"/>
                     <div class="row">
                         <div class="large-12 columns">
                             <p>First Name</p>
@@ -79,6 +78,7 @@
                             <select th:field="*{joinAs}" name="joinAs">
                                 <option value="instructor" >Instructor</option>
                                 <option value="student">Student</option>
+                                <option value="admin">Admin</option>
                             </select>
                         </div>
                     </div>

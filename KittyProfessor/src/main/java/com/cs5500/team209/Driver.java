@@ -57,8 +57,7 @@ public class Driver implements CommandLineRunner {
 		roleRepository.save(new Role("ROLE_USER"));
 		ArrayList<Role> aliceRoles = new ArrayList<>();
 		aliceRoles.add(new Role("ROLE_ADMIN"));
-		repository.save(new User("alice", "test123", aliceRoles));
-		repository.save(new User("bob", "test123"));
+		repository.save(new User("alice", "test123", aliceRoles, "admin"));
 
 
 		// fetch all users

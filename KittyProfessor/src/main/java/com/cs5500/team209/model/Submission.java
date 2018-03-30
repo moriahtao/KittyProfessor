@@ -10,30 +10,21 @@ import org.springframework.data.annotation.Id;
 public class Submission {
 
     @Id
-    private String id;
-    private Assignment assignment;
+    private String submissionId;
+    private String assignmentId;
     private User user;
     private String path;
 
     /**
      * Setter and getters
      */
-    public String getId() {
-        return id;
+    public String getSubmissionId() {
+        return submissionId;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setSubmissionId(String submissionId) {
+        this.submissionId = submissionId;
     }
-
-    public Assignment getAssignment() {
-        return assignment;
-    }
-
-    public void setAssignment(Assignment assignment) {
-        this.assignment = assignment;
-    }
-
     public User getUser() {
         return user;
     }
@@ -50,10 +41,12 @@ public class Submission {
         this.path = path;
     }
 
+    public String getAssignmentId() {
+        return assignmentId;
+    }
 
-    public Submission(Assignment assignment, User user) {
-        this.assignment = assignment;
-        this.user = user;
+    public void setAssignmentId(String assignmentId) {
+        this.assignmentId = assignmentId;
     }
 
 

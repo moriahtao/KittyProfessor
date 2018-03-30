@@ -17,7 +17,7 @@ public interface CourseRepository extends MongoRepository<Course, String> {
      * @param id the courseId for query
      * @return the course found
      */
-    Course findCourseById(@Param("id") String id);
+    Course findCourseByCourseId(@Param("courseId") String id);
 
     List<Course> findCourseByUserName(@Param("userName") String userName);
 }

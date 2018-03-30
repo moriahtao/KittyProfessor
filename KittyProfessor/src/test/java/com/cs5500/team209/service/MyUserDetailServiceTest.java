@@ -42,7 +42,7 @@ public class MyUserDetailServiceTest {
      */
     @Before
     public void setUp() {
-        User alex = new User("alex", "1234");
+        User alex = new User("alex", "1234", "admin");
         userRepository.save(alex);
         Mockito.when(userRepository.findByUsername(alex.getUsername())).thenReturn(alex);
     }

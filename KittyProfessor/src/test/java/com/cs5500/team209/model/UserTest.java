@@ -33,7 +33,7 @@ public class UserTest {
         user.setFirstName("joe");
         user.setLastName("Wood");
         user.setPassword("1234");
-        user.setId("1");
+
         assertEquals("example@gmail", user.getEmail());
         assertEquals("joe", user.getUsername());
         assertEquals("1234", user.getPassword());
@@ -41,7 +41,7 @@ public class UserTest {
         assertEquals("neu", user.getUniversity());
         assertEquals("joe", user.getFirstName());
         assertEquals("Wood", user.getLastName());
-        assertEquals("1", user.getId());
+
         assertEquals("example@gmail", user.getEmail());
         assertEquals(roleList, user.getRoles());
     }

@@ -1,11 +1,8 @@
 package com.cs5500.team209.service;
 
 import com.cs5500.team209.model.Course;
-import com.cs5500.team209.model.User;
-import com.cs5500.team209.model.dto.FetchUserResult;
 import com.cs5500.team209.model.dto.UpdateCourseResult;
 import com.cs5500.team209.repository.CourseRepository;
-import com.mongodb.BasicDBObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -47,7 +44,7 @@ public class CourseService {
      * @return course
      */
     public Course getCourseByCourseId(String id) {
-        return courseRepository.findCourseById(id);
+        return courseRepository.findCourseByCourseId(id);
     }
 
     /**
@@ -72,7 +69,7 @@ public class CourseService {
      */
     private List<String> validateCourse(Course course) {
         List<String> errorMessages = new ArrayList<>();
-        checkNull(errorMessages, course.getId(), "Course Id");
+        checkNull(errorMessages, course.getCourseId(), "Course Id");
         checkNull(errorMessages, course.getName(), "Course Name");
         return errorMessages;
     }

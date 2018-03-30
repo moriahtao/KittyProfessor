@@ -58,8 +58,8 @@ public class AdminRestControllerTest {
         this.mvc = webAppContextSetup(webApplicationContext).build();
         userRepository.deleteAll();
         //roleRepository.deleteAll();
-        User joe = new User("joe", "1234");
-        User andy = new User("andy", "1234");
+        User joe = new User("joe", "1234", "admin");
+        User andy = new User("andy", "1234", "admin");
         //roleRepository.save(new Role("ROLE_ADMIN"));
         //roleRepository.save(new Role("ROLE_USER"));
         userRepository.save(joe);
@@ -75,7 +75,7 @@ public class AdminRestControllerTest {
     @Autowired
     ObjectMapper objectMapper;
     @Test public void givenUser_thenReturnJsonArray() throws Exception {
-        User mockUser = new User("joe", "1234");
+        User mockUser = new User("joe", "1234", "admin");
 
         // studentService.addCourse to respond back with mockCourse
         Mockito.when(userService.createUser(Mockito.any(User.class))).thenReturn(new UpdateUserResult(mockUser));
@@ -101,7 +101,7 @@ public class AdminRestControllerTest {
      * @throws Exception
      */
     @Test public void givenUserByUsername_thenReturnJsonArray() throws Exception {
-        User mockUser = new User("joe", "1234");
+        User mockUser = new User("joe", "1234", "admin");
 
         // studentService.addCourse to respond back with mockCourse
         Mockito.when(userService.getUserByUsername(Mockito.anyString())).thenReturn(new FetchUserResult(mockUser));
@@ -120,7 +120,7 @@ public class AdminRestControllerTest {
     }
 
     @Test public void givenUpdatedUser_thenReturnJsonArray() throws Exception {
-        User mockUser = new User("joe", "1234");
+        User mockUser = new User("joe", "1234", "admin");
 
         // studentService.addCourse to respond back with mockCourse
         Mockito.when(userService.getUserByUsername(Mockito.anyString())).thenReturn(new FetchUserResult(mockUser));
@@ -139,7 +139,7 @@ public class AdminRestControllerTest {
         MockHttpServletResponse response = result.getResponse();
 
         assertEquals(HttpStatus.OK.value(), response.getStatus());
-        assertEquals("{\"data\":{\"id\":null,\"username\":\"joe\",\"password\":null,\"firstName\":null,\"lastName\":null,\"roles\":[{\"authority\":\"ROLE_USER\"}],\"joinAs\":null,\"university\":null,\"email\":null},\"success\":true}", response.getContentAsString());
+        assertEquals("{\"data\":{\"username\":\"joe\",\"password\":null,\"firstName\":null,\"lastName\":null,\"roles\":[{\"authority\":\"ROLE_USER\"}],\"joinAs\":\"admin\",\"university\":null,\"email\":null},\"success\":true}", response.getContentAsString());
 
     }
 
@@ -148,7 +148,7 @@ public class AdminRestControllerTest {
      * @throws Exception
      */
     @Test public void deleteUser_thenReturnJsonArray() throws Exception {
-        User mockUser = new User("joe", "1234");
+        User mockUser = new User("joe", "1234", "admin");
 
         // studentService.addCourse to respond back with mockCourse
         Mockito.when(userService.getUserByUsername(Mockito.anyString())).thenReturn(new FetchUserResult(mockUser));

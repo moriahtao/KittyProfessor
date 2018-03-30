@@ -64,6 +64,9 @@ public class UserService {
         return new FetchUserResult(userRepository.findByUsername(username));
     }
 
+    public List<User> getAllUsers(){
+        return userRepository.findAll();
+    }
     /**
      * validate user having the required fields
      * @param user the user to be validated

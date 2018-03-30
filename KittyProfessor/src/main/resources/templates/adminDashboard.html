@@ -1,0 +1,68 @@
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="x-ua-compatible" content="ie=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Log in</title>
+    <link type="text/css" href="css/app.css" rel="stylesheet"/>
+  </head>
+  <body>
+
+  <div class="top-bar row expanded" id="responsive-menu">
+    <div class="columns  large-7 large-offset-1 top-bar-left">
+      <ul class="dropdown menu data-dropdown-menu">
+        <li class="menu-text"><h2>Kitty Professor</h2></li>
+      </ul>
+    </div>
+    <div class="top-bar-right columns large-4">
+      <ul class="menu">
+        <li> <a href="#" class="logged--as" th:text="${session.userName}"/></li>
+        <li>
+          <form action="#" th:action = "@{/logout}" method = "post">
+            <input type="submit" name="logout" value="logout" class="button btn--primary right" />
+          </form></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="columns">
+      <div class="main--content">
+
+        <div class="row  data-equalizer" data-equalize-by-row="true" th:each="user : ${users}">
+          <div class="column large-4  add--course course--added data-equalizer-watch"
+               data-open="exampleModal1">
+            <div class="course--content">
+              <div class="prompt--add">Click here to add a new course</div>
+              <div class="course--heading">
+                <div class="course--info"><span th:text="*{user.username}"/></div>
+              </div>
+              <div class="course--details">
+                <div class="hw--info">
+                  <p th:text="'role :' + *{user.joinAs}"/>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+  <div class="row expanded footer">
+    <div class="columns">
+      <div class="footer--links">
+        <a href="#">
+          Feedback
+        </a>
+        <a href="">
+          Contact us
+        </a>
+      </div>
+
+    </div>
+  </div>
+  </footer>
+  </body>
+</html>
