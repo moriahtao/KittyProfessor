@@ -15,6 +15,7 @@
 *.iml
 *.idea
 out
+target
 
 # ignore all . files and . folders
 .*
