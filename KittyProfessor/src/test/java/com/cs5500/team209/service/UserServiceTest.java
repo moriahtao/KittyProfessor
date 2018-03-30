@@ -51,7 +51,7 @@ public class UserServiceTest {
      */
     @Before
     public void setUp() {
-        User alex = new User("alex", "1234");
+        User alex = new User("alex", "1234", "admin");
         User ann = new User("ann", "1234", "student", "neu", "example@gmail");
         userRepository.save(alex);
         Mockito.when(userRepository.findByUsername(alex.getUsername())).thenReturn(alex);

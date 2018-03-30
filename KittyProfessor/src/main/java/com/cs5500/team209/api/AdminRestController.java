@@ -65,7 +65,7 @@ public class AdminRestController {
     public Object updateUser(@PathVariable("username") String username, @RequestBody User user) {
         FetchUserResult result = userService.getUserByUsername(username);
         if (result != null){
-            user.setId(result.getUser().getId());
+
             UpdateUserResult newUser = userService.createUser(user);
             if (newUser.isSuccess()){
                 return WebUtils.successMap(newUser.getUser());

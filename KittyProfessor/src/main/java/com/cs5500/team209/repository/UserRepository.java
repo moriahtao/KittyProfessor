@@ -4,6 +4,8 @@ import com.cs5500.team209.model.User;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
+
 /**
  *
  * Created by mengtao on 2/25/18.
@@ -18,6 +20,5 @@ public interface UserRepository extends MongoRepository<User, String> {
      * @return the user found
      */
     User findByUsername(@Param("username") String name);
-
 
 }

@@ -1,4 +1,0 @@
--------------------------------------------------------------------------------
-Test set: com.cs5500.team209.model.dto.MyUserPrincipleTest
--------------------------------------------------------------------------------
-Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.005 sec - in com.cs5500.team209.model.dto.MyUserPrincipleTest

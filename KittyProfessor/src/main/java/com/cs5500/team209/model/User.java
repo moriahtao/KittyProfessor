@@ -12,10 +12,8 @@ import java.util.List;
  * the User class
  */
 public class User {
-    @Id
-    private String id;
 
-    @Indexed(unique = true)
+    @Id
     private String username;
     private String password;
     private String firstName;
@@ -34,12 +32,13 @@ public class User {
      * @param username username
      * @param password password
      */
-    public User(String username, String password) {
+    public User(String username, String password, String joinAS) {
         this.username = username;
         this.password = password;
         List<Role> roles = new ArrayList<Role>();
         roles.add(new Role("ROLE_USER"));
         this.roles = roles;
+        this.joinAs = joinAS;
     }
 
     /**
@@ -67,12 +66,13 @@ public class User {
      * @param password password
      * @param roles roles of the user
      */
-    public User(String username, String password, List<Role> roles) {
+    public User(String username, String password, List<Role> roles, String joinAS) {
         this.username = username;
         this.password = password;
         List<Role> rolesList = new ArrayList<Role>();
         rolesList.addAll(roles);
         this.roles = rolesList;
+        this.joinAs = joinAS;
     }
 
     /**
@@ -83,7 +83,7 @@ public class User {
     public String toString() {
         return String.format(
                 "User[id=%s, username='%s']",
-                id, username);
+                email, username);
     }
 
     /**
@@ -135,18 +135,6 @@ public class User {
      */
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    /**
-     * id
-     * @return id
-     */
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 
     public String getUsername() {

@@ -10,7 +10,7 @@ import org.springframework.data.annotation.Id;
 public class Course {
 
     @Id
-    private String id;
+    private String courseId;
 
     private String courseCode;
 
@@ -40,12 +40,12 @@ public class Course {
     /**
      * Setters and Getters
      */
-    public String getId() {
-        return id;
+    public String getCourseId() {
+        return courseId;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setCourseId(String courseId) {
+        this.courseId = courseId;
     }
 
     public String getName() {

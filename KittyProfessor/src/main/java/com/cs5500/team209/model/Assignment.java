@@ -13,6 +13,7 @@ public class Assignment {
     private String assignmentId;
     private String name;
     private String courseID;
+    private String desc;
     private int threshold;
     private String due;
 
@@ -59,6 +60,14 @@ public class Assignment {
 
     public void setDue(String due) {
         this.due = due;
+    }
+
+    public String getDesc() {
+        return desc;
+    }
+
+    public void setDesc(String desc) {
+        this.desc = desc;
     }
 
 }

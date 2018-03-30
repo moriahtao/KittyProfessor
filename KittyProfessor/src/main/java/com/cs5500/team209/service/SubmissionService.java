@@ -38,7 +38,7 @@ public class SubmissionService {
      */
     private List<String> validateSubmission(Submission submission) {
         List<String> errorMessages = new ArrayList<>();
-        if (submission.getAssignment() == null) {
+        if (submission == null) {
             errorMessages.add("Assignment field can't be null.");
         }
         if (submission.getUser() == null) {

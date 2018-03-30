@@ -55,8 +55,8 @@ public class UserRestControllerTest {
     public void setup() throws Exception {
         this.mvc = webAppContextSetup(webApplicationContext).build();
         userRepository.deleteAll();
-        User joe = new User("joe", "1234");
-        User andy = new User("andy", "1234");
+        User joe = new User("joe", "1234", "admin");
+        User andy = new User("andy", "1234", "admin");
         userRepository.save(joe);
         userRepository.save(andy);
         Mockito.when(userRepository.findByUsername(joe.getUsername())).thenReturn(joe);
@@ -71,7 +71,7 @@ public class UserRestControllerTest {
     ObjectMapper objectMapper;
     @Test
     public void givenUser_thenReturnJsonArray() throws Exception {
-        User mockUser = new User("joe", "1234");
+        User mockUser = new User("joe", "1234", "admin");
 
         // UserService.createUser to respond back with mockCourse
         Mockito.when(userService.createUser(Mockito.any(User.class))).thenReturn(new UpdateUserResult(mockUser));
