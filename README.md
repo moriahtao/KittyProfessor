@@ -15,3 +15,4 @@ CS5500 Project Repository
 * Start MongoDB (run 'mongod' in terminal)
 * To install JPlag library, run 'mvn install:install-file -Dfile=KittyProfessor/jar/jplag-2.11.9-SNAPSHOT-jar-with-dependencies.jar -DgroupId=com.google.code -DartifactId=jplag -Dversion=2.11.9 -Dpackaging=jar'
 * The project is ready to run
+* Once start the program, browse at (http://localhost:8090/)
