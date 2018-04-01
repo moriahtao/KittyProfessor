@@ -14,6 +14,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
+import org.apache.log4j.Logger;
+
 
 import java.util.ArrayList;
 
@@ -23,6 +25,8 @@ import java.util.ArrayList;
 @SpringBootApplication
 @EnableConfigurationProperties(StorageProperties.class)
 public class Driver implements CommandLineRunner {
+	final static Logger logger = Logger.getLogger(Driver.class);
+
 	@Autowired
 	private UserRepository repository;
 
@@ -60,18 +64,18 @@ public class Driver implements CommandLineRunner {
 		repository.save(new User("alice", "test123", aliceRoles, "admin"));
 
 
+
 		// fetch all users
-		System.out.println("Customers found with findAll():");
-		System.out.println("-------------------------------");
+		logger.info("Customers found with findAll():");
+		logger.info("-------------------------------");
 		for (User user : repository.findAll()) {
-			System.out.println(user);
+			logger.info(user);
 		}
-		System.out.println();
 
 		// fetch an individual user
-		System.out.println("Users found with findByUsername('alice'):");
-		System.out.println("--------------------------------");
-		System.out.println(repository.findByUsername("alice"));
+		logger.info("Users found with findByUsername('alice'):");
+		logger.info("--------------------------------");
+		logger.info(repository.findByUsername("alice"));
 
 	}
 }

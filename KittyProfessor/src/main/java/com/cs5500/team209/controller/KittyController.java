@@ -1,20 +1,22 @@
 package com.cs5500.team209.controller;
 
 import com.cs5500.team209.Parser;
-import com.cs5500.team209.model.Assignment;
-import com.cs5500.team209.model.Course;
-import com.cs5500.team209.model.Login;
-import com.cs5500.team209.model.User;
+import com.cs5500.team209.model.*;
 import com.cs5500.team209.model.dto.FetchUserResult;
+import com.cs5500.team209.model.dto.UpdateSubmissionResult;
+import com.cs5500.team209.model.dto.UpdateUserResult;
 import com.cs5500.team209.service.AssignmentService;
 import com.cs5500.team209.service.CourseService;
+import com.cs5500.team209.service.SubmissionService;
 import com.cs5500.team209.service.UserService;
 import com.cs5500.team209.storage.StorageService;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
+import org.springframework.security.web.authentication.preauth.x509.SubjectDnX509PrincipalExtractor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -32,6 +34,8 @@ import java.util.concurrent.TimeUnit;
 @Controller
 @Scope("session")
 public class KittyController {
+    final static Logger logger = Logger.getLogger(KittyController.class);
+
 
     @Autowired
     CourseService courseService;
@@ -41,6 +45,9 @@ public class KittyController {
 
     @Autowired
     UserService userService;
+
+    @Autowired
+    SubmissionService submissionService;
 
     @Autowired
     StorageService storageService;
@@ -188,17 +195,54 @@ public class KittyController {
         return "new-assignment-prof";
     }
 
+
+    @GetMapping("/submissions")
+    public String getSubmissionList(HttpServletRequest request, @RequestParam("assignmentId")  String assignmentId,
+                                  Model model) {
+        String username = request.getUserPrincipal().getName();
+        List<Submission> submissionList = submissionService.getSubmissionsForAssignment(assignmentId);
+        model.addAttribute("submissions", submissionList);
+        Submission submission = new Submission(assignmentId, username);
+        model.addAttribute("submission", submission);
+        return "new-assignment-prof";
+    }
+
+    @PostMapping("/addSubmissions")
+    public String createSubmissionForAssignment(@ModelAttribute Submission submission,
+                                     Model model) {
+        System.out.println(submission.getAssignmentId());
+        submissionService.createSubmission(submission);
+        List<Submission> submissionList = submissionService.getSubmissionsForAssignment(submission.getAssignmentId());
+
+         model.addAttribute("submissions", submissionList);
+        //model.addAttribute("submission", new Assignment());
+        //model.addAttribute("cId", assignment.getCourseID());
+        // TODO: add mapping page
+        return "new-assignment-prof";
+    }
+
     @PostMapping("/upload")
-    public String handleFileUpload(HttpServletRequest request,
+    public String handleFileUpload(HttpServletRequest request, @RequestParam("submissionId")  String submissionId,
                                    @RequestParam("file") MultipartFile file) {
 
-        String userName = (String)request.getSession().getAttribute("userName");
+        //String userName = (String)request.getSession().getAttribute("userName");
         try {
-            Files.createDirectories(Paths.get("exercise1/"+userName));
+            Files.createDirectories(Paths.get("data/"));
         } catch (IOException e) {
             e.printStackTrace();
         }
-        storageService.store(file, Paths.get("exercise1/"+userName));
+        Submission submission = submissionService.getSubmissionById(submissionId);
+        if (submission != null) {
+            UpdateSubmissionResult updateSubmissionResult =
+                    submissionService.addFileToSubmission("data/" + file.getName() + "_" + submissionId, submission);
+            if (updateSubmissionResult.isSuccess()) {
+                storageService.store(file, Paths.get("data/"));
+            } else {
+                logger.warn("updateSubmission fail");
+            }
+        } else {
+            logger.warn("fetch submission fail");
+        }
         return "redirect:/";
     }
 

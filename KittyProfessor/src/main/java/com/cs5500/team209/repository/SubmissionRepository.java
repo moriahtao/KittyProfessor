@@ -15,10 +15,12 @@ import java.util.List;
  */
 public interface SubmissionRepository extends MongoRepository<Submission, String> {
     /**
-     * find assignments by courseId
-     * @param courseId the courseId for query
-     * @return the assignments found
+     * find submission by id
+     * @param submissionId the id for query
+     * @return the submission found
      */
-    @Query("{'assignment.id' : ?0, 'user.username' : ?0}")
-    List<Assignment> findAssignmentsForCourse(String courseId, String username);
+    Submission findSubmissionById(String submissionId);
+
+    List<Submission> findSubmissionsByAssignmentId(@Param("assignmentId") String assignmentId);
+
 }
