@@ -2,10 +2,7 @@ package com.cs5500.team209;
 
 import com.cs5500.team209.model.Role;
 import com.cs5500.team209.model.User;
-import com.cs5500.team209.repository.AssignmentRepository;
-import com.cs5500.team209.repository.CourseRepository;
-import com.cs5500.team209.repository.RoleRepository;
-import com.cs5500.team209.repository.UserRepository;
+import com.cs5500.team209.repository.*;
 import com.cs5500.team209.storage.StorageProperties;
 import com.cs5500.team209.storage.StorageService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +34,9 @@ public class Driver implements CommandLineRunner {
 	private AssignmentRepository assignmentRepository;
 
 	@Autowired
+	private SubmissionRepository submissionRepository;
+
+	@Autowired
 	private RoleRepository roleRepository;
 
 	public static void main(String[] args) {
@@ -51,31 +51,31 @@ public class Driver implements CommandLineRunner {
 	@Override
 	public void run(String... args) throws Exception {
 
-		repository.deleteAll();
-		courseRepository.deleteAll();
-		assignmentRepository.deleteAll();
-		roleRepository.deleteAll();
-
-		// save a couple of users
-		roleRepository.save(new Role("ROLE_ADMIN"));
-		roleRepository.save(new Role("ROLE_USER"));
-		ArrayList<Role> aliceRoles = new ArrayList<>();
-		aliceRoles.add(new Role("ROLE_ADMIN"));
-		repository.save(new User("alice", "test123", aliceRoles, "admin"));
-
-
-
-		// fetch all users
-		logger.info("Customers found with findAll():");
-		logger.info("-------------------------------");
-		for (User user : repository.findAll()) {
-			logger.info(user);
-		}
-
-		// fetch an individual user
-		logger.info("Users found with findByUsername('alice'):");
-		logger.info("--------------------------------");
-		logger.info(repository.findByUsername("alice"));
+//		repository.deleteAll();
+//		courseRepository.deleteAll();
+//		assignmentRepository.deleteAll();
+//		roleRepository.deleteAll();
+//
+//		// save a couple of users
+//		roleRepository.save(new Role("ROLE_ADMIN"));
+//		roleRepository.save(new Role("ROLE_USER"));
+//		ArrayList<Role> aliceRoles = new ArrayList<>();
+//		aliceRoles.add(new Role("ROLE_ADMIN"));
+//		repository.save(new User("alice", "test123", aliceRoles, "admin"));
+//
+//
+//
+//		// fetch all users
+//		logger.info("Customers found with findAll():");
+//		logger.info("-------------------------------");
+//		for (User user : repository.findAll()) {
+//			logger.info(user);
+//		}
+//
+//		// fetch an individual user
+//		logger.info("Users found with findByUsername('alice'):");
+//		logger.info("--------------------------------");
+//		logger.info(repository.findByUsername("alice"));
 
 	}
 }

@@ -29,6 +29,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 @Controller
@@ -76,8 +77,8 @@ public class KittyController {
                 "admin");
         List<User> users = userService.getAllUsers();
         List<User> users1 = new ArrayList<>();
-        for(User user: users) {
-            if(!user.getJoinAs().equals("admin")) {
+        for (User user : users) {
+            if (!user.getJoinAs().equals("admin")) {
                 users1.add(user);
             }
         }
@@ -103,15 +104,15 @@ public class KittyController {
                 login.getUserName());
 
         request.getSession().setAttribute("role",
-                 user.getUser().getJoinAs());
+                user.getUser().getJoinAs());
 
         model.addAttribute("courses", courseService.getAllCourses(login.getUserName()));
 
-        if(request.getSession().getAttribute("role").equals("student")) {
+        if (request.getSession().getAttribute("role").equals("student")) {
             List<Course> allCourses = courseService.getAllCourses();
             List<Course> allCourses1 = new ArrayList<>();
-            for(Course course2: allCourses) {
-                if(!course2.getCourseId().contains("student")) {
+            for (Course course2 : allCourses) {
+                if (!course2.getCourseId().contains("student")) {
                     allCourses1.add(course2);
                 }
             }
@@ -123,19 +124,19 @@ public class KittyController {
 
     @PostMapping("/addCoursesStudent")
     public String addCourseStudent(HttpServletRequest request,
-                            @ModelAttribute Course course,
-                            Model model) {
+                                   @ModelAttribute Course course,
+                                   Model model) {
 
         Course course1 = courseService.getCourseByCourseId(course.getCourseId());
-        course1.setCourseId(course1.getCourseId()+"student");
+        course1.setCourseId(course1.getCourseId() + "student");
         course1.setUserName((String) request.getAttribute("userName"));
         courseService.createCourse(course1);
 
         model.addAttribute("courses", courseService.getAllCourses(course.getUserName()));
         List<Course> allCourses = courseService.getAllCourses();
         List<Course> allCourses1 = new ArrayList<>();
-        for(Course course2: allCourses) {
-            if(!course2.getCourseId().contains("student")) {
+        for (Course course2 : allCourses) {
+            if (!course2.getCourseId().contains("student")) {
                 allCourses1.add(course2);
             }
         }
@@ -152,13 +153,13 @@ public class KittyController {
 
     @PostMapping("/addcourses")
     public String addCourse(HttpServletRequest request,
-            @ModelAttribute Course course,
+                            @ModelAttribute Course course,
                             Model model) {
 
-        course.setUserName((String)request.getSession().getAttribute("userName"));
+        course.setUserName((String) request.getSession().getAttribute("userName"));
         course.setTerm("spring18");
-        course.setCourseId(course.getUserName()+course.getCourseCode()
-                +course.getTerm());
+        course.setCourseId(course.getUserName() + course.getCourseCode()
+                + course.getTerm());
         courseService.createCourse(course);
         model.addAttribute("courses", courseService.getAllCourses(course.getUserName()));
         model.addAttribute("course", new Course());
@@ -166,7 +167,7 @@ public class KittyController {
     }
 
     @GetMapping("/assignments")
-    public String assignmentsPage(@RequestParam("courseId")  String courseId,
+    public String assignmentsPage(@RequestParam("courseId") String courseId,
                                   Model model) {
         String newCourseId = courseId.replace("student", "");
         List<Assignment> assignments = assignmentService.getAssignmentsForCourse(newCourseId);
@@ -176,15 +177,16 @@ public class KittyController {
         model.addAttribute("assignment", assignment);
         //model.addAttribute("cId", newCourseId);
 
-        return "new-assignment-prof";
+        //return "new-assignment-prof";
+        return "assignment";
     }
 
     @PostMapping("/addAssignments")
     public String addAssignmentsPage(@ModelAttribute Assignment assignment,
-                                  Model model) {
+                                     Model model) {
         System.out.println(assignment.getCourseID());
         assignment.setAssignmentId(assignment.getCourseID() +
-                assignment.getName().replaceAll("\\s+",""));
+                assignment.getName().replaceAll("\\s+", ""));
 
         assignmentService.createAssignment(assignment);
         List<Assignment> assignments = assignmentService.getAssignmentsForCourse(assignment.getCourseID());
@@ -192,51 +194,72 @@ public class KittyController {
         model.addAttribute("assignments", assignments);
         model.addAttribute("assignment", new Assignment());
         model.addAttribute("cId", assignment.getCourseID());
-        return "new-assignment-prof";
+        //return "new-assignment-prof";
+        return "assignment";
     }
 
 
     @GetMapping("/submissions")
-    public String getSubmissionList(HttpServletRequest request, @RequestParam("assignmentId")  String assignmentId,
-                                  Model model) {
-        String username = request.getUserPrincipal().getName();
-        List<Submission> submissionList = submissionService.getSubmissionsForAssignment(assignmentId);
-        model.addAttribute("submissions", submissionList);
-        Submission submission = new Submission(assignmentId, username);
+    public String getSubmissionList(HttpServletRequest request, @RequestParam("assignmentId") String assignmentId,
+                                    Model model) {
+        String username = (String) request.getSession().getAttribute("userName");
+        List<Submission> submissionList = submissionService.getSubmissionsForAssignment(assignmentId, username);
+        int nextSubmissionIdx = submissionList.size() + 1;
+        Submission submission = new Submission(assignmentId, username, nextSubmissionIdx);
+
         model.addAttribute("submission", submission);
-        return "new-assignment-prof";
+        model.addAttribute("submissions", submissionList);
+        // model.addAttribute("nextSubmissionIndex", submissionList.size() + 1);
+        return "submission";
     }
 
     @PostMapping("/addSubmissions")
-    public String createSubmissionForAssignment(@ModelAttribute Submission submission,
-                                     Model model) {
-        System.out.println(submission.getAssignmentId());
-        submissionService.createSubmission(submission);
-        List<Submission> submissionList = submissionService.getSubmissionsForAssignment(submission.getAssignmentId());
+    public String createSubmissionForAssignment(HttpServletRequest request, @ModelAttribute Submission submission,
+                                                Model model) {
+        String username = (String) request.getSession().getAttribute("userName");
+        Submission submissionWithFields = new Submission(submission.getAssignmentId(), username, submission.getSubmissionNum());
 
-         model.addAttribute("submissions", submissionList);
-        //model.addAttribute("submission", new Assignment());
-        //model.addAttribute("cId", assignment.getCourseID());
-        // TODO: add mapping page
-        return "new-assignment-prof";
+        UpdateSubmissionResult createdSubmission = submissionService.createSubmission(submissionWithFields);
+        if (createdSubmission.isSuccess()) {
+            List<Submission> submissionList =
+                    submissionService.getSubmissionsForAssignment(submissionWithFields.getAssignmentId(), submissionWithFields.getUsername());
+            int nextSubmissionIdx = submissionList.size() + 1;
+            Submission nextSubmission =
+                    new Submission(createdSubmission.getSubmission().getAssignmentId(), username, nextSubmissionIdx);
+
+            model.addAttribute("submission", nextSubmission);
+            model.addAttribute("submissions", submissionList);
+            model.addAttribute("nextSubmissionIndex", submissionList.size() + 1);
+        }
+
+        return "submission";
     }
 
     @PostMapping("/upload")
-    public String handleFileUpload(HttpServletRequest request, @RequestParam("submissionId")  String submissionId,
+    public String handleFileUpload(HttpServletRequest request, @RequestParam("submissionId") String submissionId,
                                    @RequestParam("file") MultipartFile file) {
 
+        System.out.println(submissionId);
         //String userName = (String)request.getSession().getAttribute("userName");
         try {
             Files.createDirectories(Paths.get("data/"));
         } catch (IOException e) {
             e.printStackTrace();
         }
-        Submission submission = submissionService.getSubmissionById(submissionId);
-        if (submission != null) {
+        Submission queriedSubmission = submissionService.getSubmissionById(submissionId);
+        if (queriedSubmission != null) {
+            String fileName = UUID.randomUUID().toString();
+            String extension = "";
+
+            int i = file.getOriginalFilename().lastIndexOf('.');
+            if (i > 0) {
+                extension = file.getOriginalFilename().substring(i + 1);
+            }
+            fileName = fileName + "." + extension;
             UpdateSubmissionResult updateSubmissionResult =
-                    submissionService.addFileToSubmission("data/" + file.getName() + "_" + submissionId, submission);
+                    submissionService.addFileToSubmission("data/" + fileName, queriedSubmission);
             if (updateSubmissionResult.isSuccess()) {
-                storageService.store(file, Paths.get("data/"));
+                storageService.store(file, Paths.get("data/"), fileName);
             } else {
                 logger.warn("updateSubmission fail");
             }
@@ -253,10 +276,10 @@ public class KittyController {
         return "login";
     }
 
-    @RequestMapping(value="/logout", method = RequestMethod.GET)
-    public String logoutPage (HttpServletRequest request, HttpServletResponse response) {
+    @RequestMapping(value = "/logout", method = RequestMethod.GET)
+    public String logoutPage(HttpServletRequest request, HttpServletResponse response) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth != null){
+        if (auth != null) {
             new SecurityContextLogoutHandler().logout(request, response, auth);
         }
         return "login";

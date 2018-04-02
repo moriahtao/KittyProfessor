@@ -39,7 +39,7 @@ public class SubmissionService {
      * @return the submission to be queried
      */
     public Submission getSubmissionById(String id) {
-        return submissionRepository.findSubmissionById(id);
+        return submissionRepository.findSubmissionBySubmissionId(id);
     }
 
 
@@ -53,7 +53,7 @@ public class SubmissionService {
     public UpdateSubmissionResult addFileToSubmission(String filePath, Submission submission) {
         List<String> currentFiles = submission.getFilePaths();
         currentFiles.add(filePath);
-        submission.setPath(currentFiles);
+        submission.setFilePaths(currentFiles);
         return new UpdateSubmissionResult(submissionRepository.save(submission));
     }
 
@@ -61,8 +61,8 @@ public class SubmissionService {
      * find all assignments for the course
      * @return a list of assignments
      */
-    public List<Submission> getSubmissionsForAssignment(String assignmentId) {
-        return submissionRepository.findSubmissionsByAssignmentId(assignmentId);
+    public List<Submission> getSubmissionsForAssignment(String assignmentId, String username) {
+        return submissionRepository.findSubmissionsByCriteria(assignmentId, username);
     }
     /**
      * validate submission having the required fields
