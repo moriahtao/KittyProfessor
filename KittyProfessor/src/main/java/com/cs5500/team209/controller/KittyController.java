@@ -209,7 +209,6 @@ public class KittyController {
 
         model.addAttribute("submission", submission);
         model.addAttribute("submissions", submissionList);
-        // model.addAttribute("nextSubmissionIndex", submissionList.size() + 1);
         return "submission";
     }
 
@@ -218,20 +217,7 @@ public class KittyController {
                                                 Model model) {
         String username = (String) request.getSession().getAttribute("userName");
         Submission submissionWithFields = new Submission(submission.getAssignmentId(), username, submission.getSubmissionNum());
-
-        UpdateSubmissionResult createdSubmission = submissionService.createSubmission(submissionWithFields);
-        if (createdSubmission.isSuccess()) {
-            List<Submission> submissionList =
-                    submissionService.getSubmissionsForAssignment(submissionWithFields.getAssignmentId(), submissionWithFields.getUsername());
-            int nextSubmissionIdx = submissionList.size() + 1;
-            Submission nextSubmission =
-                    new Submission(createdSubmission.getSubmission().getAssignmentId(), username, nextSubmissionIdx);
-
-            model.addAttribute("submission", nextSubmission);
-            model.addAttribute("submissions", submissionList);
-            model.addAttribute("nextSubmissionIndex", submissionList.size() + 1);
-        }
-
+        submissionService.createSubmission(submissionWithFields);
         return "submission";
     }
 

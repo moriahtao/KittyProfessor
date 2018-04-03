@@ -27,7 +27,7 @@
 </div>
 
 <div th:if="${session.role} == 'student'">
-<form action="#" th:action="@{/addSubmissions}" th:object="${submission}" method="post">
+<form id="submission-form" action="#" th:action="@{/addSubmissions}" th:object="${submission}" method="post">
     <input type="hidden" th:field="*{assignmentId}" />
     <input type="hidden" th:field="*{submissionNum}" />
     <p><input type="submit" value="Submit" /> <input type="reset" value="Reset" /></p>
@@ -90,9 +90,23 @@
     </div>
 </footer>
 
-<script src="node_modules/jquery/dist/jquery.js" type="application/javascript"></script>
-<script src="node_modules/what-input/dist/what-input.js" type="application/javascript"></script>
-<script src="node_modules/foundation-sites/dist/js/foundation.js" type="application/javascript"></script>
-<script src="static/js/app.js"></script>
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"
+        integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+        crossorigin="anonymous"></script>
+<script type="application/javascript">
+    $("#submission-form").submit(function(e){
+        e.preventDefault();
+        var url = $(this).attr('action');
+        var data = $(this).serialize();
+        $.ajax({
+            url: url,
+            type: "post",
+            data: data,
+            success: function(){
+                location.reload();
+            }
+        });
+    })
+</script>
 </body>
 </html>
