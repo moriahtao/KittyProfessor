@@ -28,6 +28,12 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 @Controller
 @Scope("session")
@@ -190,7 +196,7 @@ public class KittyController {
 
     @PostMapping("/upload")
     public String handleFileUpload(HttpServletRequest request,
-                                   @RequestParam("file") MultipartFile file) {
+                                   @RequestParam("file") MultipartFile file) throws IOException {
 
         String userName = (String)request.getSession().getAttribute("userName");
         try {
@@ -198,7 +204,54 @@ public class KittyController {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
         storageService.store(file, Paths.get("exercise1/"+userName));
+        File convFile = new File(file.getOriginalFilename());
+        file.transferTo(convFile);
+        String zipFilePath = "exercise1/"+userName+"/"+convFile;
+        System.out.println(zipFilePath);
+        String destDir = "exercise1/"+userName;
+        File dir = new File(destDir);
+        if(!dir.exists()) dir.mkdirs();
+        FileInputStream fis = null;
+        ZipInputStream zis = null;
+        FileOutputStream fos = null;
+        byte[] buffer = new byte[1024];
+        try {
+            fis = new FileInputStream(zipFilePath);
+            zis = new ZipInputStream(fis);
+            ZipEntry ze = zis.getNextEntry();
+            while(ze != null){
+                String fileName = ze.getName();
+                File newFile = new File(destDir + File.separator + fileName);
+                System.out.println("Unzipping to "+newFile.getAbsolutePath());
+                //create directories for sub directories in zip
+                new File(newFile.getParent()).mkdirs();
+                fos = new FileOutputStream(newFile);
+                int len;
+                while ((len = zis.read(buffer)) > 0) {
+                    fos.write(buffer, 0, len);
+                }
+                fos.close();
+                //close this ZipEntry
+                zis.closeEntry();
+                ze = zis.getNextEntry();
+            }
+            //close last ZipEntry
+            File oldfile = new File(zipFilePath);
+            oldfile.delete();
+            zis.closeEntry();
+            zis.close();
+            fis.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        finally {
+            zis.close();
+            fis.close();
+            fos.close();
+        }
+
         return "redirect:/";
     }
 

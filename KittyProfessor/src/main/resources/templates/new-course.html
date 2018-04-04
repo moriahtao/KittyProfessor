@@ -22,7 +22,7 @@
     </div>
 </div>
 
-<div th:if="${session.role} == 'student'">
+<div th:if="${session.role} == 'student'" >
     <form action="#" th:action="@{/addCoursesStudent}" th:object="${course}" method="post">
         <p>Select Course:
             <select th:field="${course.courseId}">
@@ -69,12 +69,13 @@
                                    th:text= "${course.numAssignments} + ' Assignments'" />
 
                                 <p th:if="${session.role} == 'instructor'" th:text="${course.numStudents} + ' Students'"/>
+
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div th:if="${session.role} == 'instructor'" id="create-course">
+            <div th:if="${session.role} == 'instructor'" id="create-course" class="create--course">
                 <div class="column large-4  add--course  data-equalizer-watch" data-open="exampleModal1">
                     <div class="course--content">
                         Click here to add a new course
