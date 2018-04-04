@@ -123,6 +123,7 @@ public class SubmissionController {
             String srcFolder = "exercise1/src";
             copyIntoPath(submissionPath, srcPath);
             unzip(srcPath, srcFolder);
+            // incrementally compare
             for (String s : otherSubmissionFilePaths) {
                 String targetPath = "exercise1/target/target.zip";
                 String targetFolder = "exercise1/target";
