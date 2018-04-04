@@ -85,7 +85,7 @@ public class SubmissionController {
             if (updateSubmissionResult.isSuccess()) {
                 //store
                 storageService.store(file, Paths.get("data/"), fileName);
-                compareSubmissions(currentFilePath, submissionId, userName);
+                compareSubmissions(currentFilePath, submissionId, queriedSubmission.getAssignmentId(), userName);
             } else {
                 logger.warn("updateSubmission fail");
             }
@@ -102,10 +102,11 @@ public class SubmissionController {
      * @param userName the username of the student submitted
      * @throws IOException
      */
-    private void compareSubmissions(String submissionPath, String submissionId, String userName) throws IOException {
+    private void compareSubmissions(String submissionPath, String submissionId, String assignmentId, String userName) throws IOException {
         HashMap<String, String> submissionFileIdMap = new HashMap<>();
+        // query: same assignmentId, different username
         List<Submission> otherSubmissions =
-                new ArrayList<>(submissionService.getOtherStudentSubmissions(submissionId, userName));
+                new ArrayList<>(submissionService.getOtherStudentSubmissions(assignmentId, userName));
         List<String> otherSubmissionFilePaths = new ArrayList<>();
         for (Submission s : otherSubmissions) {
             // one submission has at least one file

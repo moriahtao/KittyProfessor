@@ -24,7 +24,7 @@ public interface SubmissionRepository extends MongoRepository<Submission, String
     @Query("{assignmentId: ?0, username: ?1}")
     List<Submission> findSubmissionsByCriteria
             (String assignmentId, String username);
-    @Query("{assignmentId: { $ne: ?0 }, username: { $ne: ?1 }}")
+    @Query("{assignmentId: ?0, username: { $ne: ?1 }}")
     List<Submission> findOtherStudentSubmissions
             (String assignmentId, String username);
 
