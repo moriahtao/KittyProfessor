@@ -14,11 +14,18 @@ import java.util.List;
  * java repo for Submission in mongodb Submission table
  */
 public interface SubmissionRepository extends MongoRepository<Submission, String> {
-    /**
-     * find assignments by courseId
-     * @param courseId the courseId for query
-     * @return the assignments found
+     /**
+     * find submission by id
+     * @param submissionId the id for query
+     * @return the submission found
      */
-    @Query("{'assignment.id' : ?0, 'user.username' : ?0}")
-    List<Assignment> findAssignmentsForCourse(String courseId, String username);
+    Submission findSubmissionBySubmissionId(String submissionId);
+
+    @Query("{assignmentId: ?0, username: ?1}")
+    List<Submission> findSubmissionsByCriteria
+            (String assignmentId, String username);
+    @Query("{assignmentId: ?0, username: { $ne: ?1 }}")
+    List<Submission> findOtherStudentSubmissions
+            (String assignmentId, String username);
+
 }
