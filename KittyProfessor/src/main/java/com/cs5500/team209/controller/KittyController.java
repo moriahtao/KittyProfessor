@@ -22,6 +22,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 @Controller
 @Scope("session")
@@ -181,8 +187,6 @@ public class KittyController {
         model.addAttribute("cId", assignment.getCourseID());
         return "assignment";
     }
-
-
 
 
     @PostMapping("/adduser")

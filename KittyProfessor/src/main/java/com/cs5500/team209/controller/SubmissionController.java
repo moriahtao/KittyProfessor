@@ -7,7 +7,9 @@ import com.cs5500.team209.model.dto.UpdateSubmissionResult;
 import com.cs5500.team209.service.ReportService;
 import com.cs5500.team209.service.SubmissionService;
 import com.cs5500.team209.storage.StorageService;
+
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -20,14 +22,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+import java.util.zip.ZipInputStream;
 
 /**
  * Created by mengtao on 4/4/18.
@@ -71,7 +72,7 @@ public class SubmissionController {
     @PostMapping("/upload")
     public String handleFileUpload(HttpServletRequest request, @RequestParam("submissionId") String submissionId,
                                    @RequestParam("file") MultipartFile file) throws IOException {
-        String userName = (String)request.getSession().getAttribute("userName");
+        String userName = (String) request.getSession().getAttribute("userName");
         Submission queriedSubmission = submissionService.getSubmissionById(submissionId);
         if (queriedSubmission != null) {
             Files.createDirectories(Paths.get("data/"));
@@ -94,12 +95,19 @@ public class SubmissionController {
         return "redirect:/";
     }
 
+    /**
+     * Incremental comparison strategy
+     * @param submissionPath submission file path (under data/)
+     * @param submissionId the id of the new submitted submission
+     * @param userName the username of the student submitted
+     * @throws IOException
+     */
     private void compareSubmissions(String submissionPath, String submissionId, String userName) throws IOException {
         HashMap<String, String> submissionFileIdMap = new HashMap<>();
         List<Submission> otherSubmissions =
                 new ArrayList<>(submissionService.getOtherStudentSubmissions(submissionId, userName));
         List<String> otherSubmissionFilePaths = new ArrayList<>();
-        for (Submission s: otherSubmissions) {
+        for (Submission s : otherSubmissions) {
             // one submission has at least one file
             // TODO: will refactor SubmissionFilePath to single String
             if (!s.getFilePaths().isEmpty()) {
@@ -107,32 +115,69 @@ public class SubmissionController {
                 submissionFileIdMap.put(s.getFilePaths().get(0), s.getSubmissionId());
             }
         }
+        // having other submissions
+        // then compare with current submission
         if (!otherSubmissionFilePaths.isEmpty()) {
-            // change to src.zip
-            String srcPath = "exercise1/source/src.c";
-            String srcFolder = "exercise1/source";
+            String srcPath = "exercise1/src/src.zip";
+            String srcFolder = "exercise1/src";
             copyIntoPath(submissionPath, srcPath);
-            for (String s: otherSubmissionFilePaths) {
-                // change to target.zip
-                String targetPath = "exercise1/target/target.c";
+            unzip(srcPath, srcFolder);
+            for (String s : otherSubmissionFilePaths) {
+                String targetPath = "exercise1/target/target.zip";
                 String targetFolder = "exercise1/target";
                 copyIntoPath(s, targetPath);
                 //extract
-
+                unzip(targetPath, targetFolder);
                 String reportPath = "dummy.html";
                 reportPath = "src/main/resources/static/" + transformFileName(reportPath);
                 Parser.parse(reportPath);
+                // save compared report
                 reportService.createReport(new Report(submissionId, submissionFileIdMap.get(s), reportPath));
+                // only clean other submission folder if compare not end
                 deleteTargetDirectory(targetFolder);
-                System.out.println(s);
             }
-            deleteTargetDirectory(srcFolder);
-            System.out.println(submissionPath);
+            deleteTargetDirectory("exercise1/");
         }
     }
 
+
+    /**
+     * unzip zipFile into destDir
+     * @param zipFilePath the file path of zip file
+     * @param destDir the unzip target dir path
+     * @throws IOException
+     */
+    private static void unzip(String zipFilePath, String destDir) throws IOException {
+        ZipFile zipFile = new ZipFile(zipFilePath);
+        try {
+            Enumeration<? extends ZipEntry> entries = zipFile.entries();
+            entries.nextElement();
+            while (entries.hasMoreElements()) {
+                ZipEntry entry = entries.nextElement();
+                // TODO:
+                // assumption: no more folder structure in submission
+                // assumption: no "/" in file names
+                if (!entry.isDirectory()) {
+                    File entryDestination = new File(destDir, entry.getName().split("/")[1]);
+                    entryDestination.getParentFile().mkdirs();
+                    InputStream in = zipFile.getInputStream(entry);
+                    OutputStream out = new FileOutputStream(entryDestination);
+                    IOUtils.copy(in, out);
+                    IOUtils.closeQuietly(in);
+                    out.close();
+                }
+            }
+        } finally {
+            zipFile.close();
+        }
+        File oldfile = new File(zipFilePath);
+        oldfile.delete();
+    }
+
+
     /**
      * Transform input file name into a unique name
+     *
      * @param file the file for changing name
      * @return transformed name
      */
@@ -151,6 +196,7 @@ public class SubmissionController {
 
     /**
      * Copy from source file path to destination file path
+     *
      * @param srcPath path of the file to be copied
      * @param dstPath path of the file copied to
      * @throws IOException
@@ -164,6 +210,7 @@ public class SubmissionController {
 
     /**
      * recursively delete target directory
+     *
      * @param path the path of the folder to be deleted
      * @throws IOException
      */
