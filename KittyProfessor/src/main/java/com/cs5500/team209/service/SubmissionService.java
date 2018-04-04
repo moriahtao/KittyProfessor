@@ -64,6 +64,12 @@ public class SubmissionService {
     public List<Submission> getSubmissionsForAssignment(String assignmentId, String username) {
         return submissionRepository.findSubmissionsByCriteria(assignmentId, username);
     }
+
+    public List<Submission> getOtherStudentSubmissions(String submissionId, String username) {
+        return submissionRepository.findOtherStudentSubmissions(submissionId, username);
+    }
+
+
     /**
      * validate submission having the required fields
      * @param submission the submission to be validated

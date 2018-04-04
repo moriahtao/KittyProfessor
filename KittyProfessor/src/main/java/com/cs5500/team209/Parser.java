@@ -18,7 +18,7 @@ import java.util.logging.Logger;
  */
 public class Parser {
     //final static Logger logger = Logger.getLogger(Parser.class);
-    public static void parse() throws IOException {
+    public static void parse(String reportFilePath) throws IOException {
 
         try {
             String[] input = new String[]{"-l", "c/c++", "-r", "result", "exercise1"};
@@ -46,7 +46,7 @@ public class Parser {
 
         Document student2CodePage = Jsoup.parse(new File(student2Path), "utf-8");
         String student2Code = student2CodePage.select("pre").html();
-        File file = new File("src/main/resources/static/full-result.html");
+        File file = new File(reportFilePath);
 
         //logger.info("This is info" + percentage);
 

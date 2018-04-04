@@ -3,33 +3,24 @@ package com.cs5500.team209.controller;
 import com.cs5500.team209.Parser;
 import com.cs5500.team209.model.*;
 import com.cs5500.team209.model.dto.FetchUserResult;
-import com.cs5500.team209.model.dto.UpdateSubmissionResult;
-import com.cs5500.team209.model.dto.UpdateUserResult;
-import com.cs5500.team209.service.AssignmentService;
-import com.cs5500.team209.service.CourseService;
-import com.cs5500.team209.service.SubmissionService;
-import com.cs5500.team209.service.UserService;
-import com.cs5500.team209.storage.StorageService;
+
+import com.cs5500.team209.service.*;
+
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
-import org.springframework.security.web.authentication.preauth.x509.SubjectDnX509PrincipalExtractor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 @Controller
@@ -47,11 +38,6 @@ public class KittyController {
     @Autowired
     UserService userService;
 
-    @Autowired
-    SubmissionService submissionService;
-
-    @Autowired
-    StorageService storageService;
 
 
     @GetMapping("/")
@@ -86,13 +72,13 @@ public class KittyController {
         return "adminDashboard";
     }
 
-    @GetMapping("/home")
-    public String parse(Model model) throws IOException, InterruptedException {
-        model.addAttribute(new Login());
-        Parser.parse();
-        TimeUnit.SECONDS.sleep(5);
-        return "login";
-    }
+//    @GetMapping("/home")
+//    public String parse(Model model) throws IOException, InterruptedException {
+//        model.addAttribute(new Login());
+//        Parser.parse();
+//        TimeUnit.SECONDS.sleep(5);
+//        return "login";
+//    }
 
     @PostMapping("/courses")
     public String login(HttpServletRequest request,
@@ -177,7 +163,6 @@ public class KittyController {
         model.addAttribute("assignment", assignment);
         //model.addAttribute("cId", newCourseId);
 
-        //return "new-assignment-prof";
         return "assignment";
     }
 
@@ -194,66 +179,11 @@ public class KittyController {
         model.addAttribute("assignments", assignments);
         model.addAttribute("assignment", new Assignment());
         model.addAttribute("cId", assignment.getCourseID());
-        //return "new-assignment-prof";
         return "assignment";
     }
 
 
-    @GetMapping("/submissions")
-    public String getSubmissionList(HttpServletRequest request, @RequestParam("assignmentId") String assignmentId,
-                                    Model model) {
-        String username = (String) request.getSession().getAttribute("userName");
-        List<Submission> submissionList = submissionService.getSubmissionsForAssignment(assignmentId, username);
-        int nextSubmissionIdx = submissionList.size() + 1;
-        Submission submission = new Submission(assignmentId, username, nextSubmissionIdx);
 
-        model.addAttribute("submission", submission);
-        model.addAttribute("submissions", submissionList);
-        return "submission";
-    }
-
-    @PostMapping("/addSubmissions")
-    public String createSubmissionForAssignment(HttpServletRequest request, @ModelAttribute Submission submission,
-                                                Model model) {
-        String username = (String) request.getSession().getAttribute("userName");
-        Submission submissionWithFields = new Submission(submission.getAssignmentId(), username, submission.getSubmissionNum());
-        submissionService.createSubmission(submissionWithFields);
-        return "submission";
-    }
-
-    @PostMapping("/upload")
-    public String handleFileUpload(HttpServletRequest request, @RequestParam("submissionId") String submissionId,
-                                   @RequestParam("file") MultipartFile file) {
-
-        System.out.println(submissionId);
-        //String userName = (String)request.getSession().getAttribute("userName");
-        try {
-            Files.createDirectories(Paths.get("data/"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        Submission queriedSubmission = submissionService.getSubmissionById(submissionId);
-        if (queriedSubmission != null) {
-            String fileName = UUID.randomUUID().toString();
-            String extension = "";
-
-            int i = file.getOriginalFilename().lastIndexOf('.');
-            if (i > 0) {
-                extension = file.getOriginalFilename().substring(i + 1);
-            }
-            fileName = fileName + "." + extension;
-            UpdateSubmissionResult updateSubmissionResult =
-                    submissionService.addFileToSubmission("data/" + fileName, queriedSubmission);
-            if (updateSubmissionResult.isSuccess()) {
-                storageService.store(file, Paths.get("data/"), fileName);
-            } else {
-                logger.warn("updateSubmission fail");
-            }
-        } else {
-            logger.warn("fetch submission fail");
-        }
-        return "redirect:/";
-    }
 
     @PostMapping("/adduser")
     public String addUser(@ModelAttribute User user, Model model) {
