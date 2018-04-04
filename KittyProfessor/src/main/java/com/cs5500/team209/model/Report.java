@@ -11,18 +11,29 @@ public class Report {
 
     @Id
     private String reportId;
+    private String assignmentId;
     private String submissionId1;
     private String submissionId2;
     private String filePath;
+    private double score;
 
 
 
-    public Report(String submissionId1, String submissionId2, String filePath) {
+    public Report(String assignmentId, String submissionId1, String submissionId2, String filePath, double score) {
+        this.assignmentId = assignmentId;
         this.submissionId1 = submissionId1;
         this.submissionId2 = submissionId2;
         this.filePath = filePath;
+        this.score = score;
     }
 
+    public String getAssignmentId() {
+        return assignmentId;
+    }
+
+    public void setAssignmentId(String assignmentId) {
+        this.assignmentId = assignmentId;
+    }
 
     public String getSubmissionId1() {
         return submissionId1;
@@ -55,5 +66,11 @@ public class Report {
     public void setSubmissionId2(String submissionId2) {
         this.submissionId2 = submissionId2;
     }
+    public double getScore() {
+        return score;
+    }
 
+    public void setScore(double score) {
+        this.score = score;
+    }
 }

@@ -131,9 +131,9 @@ public class SubmissionController {
                 unzip(targetPath, targetFolder);
                 String reportPath = "dummy.html";
                 reportPath = "src/main/resources/static/" + transformFileName(reportPath);
-                Parser.parse(reportPath);
+                double score = Parser.parse(reportPath);
                 // save compared report
-                reportService.createReport(new Report(submissionId, submissionFileIdMap.get(s), reportPath));
+                reportService.createReport(new Report(assignmentId, submissionId, submissionFileIdMap.get(s), reportPath, score));
                 // only clean other submission folder if compare not end
                 deleteTargetDirectory(targetFolder);
             }
