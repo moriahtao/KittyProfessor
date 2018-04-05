@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title><!doctype html>
+        <html class="no-js" lang="en">
+        <head>
+            <meta charset="utf-8">
+            <meta http-equiv="x-ua-compatible" content="ie=edge">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Submitted Assignment Prof</title>
+            <link rel="stylesheet" href="css/app.css">
+        </head>
+<body>
+
+<div class="top-bar row expanded" id="responsive-menu">
+    <div class="columns  large-7 large-offset-1 top-bar-left">
+        <ul class="dropdown menu data-dropdown-menu">
+            <li class="menu-text"><h2>Kitty Professor</h2></li>
+        </ul>
+    </div>
+    <div class="top-bar-right columns large-4">
+        <ul class="menu">
+            <li> <a href="#" class="logged--as" th:text="${session.userName}"/></li>
+            <li>
+                <form action="#" th:action = "@{/logout}" method = "post">
+                    <input type="submit" name="logout" value="logout" class="button btn--primary right" />
+                </form></li>
+        </ul>
+    </div>
+</div>
+
+<div class="row">
+    <div class="columns">
+        <div class="main--content">
+            <h2 class="inner--heading">
+                <nav aria-label="You are here:" role="navigation">
+                    <ul class="breadcrumbs innerpage--breadcrumbs">
+                        <li><a href="#">Courses</a></li>
+                        <li><a href="#" th:text="${coursename}"></a></li>
+                        <li><a href="#">Assignments</a></li>
+                        <li>
+                            <span class="show-for-sr">Current: </span><span th:text="${assignment.name}"> </span>
+                        </li>
+                    </ul>
+                </nav>
+            </h2>
+
+            <div class="row">
+                <div class="columns large-6 list--students ">
+                    <h2>The students below need your attention!</h2>
+                    <div class="row">
+                        <div class="small-10 columns">
+                            <div class="slider" data-slider data-initial-start="${assignment.threshold}">
+                                <span class="slider-handle"  data-slider-handle role="slider" tabindex="1" aria-controls="sliderOutput1"></span>
+                                <span class="slider-fill" data-slider-fill></span>
+                            </div>
+                        </div>
+                        <div class="small-2 columns">
+                            <input type="number" id="sliderOutput1">
+                        </div>
+                    </div>
+                    <div class="row" th:each="report : ${reports}">
+                        <div class="columns small-12 ">
+                            <a th:href="'/reports?reportId='+${report.route}">
+                                <div class="row student-submission">
+                                    <div class=" columns large-10">
+                                        <span th:text="${report.student1}"> </span>
+                                        <span th:text="${report.student2}"></span>
+                                    </div>
+                                    <div class="report-percent columns large-2">
+                                        <span th:text="${report.result}"></span>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<footer>
+    <div class="row expanded footer">
+        <div class="columns">
+            <div class="footer--links">
+                <a href="#">
+                    Feedback
+                </a>
+                <a href="">
+                    Contact us
+                </a>
+            </div>
+
+        </div>
+    </div>
+</footer>
+
+<script src="node_modules/jquery/dist/jquery.js"></script>
+<script src="node_modules/what-input/dist/what-input.js"></script>
+<script src="node_modules/foundation-sites/dist/js/foundation.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
+</title>
+</head>
+<body>
+
+</body>
+</html>
