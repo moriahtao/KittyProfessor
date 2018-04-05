@@ -1,9 +1,12 @@
 package com.cs5500.team209.controller;
 
 import com.cs5500.team209.Parser;
+import com.cs5500.team209.model.Assignment;
 import com.cs5500.team209.model.Report;
 import com.cs5500.team209.model.Submission;
+import com.cs5500.team209.model.dto.ReportDisplay;
 import com.cs5500.team209.model.dto.UpdateSubmissionResult;
+import com.cs5500.team209.service.AssignmentService;
 import com.cs5500.team209.service.ReportService;
 import com.cs5500.team209.service.SubmissionService;
 import com.cs5500.team209.storage.StorageService;
@@ -42,6 +45,9 @@ public class SubmissionController {
     SubmissionService submissionService;
 
     @Autowired
+    AssignmentService assignmentService;
+
+    @Autowired
     StorageService storageService;
 
     @Autowired
@@ -59,6 +65,37 @@ public class SubmissionController {
         model.addAttribute("submissions", submissionList);
         return "submission";
     }
+
+    @GetMapping("/reports")
+    public String getReportList(@RequestParam("assignmentId") String assignmentId,
+                                    Model model) {
+        List<ReportDisplay> reportDisplayList = new ArrayList<>();
+        List<Report> reportList = reportService.getReportsForAssignment(assignmentId);
+        for (Report r: reportList) {
+            ReportDisplay rDisplay = new ReportDisplay(r);
+            String student1 = submissionService.getSubmissionById(rDisplay.getSubmissionId1()).getUsername();
+            String student2 = submissionService.getSubmissionById(rDisplay.getSubmissionId2()).getUsername();
+            rDisplay.setUser1(student1);
+            rDisplay.setUser2(student2);
+            reportDisplayList.add(rDisplay);
+        }
+
+        Assignment assignment = assignmentService.getAssignmentById(assignmentId);
+
+        model.addAttribute("reports", reportDisplayList);
+        model.addAttribute("assignment", assignment);
+        return "student-report";
+    }
+
+    @GetMapping("/report")
+    public String getReport(@RequestParam("reportId") String reportId,
+                                Model model) {
+        Report report = reportService.getReportById(reportId);
+        String reportLink = report.getFilePath();
+        return reportLink;
+    }
+
+
 
     @PostMapping("/addSubmissions")
     public String createSubmissionForAssignment(HttpServletRequest request, @ModelAttribute Submission submission,

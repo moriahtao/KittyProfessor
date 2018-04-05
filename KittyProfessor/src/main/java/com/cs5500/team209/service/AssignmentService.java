@@ -36,6 +36,10 @@ public class AssignmentService {
         }
     }
 
+    public Assignment getAssignmentById(String assignmentId) {
+        return assignmentRepository.findAssignmentByAssignmentId(assignmentId);
+    }
+
     /**
      * find all assignments for the course
      * @return a list of assignments
