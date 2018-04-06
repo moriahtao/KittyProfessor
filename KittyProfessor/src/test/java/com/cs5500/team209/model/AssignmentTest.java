@@ -14,13 +14,13 @@ public class AssignmentTest {
         Assignment assignment = new Assignment();
         assignment.setName("git practice");
         assignment.setAssignmentId("Assignment 1");
-        assignment.setCourseID("CS5500");
+        assignment.setCourseId("CS5500");
         assignment.setThreshold(75);
         assignment.setDue("12-04-29");
         assignment.setDesc("Run and learn how to user git commands");
         assertEquals("git practice",assignment.getName());
         assertEquals("Assignment 1",assignment.getAssignmentId());
-        assertEquals("CS5500",assignment.getCourseID());
+        assertEquals("CS5500",assignment.getCourseId());
         assertEquals(75,assignment.getThreshold());
         assertEquals("12-04-29",assignment.getDue());
         assertEquals("Run and learn how to user git commands",assignment.getDesc());

@@ -45,7 +45,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authenticationEntryPoint(restAuthenticationEntryPoint)
                 .and()
                 .authorizeRequests()
-                .antMatchers("/", "/home", "/signup", "/*").permitAll()
+                .antMatchers("/", "/home", "/signup", "/*", "/reports/*").permitAll()
                 //.antMatchers("/currentuser").access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
                 //.antMatchers("/greeting").access("hasRole('ROLE_ADMIN')")
                 //.antMatchers("/api/users").permitAll()
@@ -65,6 +65,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         web.ignoring().antMatchers("/js/**");
         web.ignoring().antMatchers("/css/**");
         web.ignoring().antMatchers("/css/**");
+        web.ignoring().antMatchers("/reports/**");
     }
 
     @Autowired

@@ -1,12 +1,18 @@
 package com.cs5500.team209.controller;
 
-import com.cs5500.team209.Parser;
+import com.amazonaws.regions.Regions;
+import com.amazonaws.services.simpleemail.AmazonSimpleEmailService;
+import com.amazonaws.services.simpleemail.AmazonSimpleEmailServiceClientBuilder;
+import com.amazonaws.services.simpleemail.model.*;
 import com.cs5500.team209.model.*;
 import com.cs5500.team209.model.dto.FetchUserResult;
 
-import com.cs5500.team209.service.*;
-
 import org.apache.log4j.Logger;
+import com.cs5500.team209.service.AssignmentService;
+import com.cs5500.team209.service.CourseService;
+import com.cs5500.team209.service.StudentCourseService;
+import com.cs5500.team209.service.UserService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.security.core.Authentication;
@@ -21,13 +27,10 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
+
+import java.util.*;
+
+import static sun.security.x509.X509CertInfo.SUBJECT;
 
 @Controller
 @Scope("session")
@@ -45,6 +48,10 @@ public class KittyController {
     UserService userService;
 
 
+    @Autowired
+    StudentCourseService studentCourseService;
+
+    String[] terms = new String[]{"fall17", "spring18"};
 
     @GetMapping("/")
     public String greeting(Model model) {
@@ -75,16 +82,90 @@ public class KittyController {
             }
         }
         model.addAttribute("users", users1);
+        model.addAttribute("editUser", new User());
+        model.addAttribute("deleteUser", new User());
         return "adminDashboard";
     }
 
-//    @GetMapping("/home")
-//    public String parse(Model model) throws IOException, InterruptedException {
-//        model.addAttribute(new Login());
-//        Parser.parse();
-//        TimeUnit.SECONDS.sleep(5);
-//        return "login";
-//    }
+    @PostMapping("/editUser")
+    public String editUser(@ModelAttribute User editUser,
+                           Model model) {
+        FetchUserResult userResult = userService.getUserByUsername(editUser.getUsername());
+        User user = userResult.getUserList().get(0);
+        user.setJoinAs(editUser.getJoinAs());
+        userService.createUser(user);
+
+        List<User> users = userService.getAllUsers();
+        List<User> users1 = new ArrayList<>();
+        for(User usert: users) {
+            if(!usert.getJoinAs().equals("admin")) {
+                users1.add(usert);
+            }
+        }
+        courseService.deleteCourseByUserName(editUser.getUsername());
+        assignmentService.deleteAssignmentByUserName(editUser.getUsername());
+
+        model.addAttribute("users", users1);
+        model.addAttribute("editUser", new User());
+        model.addAttribute("deleteUser", new User());
+        return "adminDashboard";
+    }
+
+    @PostMapping("/deleteUser")
+    public String deleteUser(@ModelAttribute User deleteUser,
+                             Model model) {
+        userService.deleteUser(deleteUser.getUsername());
+
+        List<User> users = userService.getAllUsers();
+        List<User> users1 = new ArrayList<>();
+        for(User usert: users) {
+            if(!usert.getJoinAs().equals("admin")) {
+                users1.add(usert);
+            }
+        }
+        courseService.deleteCourseByUserName(deleteUser.getUsername());
+        assignmentService.deleteAssignmentByUserName(deleteUser.getUsername());
+
+        model.addAttribute("users", users1);
+        model.addAttribute("editUser", new User());
+        model.addAttribute("deleteUser", new User());
+        return "adminDashboard";
+    }
+
+    public String sendEmail(Model model) {
+        String to = "balarajv12@gmail.com";
+        String from = "report@kittyprofessor.com";
+        String TEXTBODY = "This is how we send email";
+
+        String BODY_HTML = "<html>"
+                + "<head></head>"
+                + "<body>"
+                + "<h1>Hello!</h1>"
+                + "<p>Please see the attached file for a "
+                + "list of customers to contact.</p>"
+                + "</body>"
+                + "</html>";
+
+        AmazonSimpleEmailService client =
+                AmazonSimpleEmailServiceClientBuilder.standard()
+                        // Replace US_WEST_2 with the AWS Region you're using for
+                        // Amazon SES.
+                        .withRegion(Regions.US_WEST_2).build();
+        SendEmailRequest request = new SendEmailRequest()
+                .withDestination(
+                        new Destination().withToAddresses(to))
+                .withMessage(new Message()
+                        .withBody(new Body()
+                                .withText(new Content().withCharset("UTF-8").withData(TEXTBODY)))
+
+                        .withSubject(new Content()
+                                .withCharset("UTF-8").withData(SUBJECT)))
+                .withSource(from);
+
+        client.sendEmail(request);
+        System.out.println("Email sent!");
+        return "";
+    }
 
     @PostMapping("/courses")
     public String login(HttpServletRequest request,
@@ -98,44 +179,122 @@ public class KittyController {
         request.getSession().setAttribute("role",
                 user.getUser().getJoinAs());
 
-        model.addAttribute("courses", courseService.getAllCourses(login.getUserName()));
+        request.getSession().setAttribute("terms", terms);
 
-        if (request.getSession().getAttribute("role").equals("student")) {
-            List<Course> allCourses = courseService.getAllCourses();
-            List<Course> allCourses1 = new ArrayList<>();
-            for (Course course2 : allCourses) {
-                if (!course2.getCourseId().contains("student")) {
-                    allCourses1.add(course2);
-                }
-            }
-            model.addAttribute("allCourses", allCourses1);
+        request.getSession().setAttribute("currentTerm", "spring18");
+
+        if(user.getUser().getJoinAs().equals("student")) {
+
+            List<StudentCourse> allScs = studentCourseService
+                    .getAllCourses(login.getUserName());
+
+            model.addAttribute("courses", getCourses(allScs));
+            model.addAttribute("studentCourse", new StudentCourse());
+            model.addAttribute("leftCourses", getLeftCourses(allScs));
+            model.addAttribute("deleteStudentCourse", new StudentCourse());
+            return "course";
         }
+
+        model.addAttribute("courses", courseService.getAllCourses(login.getUserName()));
         model.addAttribute("course", new Course());
-        return "new-course";
+        model.addAttribute("editCourse", new Course());
+        model.addAttribute("deleteCourse", new Course());
+        return "course";
+    }
+
+    private List<Course> getLeftCourses(List<StudentCourse> allScs) {
+        List<Course> allCoursest = courseService.getAllCourses();
+        List<Course> allCourses = new ArrayList<>();
+        Set<String> courseIds = new HashSet<>();
+        for(StudentCourse sc : allScs) {
+            courseIds.add(sc.getCourseId());
+        }
+
+        for(Course course : allCoursest) {
+            if(courseIds.contains(course.getCourseId()))
+                continue;
+            allCourses.add(course);
+        }
+        return allCourses;
+    }
+
+    private List<Course> getCourses(List<StudentCourse> allScs) {
+        List<Course> allCourses = new ArrayList<>();
+        for(StudentCourse sc : allScs) {
+            allCourses.add(courseService.getCourseByCourseId(sc.getCourseId()));
+        }
+        return allCourses;
+    }
+
+    @PostMapping("/editCourse")
+    public String editCourse(@ModelAttribute Course course,
+                             Model model) {
+        courseService.createCourse(course);
+        model.addAttribute("courses", courseService.getAllCourses(course.getUserName()));
+        model.addAttribute("course", new Course());
+        model.addAttribute("editCourse", new Course());
+        model.addAttribute("deleteCourse", new Course());
+        return "course";
+    }
+
+    @PostMapping("/deleteCourse")
+    public String deleteCourse( HttpServletRequest request,
+                              @ModelAttribute Course deleteCourse,
+                              Model model) {
+        courseService.deleteCourse(deleteCourse.getCourseId());
+        model.addAttribute("courses", courseService.getAllCourses(
+                (String) request.getAttribute("userName")));
+        model.addAttribute("course", new Course());
+        model.addAttribute("editCourse", new Course());
+        model.addAttribute("deleteCourse", new Course());
+        return "course";
+    }
+
+    @PostMapping("/deleteStudentCourse")
+    public String deleteCourseStudent( HttpServletRequest request,
+                                @ModelAttribute StudentCourse studentCourse,
+                                Model model) {
+
+        studentCourse.setUserName((String) request.getSession().getAttribute("userName"));
+        studentCourseService.deleteStudentCourse(studentCourse.getCourseId() +
+                studentCourse.getUserName());
+
+        Course course = courseService.getCourseByCourseId(studentCourse.getCourseId());
+        course.setNumStudents(course.getNumStudents() - 1);
+        courseService.createCourse(course);
+
+        List<StudentCourse> allScs = studentCourseService
+                .getAllCourses((String) request.getSession().getAttribute("userName"));
+        model.addAttribute("courses", getCourses(allScs));
+        model.addAttribute("leftCourses", getLeftCourses(allScs));
+        model.addAttribute("studentCourse", new StudentCourse());
+        model.addAttribute("deleteStudentCourse", new StudentCourse());
+        return "course";
     }
 
     @PostMapping("/addCoursesStudent")
     public String addCourseStudent(HttpServletRequest request,
-                                   @ModelAttribute Course course,
-                                   Model model) {
+                            @ModelAttribute StudentCourse studentCourse,
+                            Model model) {
+        String userName = (String) request.getSession().getAttribute("userName");
+        studentCourse.setUserName(userName);
+        studentCourse.setStudentCourseId(studentCourse.getCourseId() + userName);
+        studentCourseService.createStudentCourse(studentCourse);
 
-        Course course1 = courseService.getCourseByCourseId(course.getCourseId());
-        course1.setCourseId(course1.getCourseId() + "student");
-        course1.setUserName((String) request.getAttribute("userName"));
-        courseService.createCourse(course1);
+        Course course = courseService.getCourseByCourseId(studentCourse.getCourseId());
+        course.setNumStudents(course.getNumStudents() + 1);
+        courseService.createCourse(course);
 
-        model.addAttribute("courses", courseService.getAllCourses(course.getUserName()));
-        List<Course> allCourses = courseService.getAllCourses();
-        List<Course> allCourses1 = new ArrayList<>();
-        for (Course course2 : allCourses) {
-            if (!course2.getCourseId().contains("student")) {
-                allCourses1.add(course2);
-            }
-        }
-        model.addAttribute("allCourses", allCourses1);
-        model.addAttribute("course", new Course());
-        return "new-course";
+        List<StudentCourse> allScs = studentCourseService
+                .getAllCourses((String) request.getSession().getAttribute("userName"));
+
+        model.addAttribute("courses", getCourses(allScs));
+        model.addAttribute("leftCourses", getLeftCourses(allScs));
+        model.addAttribute("studentCourse", new StudentCourse());
+        model.addAttribute("deleteStudentCourse", new StudentCourse());
+        return "course";
     }
+
 
     @GetMapping("/signup")
     public String signup(Model model) {
@@ -150,41 +309,90 @@ public class KittyController {
 
         course.setUserName((String) request.getSession().getAttribute("userName"));
         course.setTerm("spring18");
-        course.setCourseId(course.getUserName() + course.getCourseCode()
-                + course.getTerm());
+        course.setNumAssignments(0);
+        course.setNumStudents(0);
+        course.setCourseId(course.getUserName()+course.getCourseCode()
+                +course.getTerm());
+
         courseService.createCourse(course);
         model.addAttribute("courses", courseService.getAllCourses(course.getUserName()));
         model.addAttribute("course", new Course());
-        return "new-course";
+        model.addAttribute("editCourse", new Course());
+        model.addAttribute("deleteCourse", new Course());
+        return "course";
     }
 
     @GetMapping("/assignments")
     public String assignmentsPage(@RequestParam("courseId") String courseId,
                                   Model model) {
-        String newCourseId = courseId.replace("student", "");
-        List<Assignment> assignments = assignmentService.getAssignmentsForCourse(newCourseId);
+        List<Assignment> assignments = assignmentService.getAssignmentsForCourse(courseId);
+
         model.addAttribute("assignments", assignments);
         Assignment assignment = new Assignment();
-        assignment.setCourseID(newCourseId);
+        assignment.setCourseId(courseId);
         model.addAttribute("assignment", assignment);
-        //model.addAttribute("cId", newCourseId);
-
+        model.addAttribute("editAssignment", new Assignment());
+        model.addAttribute("deleteAssignment", new Assignment());
         return "assignment";
     }
 
     @PostMapping("/addAssignments")
     public String addAssignmentsPage(@ModelAttribute Assignment assignment,
-                                     Model model) {
-        System.out.println(assignment.getCourseID());
-        assignment.setAssignmentId(assignment.getCourseID() +
-                assignment.getName().replaceAll("\\s+", ""));
+                                  Model model) {
+
+        assignment.setAssignmentId(assignment.getCourseId() +
+                String.valueOf(System.currentTimeMillis() / 1000L));
+
+        Course course = courseService.getCourseByCourseId(
+                assignment.getCourseId());
+        course.setNumAssignments(course.getNumAssignments() + 1);
+        courseService.createCourse(course);
 
         assignmentService.createAssignment(assignment);
-        List<Assignment> assignments = assignmentService.getAssignmentsForCourse(assignment.getCourseID());
+        List<Assignment> assignments = assignmentService.getAssignmentsForCourse(assignment.getCourseId());
 
+        Assignment newAss = new Assignment();
+        newAss.setCourseId(assignment.getCourseId());
+
+        model.addAttribute("assignment", newAss);
         model.addAttribute("assignments", assignments);
-        model.addAttribute("assignment", new Assignment());
-        model.addAttribute("cId", assignment.getCourseID());
+        model.addAttribute("editAssignment", new Assignment());
+        model.addAttribute("deleteAssignment", new Assignment());
+        return "assignment";
+    }
+
+    @PostMapping("/editAssignment")
+    public String updateAssignmentsPage(@ModelAttribute Assignment editAssignment,
+                                     Model model) {
+
+        assignmentService.createAssignment(editAssignment);
+        List<Assignment> assignments = assignmentService.getAssignmentsForCourse(editAssignment.getCourseId());
+
+        Assignment newAss = new Assignment();
+        newAss.setCourseId(editAssignment.getCourseId());
+
+        model.addAttribute("assignment", newAss);
+        model.addAttribute("assignments", assignments);
+        model.addAttribute("editAssignment", new Assignment());
+        model.addAttribute("deleteAssignment", new Assignment());
+        return "assignment";
+    }
+
+    @PostMapping("/deleteAssignment")
+    public String deleteAssignmentsPage(@ModelAttribute Assignment deleteAssignment,
+                                        Model model) {
+
+        assignmentService.deleteAssignment(deleteAssignment.getAssignmentId());
+        List<Assignment> assignments = assignmentService.getAssignmentsForCourse(
+                deleteAssignment.getCourseId());
+
+        Assignment newAss = new Assignment();
+        newAss.setCourseId(newAss.getCourseId());
+
+        model.addAttribute("assignment", newAss);
+        model.addAttribute("assignments", assignments);
+        model.addAttribute("editAssignment", new Assignment());
+        model.addAttribute("deleteAssignment", new Assignment());
         return "assignment";
     }
 

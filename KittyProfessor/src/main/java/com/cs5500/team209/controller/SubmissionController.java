@@ -1,11 +1,15 @@
 package com.cs5500.team209.controller;
 
 import com.cs5500.team209.Parser;
+import com.cs5500.team209.model.Assignment;
 import com.cs5500.team209.model.Report;
 import com.cs5500.team209.model.Submission;
+import com.cs5500.team209.model.dto.ReportDisplay;
 import com.cs5500.team209.model.dto.UpdateSubmissionResult;
+import com.cs5500.team209.service.AssignmentService;
 import com.cs5500.team209.service.ReportService;
 import com.cs5500.team209.service.SubmissionService;
+import com.cs5500.team209.service.UserService;
 import com.cs5500.team209.storage.StorageService;
 
 import org.apache.commons.io.FileUtils;
@@ -42,6 +46,12 @@ public class SubmissionController {
     SubmissionService submissionService;
 
     @Autowired
+    UserService userService;
+
+    @Autowired
+    AssignmentService assignmentService;
+
+    @Autowired
     StorageService storageService;
 
     @Autowired
@@ -58,6 +68,43 @@ public class SubmissionController {
         model.addAttribute("submission", submission);
         model.addAttribute("submissions", submissionList);
         return "submission";
+    }
+
+    @GetMapping("/reports")
+    public String getReportList(@RequestParam("assignmentId") String assignmentId,
+                                    Model model) {
+        List<ReportDisplay> reportDisplayList = new ArrayList<>();
+        List<ReportDisplay> reportNotDisplayList = new ArrayList<>();
+        List<Report> reportList = reportService.getReportsForAssignment(assignmentId);
+        Assignment assignment = assignmentService.getAssignmentById(assignmentId);
+        for (Report r: reportList) {
+            ReportDisplay rDisplay = new ReportDisplay(r);
+            String username1 = submissionService.getSubmissionById(rDisplay.getReport().getSubmissionId1()).getUsername();
+            String email1 = userService.getUserByUsername(username1).getUser().getEmail();
+            String username2 = submissionService.getSubmissionById(rDisplay.getReport().getSubmissionId2()).getUsername();
+            String email2 = userService.getUserByUsername(username2).getUser().getEmail();
+            rDisplay.setUser1(email1);
+            rDisplay.setUser2(email2);
+            if (rDisplay.getReport().getScore() < assignment.getThreshold()) {
+                reportNotDisplayList.add(rDisplay);
+            } else {
+                reportDisplayList.add(rDisplay);
+            }
+        }
+
+
+        model.addAttribute("reports", reportDisplayList);
+        model.addAttribute("assignment", assignment);
+        model.addAttribute("otherReports", reportNotDisplayList);
+        return "student-report";
+    }
+
+    @GetMapping("/report")
+    public String getReport(@RequestParam("reportId") String reportId,
+                                Model model) {
+        Report report = reportService.getReportById(reportId);
+        String reportLink = report.getFilePath();
+        return reportLink;
     }
 
     @PostMapping("/addSubmissions")
@@ -131,10 +178,12 @@ public class SubmissionController {
                 //extract
                 unzip(targetPath, targetFolder);
                 String reportPath = "dummy.html";
-                reportPath = "src/main/resources/static/" + transformFileName(reportPath);
+                String transformedPath = transformFileName(reportPath);
+                //String urlPath = "reports/" + transformedPath; //for web rendering
+                reportPath = "src/main/resources/static/reports/" + transformedPath; // for file storing
                 double score = Parser.parse(reportPath);
                 // save compared report
-                reportService.createReport(new Report(assignmentId, submissionId, submissionFileIdMap.get(s), reportPath, score));
+                reportService.createReport(new Report(assignmentId, submissionId, submissionFileIdMap.get(s), transformedPath, score));
                 // only clean other submission folder if compare not end
                 deleteTargetDirectory(targetFolder);
             }
@@ -149,7 +198,7 @@ public class SubmissionController {
      * @param destDir the unzip target dir path
      * @throws IOException
      */
-    private static void unzip(String zipFilePath, String destDir) throws IOException {
+    private static boolean unzip(String zipFilePath, String destDir) throws IOException {
         ZipFile zipFile = new ZipFile(zipFilePath);
         try {
             Enumeration<? extends ZipEntry> entries = zipFile.entries();
@@ -173,7 +222,7 @@ public class SubmissionController {
             zipFile.close();
         }
         File oldfile = new File(zipFilePath);
-        oldfile.delete();
+        return oldfile.delete();
     }
 
 
