@@ -198,7 +198,7 @@ public class SubmissionController {
      * @param destDir the unzip target dir path
      * @throws IOException
      */
-    private static void unzip(String zipFilePath, String destDir) throws IOException {
+    private static boolean unzip(String zipFilePath, String destDir) throws IOException {
         ZipFile zipFile = new ZipFile(zipFilePath);
         try {
             Enumeration<? extends ZipEntry> entries = zipFile.entries();
@@ -222,7 +222,7 @@ public class SubmissionController {
             zipFile.close();
         }
         File oldfile = new File(zipFilePath);
-        oldfile.delete();
+        return oldfile.delete();
     }
 
 

@@ -11,11 +11,13 @@ public class Assignment {
 
     @Id
     private String assignmentId;
+    private String userName;
     private String name;
-    private String courseID;
+    private String courseId;
     private String desc;
     private int threshold;
     private String due;
+    private String language;
 
     /**
      * Default constructor
@@ -38,12 +40,12 @@ public class Assignment {
         this.name = name;
     }
 
-    public String getCourseID() {
-        return courseID;
+    public String getCourseId() {
+        return courseId;
     }
 
-    public void setCourseID(String courseID) {
-        this.courseID = courseID;
+    public void setCourseId(String courseId) {
+        this.courseId = courseId;
     }
 
     public int getThreshold() {
@@ -69,5 +71,22 @@ public class Assignment {
     public void setDesc(String desc) {
         this.desc = desc;
     }
+
+    public String getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(String language) {
+        this.language = language;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
 
 }

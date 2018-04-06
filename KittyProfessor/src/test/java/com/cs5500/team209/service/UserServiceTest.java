@@ -104,7 +104,7 @@ public class UserServiceTest {
         roleList.add(role1);
         roleList.add(role2);
         user.setRoles(roleList);
-        userService.deleteUser(user);
+        userService.deleteUser(user.getUsername());
     }
 
 
