@@ -2,7 +2,6 @@ package com.cs5500.team209.api;
 
 import com.cs5500.team209.WebUtils;
 import com.cs5500.team209.model.Assignment;
-import com.cs5500.team209.model.Course;
 import com.cs5500.team209.model.dto.UpdateAssignmentResult;
 import com.cs5500.team209.service.AssignmentService;
 import com.cs5500.team209.service.CourseService;
@@ -42,7 +41,7 @@ public class AssignmentRestController {
     public Object createAssignment(@PathVariable("courseId") String courseId,
                                    @RequestBody Assignment assignment) {
         if (courseId != null) {
-            assignment.setCourseID(courseId);
+            assignment.setCourseId(courseId);
             UpdateAssignmentResult result = assignmentService.createAssignment(assignment);
             if (result.isSuccess()) {
                 return WebUtils.createSuccessMap(result.getAssignment());
