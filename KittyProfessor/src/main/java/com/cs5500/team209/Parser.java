@@ -24,11 +24,11 @@ public class Parser {
             CommandLineOptions options = new CommandLineOptions(input, null);
             Program program = new Program(options);
 
-            System.out.println("initialize ok");
+            logger.info("initialize ok");
             program.run();
         }
         catch(ExitException ex) {
-            System.out.println("Error: "+ex.getReport());
+            logger.info("Error: "+ex.getReport());
             System.exit(1);
         }
 
@@ -131,12 +131,11 @@ public class Parser {
                 "</body>\n" +
                 "</html>";
 
-        BufferedWriter writer = null;
+        BufferedWriter writer = new BufferedWriter(new FileWriter(file));
         try{
-            writer = new BufferedWriter(new FileWriter(file));
             writer.write( newdata );
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.warn(e);
         } finally {
             writer.close();
         }
