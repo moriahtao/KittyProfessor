@@ -8,7 +8,6 @@ pipeline {
        stage('Build') {
            steps {
                echo "Building"
-		sh 'mvn install:install-file -Dfile=./KittyProfessor/jar/jplag-2.11.9-SNAPSHOT-jar-with-dependencies.jar -DgroupId=com.google.code -DartifactId=jplag -Dversion=2.11.9 -Dpackaging=jar'
                sh 'mvn compile -f KittyProfessor/pom.xml'
                sh 'mvn package -f KittyProfessor/pom.xml'
            }

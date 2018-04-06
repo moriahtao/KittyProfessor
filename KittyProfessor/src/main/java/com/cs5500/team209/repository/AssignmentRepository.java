@@ -1,6 +1,7 @@
 package com.cs5500.team209.repository;
 
 import com.cs5500.team209.model.Assignment;
+import com.cs5500.team209.model.Course;
 import org.springframework.data.mongodb.core.query.BasicQuery;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.repository.MongoRepository;
@@ -22,11 +23,4 @@ public interface AssignmentRepository extends MongoRepository<Assignment, String
      */
 
     List<Assignment> findAssignmentsByCourseID(@Param("courseID") String courseId);
-
-    /**
-     * find assignment by id
-     * @param assignmentId the id for query
-     * @return the assignment found
-     */
-    Assignment findAssignmentByAssignmentId(String assignmentId);
 }
