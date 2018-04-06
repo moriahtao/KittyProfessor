@@ -51,25 +51,42 @@
                     <h2>The students below need your attention!</h2>
                     <div class="row">
                         <div class="small-10 columns">
-                            <div class="slider" data-slider data-initial-start="${assignment.threshold}">
-                                <span class="slider-handle"  data-slider-handle role="slider" tabindex="1" aria-controls="sliderOutput1"></span>
-                                <span class="slider-fill" data-slider-fill></span>
+                            <div >
+                                <input type="range" min="1" max="100"  th:attr="value=${assignment.threshold}" class="slider" style="width:100%;">
+                                <!--<span class="slider-handle"  data-slider-handle role="slider" tabindex="1" aria-controls="sliderOutput1"></span>-->
+                                <!--<span class="slider-fill" data-slider-fill></span>-->
                             </div>
                         </div>
                         <div class="small-2 columns">
-                            <input type="number" id="sliderOutput1">
+                            <input type="number" id="sliderOutput1" th:attr="value=${assignment.threshold}">
                         </div>
                     </div>
                     <div class="row" th:each="report : ${reports}">
                         <div class="columns small-12 ">
-                            <a th:href="'/reports?reportId='+${report.route}">
+                            <a th:href="'/reports/'+ ${report.report.filePath}">
+                                <p>report</p>
                                 <div class="row student-submission">
                                     <div class=" columns large-10">
-                                        <span th:text="${report.student1}"> </span>
-                                        <span th:text="${report.student2}"></span>
+                                        <span th:text="*{report.user1}"> </span>
+                                        <span th:text="*{report.user2}"></span>
                                     </div>
                                     <div class="report-percent columns large-2">
-                                        <span th:text="${report.result}"></span>
+                                        <span th:text="*{report.report.score}"></span>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="row other-reports" th:each="report : ${otherReports}">
+                        <div class="columns small-12 ">
+                            <a th:href="'/reports/'+ ${report.report.filePath}">
+                                <div class="row student-submission">
+                                    <div class=" columns large-10">
+                                        <span th:text="*{report.user1}"> </span>
+                                        <span th:text="*{report.user2}"></span>
+                                    </div>
+                                    <div class="report-percent columns large-2">
+                                        <span th:text="*{report.report.score}"></span>
                                     </div>
                                 </div>
                             </a>

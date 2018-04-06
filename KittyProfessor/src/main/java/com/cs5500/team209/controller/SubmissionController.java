@@ -9,6 +9,7 @@ import com.cs5500.team209.model.dto.UpdateSubmissionResult;
 import com.cs5500.team209.service.AssignmentService;
 import com.cs5500.team209.service.ReportService;
 import com.cs5500.team209.service.SubmissionService;
+import com.cs5500.team209.service.UserService;
 import com.cs5500.team209.storage.StorageService;
 
 import org.apache.commons.io.FileUtils;
@@ -45,6 +46,9 @@ public class SubmissionController {
     SubmissionService submissionService;
 
     @Autowired
+    UserService userService;
+
+    @Autowired
     AssignmentService assignmentService;
 
     @Autowired
@@ -70,20 +74,28 @@ public class SubmissionController {
     public String getReportList(@RequestParam("assignmentId") String assignmentId,
                                     Model model) {
         List<ReportDisplay> reportDisplayList = new ArrayList<>();
+        List<ReportDisplay> reportNotDisplayList = new ArrayList<>();
         List<Report> reportList = reportService.getReportsForAssignment(assignmentId);
+        Assignment assignment = assignmentService.getAssignmentById(assignmentId);
         for (Report r: reportList) {
             ReportDisplay rDisplay = new ReportDisplay(r);
-            String student1 = submissionService.getSubmissionById(rDisplay.getSubmissionId1()).getUsername();
-            String student2 = submissionService.getSubmissionById(rDisplay.getSubmissionId2()).getUsername();
-            rDisplay.setUser1(student1);
-            rDisplay.setUser2(student2);
-            reportDisplayList.add(rDisplay);
+            String username1 = submissionService.getSubmissionById(rDisplay.getReport().getSubmissionId1()).getUsername();
+            String email1 = userService.getUserByUsername(username1).getUser().getEmail();
+            String username2 = submissionService.getSubmissionById(rDisplay.getReport().getSubmissionId2()).getUsername();
+            String email2 = userService.getUserByUsername(username2).getUser().getEmail();
+            rDisplay.setUser1(email1);
+            rDisplay.setUser2(email2);
+            if (rDisplay.getReport().getScore() < assignment.getThreshold()) {
+                reportNotDisplayList.add(rDisplay);
+            } else {
+                reportDisplayList.add(rDisplay);
+            }
         }
 
-        Assignment assignment = assignmentService.getAssignmentById(assignmentId);
 
         model.addAttribute("reports", reportDisplayList);
         model.addAttribute("assignment", assignment);
+        model.addAttribute("otherReports", reportNotDisplayList);
         return "student-report";
     }
 
@@ -94,8 +106,6 @@ public class SubmissionController {
         String reportLink = report.getFilePath();
         return reportLink;
     }
-
-
 
     @PostMapping("/addSubmissions")
     public String createSubmissionForAssignment(HttpServletRequest request, @ModelAttribute Submission submission,
@@ -168,10 +178,12 @@ public class SubmissionController {
                 //extract
                 unzip(targetPath, targetFolder);
                 String reportPath = "dummy.html";
-                reportPath = "src/main/resources/static/" + transformFileName(reportPath);
+                String transformedPath = transformFileName(reportPath);
+                //String urlPath = "reports/" + transformedPath; //for web rendering
+                reportPath = "src/main/resources/static/reports/" + transformedPath; // for file storing
                 double score = Parser.parse(reportPath);
                 // save compared report
-                reportService.createReport(new Report(assignmentId, submissionId, submissionFileIdMap.get(s), reportPath, score));
+                reportService.createReport(new Report(assignmentId, submissionId, submissionFileIdMap.get(s), transformedPath, score));
                 // only clean other submission folder if compare not end
                 deleteTargetDirectory(targetFolder);
             }

@@ -64,6 +64,10 @@
                                     <a th:href="'/submissions?assignmentId='+${assignment.assignmentId}"
                                        th:text= "'submit your homework'" />
                                 </div>
+                                <div th:if="${session.role} == 'instructor'">
+                                    <a th:href="'/reports?assignmentId='+${assignment.assignmentId}"
+                                       th:text= "'view all reports'" />
+                                </div>
                             </div>
                         </div>
                     </div>
