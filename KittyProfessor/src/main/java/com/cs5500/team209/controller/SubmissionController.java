@@ -3,13 +3,11 @@ package com.cs5500.team209.controller;
 import com.cs5500.team209.Parser;
 import com.cs5500.team209.model.Assignment;
 import com.cs5500.team209.model.Report;
+import com.cs5500.team209.model.StudentCourse;
 import com.cs5500.team209.model.Submission;
 import com.cs5500.team209.model.dto.ReportDisplay;
 import com.cs5500.team209.model.dto.UpdateSubmissionResult;
-import com.cs5500.team209.service.AssignmentService;
-import com.cs5500.team209.service.ReportService;
-import com.cs5500.team209.service.SubmissionService;
-import com.cs5500.team209.service.UserService;
+import com.cs5500.team209.service.*;
 import com.cs5500.team209.storage.StorageService;
 
 import org.apache.commons.io.FileUtils;
@@ -56,6 +54,9 @@ public class SubmissionController {
 
     @Autowired
     ReportService reportService;
+
+    @Autowired
+    StudentCourseService studentCourseService;
 
     @GetMapping("/submissions")
     public String getSubmissionList(HttpServletRequest request, @RequestParam("assignmentId") String assignmentId,
@@ -267,5 +268,28 @@ public class SubmissionController {
      */
     private void deleteTargetDirectory(String path) throws IOException {
         FileUtils.deleteDirectory(new File(path));
+    }
+
+    @GetMapping("/allStudents")
+    public String getAllSubmissionList(HttpServletRequest request, @RequestParam("courseId") String courseId,
+                                    Model model) {
+        List<StudentCourse> studentCourses = studentCourseService.getCourseByCourseId(courseId);
+        List<String> studentList = new ArrayList<>();
+        for(StudentCourse sc: studentCourses) {
+            studentList.add(sc.getUserName());
+        }
+        model.addAttribute("students", studentList);
+
+        return "student-list";
+    }
+
+
+    @GetMapping("/studentSubmissions")
+    public String getStudentSubmissionList(HttpServletRequest request, @RequestParam("studentUsername") String studentUsername,
+                                       Model model) {
+        List<Submission> submissionList = submissionService.getSubmissionByUsername(studentUsername);
+        model.addAttribute("submissions", submissionList);
+
+        return "submission-list";
     }
 }

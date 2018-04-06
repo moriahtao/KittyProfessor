@@ -38,7 +38,7 @@
                     <h2>The List of Students in this course</h2>
                     <div class="row" th:each="student : ${students}">
                         <div class="columns small-12 ">
-                            <a th:href="'/studentSubmissions?studentUsername'+ ${student}">
+                            <a th:href="'/studentSubmissions?studentUsername='+ ${student}">
                                 <div class="row student-submission">
                                     <div class=" columns large-10">
                                         <span th:text="*{student}"> </span>

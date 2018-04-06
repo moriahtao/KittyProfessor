@@ -69,6 +69,9 @@ public class SubmissionService {
         return submissionRepository.findOtherStudentSubmissions(submissionId, username);
     }
 
+    public List<Submission> getSubmissionByUsername(String username) {
+        return submissionRepository.findSubmissionByUsername(username);
+    }
 
     /**
      * validate submission having the required fields

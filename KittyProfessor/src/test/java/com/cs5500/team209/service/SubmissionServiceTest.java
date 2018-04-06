@@ -51,12 +51,15 @@ public class SubmissionServiceTest {
     @Before
     public void setUp() {
         List<String> paths = new ArrayList<>();
+        List<Submission> submissionList = new ArrayList<>();
         paths.add("admin");
         Submission submission = new Submission("1", "alex", paths);
+        submissionList.add(submission);
         submissionRepository.save(submission);
         Mockito.when(submissionRepository.findSubmissionBySubmissionId(submission.getSubmissionId())).thenReturn(submission);
         //Mockito.when(userRepository.findByUsername("joe")).thenReturn(null);
         Mockito.when(submissionRepository.save(Mockito.any(Submission.class))).thenReturn(submission);
+        Mockito.when(submissionRepository.findSubmissionByUsername("alex")).thenReturn(submissionList);
 
 
     }
@@ -102,5 +105,17 @@ public class SubmissionServiceTest {
         UpdateSubmissionResult result = submissionService.addFileToSubmission("admin", submission);
         assertEquals("alex", result.getSubmission().getUsername());
     }
-    
+
+    /**
+     * should return user after successfully create user
+     */
+    @Test
+    public void whenQuerySubmission_thenSubmissionShouldBeFound() {
+        List<String> paths = new ArrayList<>();
+        paths.add("admin");
+        Submission submission = new Submission("1", "alex", paths);
+        List<Submission> result = submissionService.getSubmissionByUsername("alex");
+        assertEquals(1, result.size());
+    }
+
 }

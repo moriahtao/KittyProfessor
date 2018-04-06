@@ -67,7 +67,7 @@
                                 <a th:href="'/assignments?courseId='+${course.courseId}"
                                    th:text= "${course.numAssignments} + ' Assignments'" />
 
-                                <p th:if="${session.role} == 'instructor'"
+                                <a th:href="'/allStudents?courseId='+${course.courseId}" th:if="${session.role} == 'instructor'"
                                    th:text="${course.numStudents} + ' Students'"/>
                             </div>
                         </div>
