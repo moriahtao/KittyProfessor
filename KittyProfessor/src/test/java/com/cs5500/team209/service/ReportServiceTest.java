@@ -53,5 +53,7 @@ public class ReportServiceTest {
         Mockito.when(reportRepository.findReportByReportId(report1.getReportId())).thenReturn(report1);
         UpdateReportResult found = reportService.createReport(report1);
         Mockito.when(reportRepository.save(Mockito.any(Report.class))).thenReturn(report1);
+        reportService.getReportById(report1.getReportId());
+        reportService.getReportsForAssignment(report1.getAssignmentId());
     }
 }
