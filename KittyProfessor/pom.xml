@@ -30,10 +30,10 @@
 		<sonar.groovy.binaries>target/classes</sonar.groovy.binaries>
 
 		<sonar.exclusions>
-			**/KittyController.java, src/main/java/com/cs5500/team209/storage/*, src/main/java/com/cs5500/team209/controller/*
+			src/main/java/com/cs5500/team209/storage/*, src/main/java/com/cs5500/team209/controller/*
 		</sonar.exclusions>
 		<sonar.coverage.exclusions>
-			**/KittyController.java, src/main/java/com/cs5500/team209/storage/*, src/main/java/com/cs5500/team209/controller/*
+			src/main/java/com/cs5500/team209/storage/*, src/main/java/com/cs5500/team209/controller/*
 		</sonar.coverage.exclusions>
 	</properties>
 
