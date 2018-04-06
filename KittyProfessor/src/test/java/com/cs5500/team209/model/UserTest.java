@@ -19,6 +19,15 @@ public class UserTest {
      */
     @Test
     public void getUser() {
+        ArrayList<Role> roles = new ArrayList<Role>();
+        Role r1 = new Role();
+        Role r2 = new Role();
+        roles.add(r1);
+        roles.add(r2);
+        User user1 = new User();
+        User user2 = new User("joe", "1234", "student");
+        User user3 = new User("joe", "1234", "student");
+        User user4 = new User("joe", "1234", roles,"student");
         User user = new User("joe", "1234", "student", "neu", "example@gmail");
         Role role1 = new Role("ROLE_ADMIN");
         Role role2 = new Role("ROLE_USER");
@@ -33,7 +42,7 @@ public class UserTest {
         user.setFirstName("joe");
         user.setLastName("Wood");
         user.setPassword("1234");
-
+        assertEquals("User[id=example@gmail, username='joe']",user.toString());
         assertEquals("example@gmail", user.getEmail());
         assertEquals("joe", user.getUsername());
         assertEquals("1234", user.getPassword());
