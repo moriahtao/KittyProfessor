@@ -64,7 +64,6 @@
                     <div class="row" th:each="report : ${reports}">
                         <div class="columns small-12 ">
                             <a th:href="'/reports/'+ ${report.report.filePath}">
-                                <p>report</p>
                                 <div class="row student-submission">
                                     <div class=" columns large-10">
                                         <span th:text="*{report.user1}"> </span>
