@@ -45,7 +45,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authenticationEntryPoint(restAuthenticationEntryPoint)
                 .and()
                 .authorizeRequests()
-                .antMatchers("/", "/home", "/signup", "/*").permitAll()
+                .antMatchers("/", "/home", "/signup", "/*", "/reports/*").permitAll()
                 //.antMatchers("/currentuser").access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
                 //.antMatchers("/greeting").access("hasRole('ROLE_ADMIN')")
                 //.antMatchers("/api/users").permitAll()
@@ -64,6 +64,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public void configure(WebSecurity web) throws Exception {
         web.ignoring().antMatchers("/js/**");
         web.ignoring().antMatchers("/css/**");
+        web.ignoring().antMatchers("/css/**");
+        web.ignoring().antMatchers("/reports/**");
     }
 
     @Autowired
@@ -97,19 +99,19 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return authProvider;
     }
 
-    /**
-     * add a header to all response
-     * tell browser to trust the client
-     * @return Configure cross origin requests processing
-     */
-    @Bean
-    public WebMvcConfigurer corsConfigurer() {
-        return new WebMvcConfigurerAdapter() {
-            @Override
-            public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**").allowedOrigins("*");
-            }
-        };
-    }
+//    /**
+//     * add a header to all response
+//     * tell browser to trust the client
+//     * @return Configure cross origin requests processing
+//     */
+//    @Bean
+//    public WebMvcConfigurer corsConfigurer() {
+//        return new WebMvcConfigurerAdapter() {
+//            @Override
+//            public void addCorsMappings(CorsRegistry registry) {
+//                registry.addMapping("/**").allowedOrigins("*");
+//            }
+//        };
+//    }
 
 }

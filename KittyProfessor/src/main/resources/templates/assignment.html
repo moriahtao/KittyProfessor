@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>New Assignment Prof</title>
+    <link rel="stylesheet" href="css/app.css" type="text/css"/>
+</head>
+<body>
+
+<div class="top-bar row expanded" id="responsive-menu">
+    <div class="columns  large-7 large-offset-1 top-bar-left">
+        <ul class="dropdown menu data-dropdown-menu">
+            <li class="menu-text"><h2>Kitty Professor</h2></li>
+        </ul>
+    </div>
+    <div class="top-bar-right columns large-4">
+        <ul class="menu">
+            <li> <a href="#" class="logged--as" th:text="${session.userName}"/></li>
+            <li>
+                <form action="#" th:action = "@{/logout}" method = "post">
+                    <input type="submit" name="logout" value="logout" class="button btn--primary right" />
+                </form></li>
+        </ul>
+    </div>
+</div>
+
+<div th:if="${session.role} == 'instructor'">
+<form action="#" th:action="@{/addAssignments}" th:object="${assignment}" method="post">
+    <p>Name:      <input type="text" th:field="*{name}" /></p>
+    <p>Due:       <input type="datetime-local" th:field="*{due}" /></p>
+    <p>Threshold: <input type="text" th:field="*{threshold}" /></p>
+    <input type="hidden" th:field="*{courseID}" />
+    <p><input type="submit" value="Submit" /> <input type="reset" value="Reset" /></p>
+</form>
+</div>
+
+<div class="row">
+    <div class="columns">
+        <div class="main--content">
+            <h2 class="inner--heading">
+                <nav aria-label="You are here:" role="navigation">
+                    <ul class="breadcrumbs innerpage--breadcrumbs">
+                        <li><a href="#">Courses</a></li>
+                        <li><a href="#">CS5500 | Managing Software Development</a></li>
+                        <li>
+                            <span class="show-for-sr">Current: </span> Assignments
+                        </li>
+                    </ul>
+                </nav>
+            </h2>
+            <div class="row  data-equalizer" data-equalize-by-row="true" th:each="assignment : ${assignments}">
+                <div class="column large-4  add--course course--added data-equalizer-watch"  data-open="exampleModal1">
+                    <div class="course--content">
+                        <div class="prompt--add">Click here to add a new course</div>
+                        <div class="course--heading">
+                            <div class="course--info"><span th:text="*{assignment.name}"/></div>
+                        </div>
+                        <div class="course--details">
+                            <div class="hw--info">
+                                <p th:text="'Due :' + *{assignment.due}"/>
+                                <div th:if="${session.role} == 'student'">
+                                    <a th:href="'/submissions?assignmentId='+${assignment.assignmentId}"
+                                       th:text= "'submit your homework'" />
+                                </div>
+                                <div th:if="${session.role} == 'instructor'">
+                                    <a th:href="'/reports?assignmentId='+${assignment.assignmentId}"
+                                       th:text= "'view all reports'" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    </div>
+</div>
+</div>
+
+<footer>
+    <div class="row expanded footer">
+        <div class="columns">
+            <div class="footer--links">
+                <a href="#">
+                    Feedback
+                </a>
+                <a href="">
+                    Contact us
+                </a>
+            </div>
+
+        </div>
+    </div>
+</footer>
+
+<script src="node_modules/jquery/dist/jquery.js" type="application/javascript"></script>
+<script src="node_modules/what-input/dist/what-input.js" type="application/javascript"></script>
+<script src="node_modules/foundation-sites/dist/js/foundation.js" type="application/javascript"></script>
+<script src="static/js/app.js"></script>
+</body>
+</html>
