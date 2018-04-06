@@ -5,7 +5,11 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>New Assignment Prof</title>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"/>
     <link rel="stylesheet" href="css/app.css" type="text/css"/>
+    <link rel="stylesheet" href="css/options.css" type="text/css"/>
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"/>
 </head>
 <body>
 
@@ -21,41 +25,32 @@
             <li>
                 <form action="#" th:action = "@{/logout}" method = "post">
                     <input type="submit" name="logout" value="logout" class="button btn--primary right" />
-                </form></li>
+                </form>
+            </li>
         </ul>
     </div>
-</div>
-
-<div th:if="${session.role} == 'instructor'">
-<form action="#" th:action="@{/addAssignments}" th:object="${assignment}" method="post">
-    <p>Name:      <input type="text" th:field="*{name}" /></p>
-    <p>Due:       <input type="datetime-local" th:field="*{due}" /></p>
-    <p>Threshold: <input type="text" th:field="*{threshold}" /></p>
-    <input type="hidden" th:field="*{courseID}" />
-    <p><input type="submit" value="Submit" /> <input type="reset" value="Reset" /></p>
-</form>
 </div>
 
 <div class="row">
     <div class="columns">
         <div class="main--content">
-            <h2 class="inner--heading">
-                <nav aria-label="You are here:" role="navigation">
-                    <ul class="breadcrumbs innerpage--breadcrumbs">
-                        <li><a href="#">Courses</a></li>
-                        <li><a href="#">CS5500 | Managing Software Development</a></li>
-                        <li>
-                            <span class="show-for-sr">Current: </span> Assignments
-                        </li>
-                    </ul>
-                </nav>
-            </h2>
+            <h2 class="inner--heading"> Courses</h2>
             <div class="row  data-equalizer" data-equalize-by-row="true" th:each="assignment : ${assignments}">
                 <div class="column large-4  add--course course--added data-equalizer-watch"  data-open="exampleModal1">
                     <div class="course--content">
-                        <div class="prompt--add">Click here to add a new course</div>
                         <div class="course--heading">
                             <div class="course--info"><span th:text="*{assignment.name}"/></div>
+                            <div class="block-options" th:if="${session.role} == 'instructor'">
+                                <i class="fa fa-edit edit-course-icon"
+                                   th:attr="data-assignmentId=*{assignment.assignmentId},
+                                            data-name=*{assignment.name},
+                                            data-threshold=*{assignment.threshold},
+                                            data-language=*{assignment.language},
+                                            data-due=*{assignment.due},
+                                            data-courseId=*{assignment.courseId}"></i>
+                                <i class="fa fa-trash delete-course-icon"
+                                   th:attr="data-assignmentId=${assignment.assignmentId}"></i>
+                            </div>
                         </div>
                         <div class="course--details">
                             <div class="hw--info">
@@ -67,14 +62,166 @@
                                 <div th:if="${session.role} == 'instructor'">
                                     <a th:href="'/reports?assignmentId='+${assignment.assignmentId}"
                                        th:text= "'view all reports'" />
+
+                                    <div th:if="${session.role} == 'instructor'">
+                                        <p th:text="'Language :' + *{assignment.language}"/>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+            <div th:if="${session.role} == 'instructor'" id="create-assignment">
+                <div class="column large-4  add--course  data-equalizer-watch" data-open="exampleModal1">
+                    <div class="course--content">
+                        Click here to add a new assignment
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
+
 </div>
+
+
+
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<div th:if="${session.role} == 'instructor'">
+    <div id="add-assignment-dialog" title="Add new assignment">
+        <form id="addAssignment" action="#" th:action="@{/addAssignments}" th:object="${assignment}" method="post">
+            <p>Name:      <input type="text" th:field="*{name}" /></p>
+            <p>Due:       <input type="datetime-local" th:field="*{due}" /></p>
+            <p>Threshold: <input type="text" th:field="*{threshold}" /></p>
+            <p>Language:  <select th:field="*{language}">
+                                <option value="java17">Java</option>
+                                <option value="python3">Python</option>
+                                <option value="c/c++">c/c++</option>
+                                <option value="c#-1.2">c#</option>
+                                <option value="scheme">scheme</option>
+                          </select>
+            </p>
+            <input type="hidden" th:field="*{courseId}" />
+        </form>
+    </div>
+    <div id="delete-assignment-dialog" title="Delete Assignment">
+        <p>All the submissions and information about the assignment will be deleted.
+            Do you want to continue?
+        </p>
+        <form th:action="@{/deleteAssignment}" id="deleteAssignment" th:object="${deleteAssignment}" method="post">
+            <input type="hidden" th:field="*{assignmentId}"/>
+        </form>
+    </div>
+    <div id="edit-assignment-dialog" title="Update assignment">
+        <form action="#" id="editAssignment" th:action="@{/editAssignment}" th:object="${editAssignment}" method="post">
+            <p>Name:      <input type="text" th:field="*{name}" /></p>
+            <p>Due:       <input type="datetime-local" th:field="*{due}" /></p>
+            <p>Threshold: <input type="text" th:field="*{threshold}" /></p>
+            <p>Language:  <select th:field="*{language}">
+                <option value="java17">Java</option>
+                <option value="python3">Python</option>
+                <option value="c/c++">c/c++</option>
+                <option value="c#-1.2">c#</option>
+                <option value="scheme">scheme</option>
+            </select>
+            </p>
+            <input type="hidden" th:field="*{courseId}" />
+            <input type="hidden" th:field="*{assignmentId}">
+        </form>
+    </div>
+    <script type="application/javascript">
+        function addAssignment() {
+            $("#addAssignment").submit();
+        }
+
+        function deleteAssignment() {
+            $("#deleteAssignment").submit();
+        }
+
+        function editAssignment() {
+            $("#editAssignment").submit();
+        }
+
+        dialog = $( "#add-assignment-dialog" ).dialog({
+            autoOpen: false,
+            height: 500,
+            width: 600,
+            modal: true,
+            dialogClass: "kitty-dialog",
+            resizable: false,
+            draggable: false,
+            buttons: {
+                "Add": addAssignment,
+                Cancel: function() {
+                    dialog.dialog( "close" );
+                }
+            },
+            open: function(event, ui) {
+                $(".ui-dialog-titlebar-close", ui.dialog | ui).hide();
+            }
+        });
+
+        deleteDialog = $( "#delete-assignment-dialog" ).dialog({
+            autoOpen: false,
+            height: 200,
+            width: 600,
+            modal: true,
+            dialogClass: "kitty-dialog",
+            resizable: false,
+            draggable: false,
+            buttons: {
+                "Delete": deleteAssignment,
+                Cancel: function() {
+                    deleteDialog.dialog( "close" );
+                }
+            },
+            open: function(event, ui) {
+                $(".ui-dialog-titlebar-close", ui.dialog | ui).hide();
+            }
+        });
+
+        editDialog = $( "#edit-assignment-dialog" ).dialog({
+            autoOpen: false,
+            height: 500,
+            width: 600,
+            modal: true,
+            dialogClass: "kitty-dialog",
+            resizable: false,
+            draggable: false,
+            buttons: {
+                "Update": editAssignment,
+                Cancel: function() {
+                    editDialog.dialog( "close" );
+                }
+            },
+            open: function(event, ui) {
+                $(".ui-dialog-titlebar-close", ui.dialog | ui).hide();
+            }
+        });
+
+        $( "#create-assignment" ).on( "click", function() {
+            dialog.dialog( "open" );
+        });
+
+        $(".delete-course-icon").on("click", function () {
+            $("#deleteAssignment [name='assignmentId']").val($(this).attr("data-assignmentId"));
+            deleteDialog.dialog("open");
+        });
+
+        $(".edit-course-icon").on("click", function () {
+            console.log("edit icon is pressed");
+            $("#editAssignment [name='assignmentId']").val($(this).attr("data-assignmentId"));
+            $("#editAssignment [name='name']").val($(this).attr("data-name"));
+            $("#editAssignment [name='courseId']").val($(this).attr("data-courseId"));
+            $("#editAssignment [name='threshold']").val($(this).attr("data-threshold"));
+            $("#editAssignment [name='due']").val($(this).attr("data-due"));
+            var language = $(this).attr("data-language");
+            $("#editAssignment [name='language'] option[value="+language+"]").attr("selected", "selected");
+            editDialog.dialog("open");
+        });
+
+    </script>
 </div>
 
 <footer>
@@ -93,7 +240,6 @@
     </div>
 </footer>
 
-<script src="node_modules/jquery/dist/jquery.js" type="application/javascript"></script>
 <script src="node_modules/what-input/dist/what-input.js" type="application/javascript"></script>
 <script src="node_modules/foundation-sites/dist/js/foundation.js" type="application/javascript"></script>
 <script src="static/js/app.js"></script>

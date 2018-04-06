@@ -77,7 +77,7 @@ public class CourseServiceTest {
         Mockito.when(courseRepository.save(Mockito.any(Course.class))).thenReturn(msd1);
         UpdateCourseResult found = courseService.createCourse(msd1);
         System.out.println(courseService.getCourseByCourseId("2"));
-        courseService.deleteCourse(msd1);
+        courseService.deleteCourse(msd1.getCourseId());
 
     }
 

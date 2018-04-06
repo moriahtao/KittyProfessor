@@ -40,11 +40,11 @@ public class AssignmentServiceTest {
     public void createAssignment() {
         Assignment assignment1 =  new Assignment();
         assignment1.setThreshold(70);
-        assignment1.setCourseID("CS5500");
+        assignment1.setCourseId("CS5500");
         assignment1.setName("structural patterns");
         assignmentRepository.save(assignment1);
         Mockito.when(assignmentRepository.save(Mockito.any(Assignment.class))).thenReturn(assignment1);
         UpdateAssignmentResult found = assignmentService.createAssignment(assignment1);
-        assignmentService.getAssignmentsForCourse(assignment1.getCourseID());
+        assignmentService.getAssignmentsForCourse(assignment1.getCourseId());
     }
 }
