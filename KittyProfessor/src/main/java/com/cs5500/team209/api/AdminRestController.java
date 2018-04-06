@@ -89,7 +89,7 @@ public class AdminRestController {
     public Object deleteUser(@PathVariable("username") String username, @RequestBody User user) {
         FetchUserResult oldUser = userService.getUserByUsername(username);
         if (oldUser != null){
-            userService.deleteUser(user);
+            userService.deleteUser(user.getUsername());
             return WebUtils.successMap("User deleted successfully.");
         }
         else{

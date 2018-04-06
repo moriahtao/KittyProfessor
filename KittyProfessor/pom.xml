@@ -28,7 +28,15 @@
              the same report, so that, it will give the cross-module code coverage. -->
 		<sonar.jacoco.itReportPath>${project.basedir}/../target/jacoco-it.exec</sonar.jacoco.itReportPath>
 		<sonar.groovy.binaries>target/classes</sonar.groovy.binaries>
+
+		<sonar.exclusions>
+			**/Parser.java, src/main/java/com/cs5500/team209/storage/*, src/main/java/com/cs5500/team209/controller/*, src/main/java/com/cs5500/team209/security/*
+		</sonar.exclusions>
+		<sonar.coverage.exclusions>
+			**/Parser.java, src/main/java/com/cs5500/team209/storage/*, src/main/java/com/cs5500/team209/controller/*, src/main/java/com/cs5500/team209/security/*
+		</sonar.coverage.exclusions>
 	</properties>
+
 
 	<dependencies>
 		<dependency>
@@ -118,6 +126,7 @@
 			</plugin>
 		</plugins>
 	</build>
+
 
 	<profiles>
 		<profile>

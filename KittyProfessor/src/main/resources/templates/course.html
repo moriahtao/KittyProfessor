@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+            <meta http-equiv="x-ua-compatible" content="ie=edge"/>
+            <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+            <title>New Course</title>
+            <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"/>
+            <link rel="stylesheet" href="css/app.css" type="text/css"/>
+            <link rel="stylesheet" href="css/options.css" type="text/css"/>
+            <link rel="stylesheet"
+                  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"/>
+</head>
+
+<body>
+
+<div class="top-bar row expanded" id="responsive-menu">
+    <div class="columns  large-7 large-offset-1 top-bar-left">
+        <ul class="dropdown menu data-dropdown-menu">
+            <li class="menu-text"><h2>Kitty Professor</h2></li>
+        </ul>
+    </div>
+    <div class="top-bar-right columns large-4">
+        <ul class="menu">
+            <li> <a href="#" class="logged--as" th:text="${session.userName}"/></li>
+            <li>
+            <form action="#" th:action = "@{/logout}" method = "post">
+                <input type="submit" name="logout" value="logout" class="button btn--primary right" />
+            </form></li>
+        </ul>
+    </div>
+</div>
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<div class="row">
+    <div class="columns">
+        <div class="main--content">
+            <h2 class="inner--heading"> Courses</h2>
+            <select name="term">
+                <option value="fall17">Fall 2017</option>
+                <option value="spring18" selected="selected">Spring 2018</option>
+            </select>
+            <div class="row  data-equalizer"  data-equalize-by-row="true">
+                <div class="column large-4  add--course course--added
+                data-equalizer-watch"  data-open="exampleModal1"
+                     th:each="course : ${courses}">
+                    <div class="course--content" th:attr="data-term=${course.term}">
+                        <div class="course--heading">
+                            <div class="course--info">
+                                <span th:text="${course.courseCode} + ' | ' + ${course.name}"/>
+                            </div>
+                            <div class="block-options">
+
+                                    <i class="fa fa-edit edit-course-icon"
+                                       th:attr="data-courseId=${course.courseId},
+                                       data-courseCode=${course.courseCode},
+                                       data-name=${course.name},
+                                       data-term=${course.term}"
+                                       th:if="${session.role} == 'instructor'">
+                                    </i>
+                                    <i class="fa fa-trash delete-course-icon"
+                                       th:attr="data-courseId=${course.courseId}"></i>
+                            </div>
+                        </div>
+                        <div class="course--details">
+                            <div class="hw--info">
+                                <a th:href="'/assignments?courseId='+${course.courseId}"
+                                   th:text= "${course.numAssignments} + ' Assignments'" />
+
+                                <a th:href="'/allStudents?courseId='+${course.courseId}" th:if="${session.role} == 'instructor'"
+                                   th:text="${course.numStudents} + ' Students'"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div th:if="${session.role} == 'instructor'" id="create-course" th:attr="data-term=${session.currentTerm}">
+                <div class="column large-4  add--course  data-equalizer-watch" data-open="exampleModal1">
+                    <div class="course--content">
+                        Click here to add a new course
+                    </div>
+                </div>
+            </div>
+            <div th:if="${session.role} == 'student'" id="join-course" th:attr="data-term=${session.currentTerm}">
+                <div class="column large-4  add--course  data-equalizer-watch" data-open="exampleModal1">
+                    <div class="course--content">
+                        Click here to join a new course
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div th:if="${session.role} == 'instructor'">
+        <div id="add-course-dialog" title="Add new course">
+            <form action="#" id="addCourse" th:action="@{/addcourses}" th:object="${course}" method="post">
+                <p>Course code: <input type="text" th:field="*{courseCode}" /></p>
+                <p>Name: <input type="text" th:field="*{name}" /></p>
+                <p>Term: <input type="text" value="spring18" disabled="true"/></p>
+            </form>
+        </div>
+
+        <div id="delete-dialog" title="Delete course">
+            <p>All the assignments and information about the course will be deleted.
+                Do you want to continue?
+            </p>
+            <form th:action="@{/deleteCourse}" id="deleteCourse" th:object="${deleteCourse}" method="post">
+                <input type="hidden" th:field="*{courseId}"/>
+            </form>
+        </div>
+
+        <div id="edit-dialog" title="Update course">
+            <form th:action="@{/editCourse}" id="editCourse" th:object="${editCourse}" method="post">
+                <p>Course code: <input type="text" th:field="*{courseCode}" /></p>
+                <p>Name: <input type="text" th:field="*{name}" /></p>
+                <p>Term: <input type="text" th:field="*{term}" /></p>
+                <input type="hidden" th:field="*{courseId}">
+            </form>
+        </div>
+        <script type="application/javascript">
+            function addCourse() {
+                $("#addCourse").submit();
+            }
+
+            function deleteCourse() {
+                $("#deleteCourse").submit();
+            }
+
+            function editCourse() {
+                $("#editCourse").submit();
+            }
+
+            dialog = $( "#add-course-dialog" ).dialog({
+                autoOpen: false,
+                height: 500,
+                width: 600,
+                modal: true,
+                dialogClass: "kitty-dialog",
+                resizable: false,
+                draggable: false,
+                buttons: {
+                    "Add": addCourse,
+                    Cancel: function() {
+                        dialog.dialog( "close" );
+                    }
+                },
+                open: function(event, ui) {
+                    $(".ui-dialog-titlebar-close", ui.dialog | ui).hide();
+                }
+            });
+
+            deleteDialog = $( "#delete-dialog" ).dialog({
+                autoOpen: false,
+                height: 200,
+                width: 600,
+                modal: true,
+                dialogClass: "kitty-dialog",
+                resizable: false,
+                draggable: false,
+                buttons: {
+                    "Delete": deleteCourse,
+                    Cancel: function() {
+                        deleteDialog.dialog( "close" );
+                    }
+                },
+                open: function(event, ui) {
+                    $(".ui-dialog-titlebar-close", ui.dialog | ui).hide();
+                }
+            });
+
+            editDialog = $( "#edit-dialog" ).dialog({
+                autoOpen: false,
+                height: 500,
+                width: 600,
+                modal: true,
+                dialogClass: "kitty-dialog",
+                resizable: false,
+                draggable: false,
+                buttons: {
+                    "Update": editCourse,
+                    Cancel: function() {
+                        editDialog.dialog( "close" );
+                    }
+                },
+                open: function(event, ui) {
+                    $(".ui-dialog-titlebar-close", ui.dialog | ui).hide();
+                }
+            });
+
+            $( "#create-course" ).on( "click", function() {
+                dialog.dialog( "open" );
+            });
+
+            $(".delete-course-icon").on("click", function () {
+                $("#deleteCourse [name='courseId']").val($(this).attr("data-courseId"));
+                deleteDialog.dialog("open");
+            });
+
+            $(".edit-course-icon").on("click", function () {
+                console.log("edit icon is pressed");
+                $("#editCourse [name='courseCode']").val($(this).attr("data-courseCode"));
+                $("#editCourse [name='name']").val($(this).attr("data-name"));
+                $("#editCourse [name='courseId']").val($(this).attr("data-courseId"));
+                $("#editCourse [name='term']").val($(this).attr("data-term"));
+                editDialog.dialog("open");
+            });
+
+
+        </script>
+    </div>
+
+    <!--For students-->
+    <div th:if="${session.role} == 'student'">
+
+        <div id="join-course-dialog">
+            <form action="#" id="joinCourse" th:action="@{/addCoursesStudent}" th:object="${studentCourse}" method="post">
+                <p>Select Course:
+                    <select th:field="${studentCourse.courseId}">
+                        <option th:each="course1 : ${leftCourses}"
+                                th:value="${course1.courseId}"
+                                th:utext="${course1.name}"/>
+                    </select>
+                </p>
+            </form>
+        </div>
+
+        <div id="drop-course-dialog" title="Drop course">
+            <p>All the assignments and information about the course will be deleted.
+                Do you want to continue?
+            </p>
+            <form th:action="@{/deleteStudentCourse}" id="deleteStudentCourse" th:object="${deleteStudentCourse}" method="post">
+                <input type="hidden" th:field="*{courseId}"/>
+            </form>
+        </div>
+
+        <script type="application/javascript">
+            function joinCourse() {
+                $("#joinCourse").submit();
+            }
+
+            function dropCourse() {
+                $("#deleteStudentCourse").submit();
+            }
+
+            joinDialog = $( "#join-course-dialog" ).dialog({
+                autoOpen: false,
+                height: 250,
+                width: 600,
+                modal: true,
+                dialogClass: "kitty-dialog",
+                resizable: false,
+                draggable: false,
+                buttons: {
+                    "Join": joinCourse,
+                    Cancel: function() {
+                        joinDialog.dialog( "close" );
+                    }
+                },
+                open: function(event, ui) {
+                    $(".ui-dialog-titlebar-close", ui.dialog | ui).hide();
+                }
+            });
+
+            dropDialog = $( "#drop-course-dialog" ).dialog({
+                autoOpen: false,
+                height: 200,
+                width: 600,
+                modal: true,
+                dialogClass: "kitty-dialog",
+                resizable: false,
+                draggable: false,
+                buttons: {
+                    "Delete": dropCourse,
+                    Cancel: function() {
+                        dropDialog.dialog( "close" );
+                    }
+                },
+                open: function(event, ui) {
+                    $(".ui-dialog-titlebar-close", ui.dialog | ui).hide();
+                }
+            });
+
+
+            $( "#join-course" ).on( "click", function() {
+                joinDialog.dialog( "open" );
+            });
+
+            $( ".delete-course-icon" ).on( "click", function() {
+                $("#deleteStudentCourse [name='courseId']").val($(this).attr('data-courseId'));
+                dropDialog.dialog( "open" );
+            });
+
+        </script>
+    </div>
+</div>
+
+
+<footer>
+    <div class="row expanded footer">
+        <div class="columns">
+            <div class="footer--links">
+                <a href="#">
+                    Feedback
+                </a>
+                <a href="">
+                    Contact us
+                </a>
+            </div>
+
+        </div>
+    </div>
+</footer>
+
+<script type="application/javascript">
+    /*$("[name='term']").on("change", function(){
+        $("[data-term]").hide();
+        $("[data-term="+$(this).val()+"]").show();
+    });*/
+</script>
+<script src="node_modules/what-input/dist/what-input.js" type="application/javascript"></script>
+<script src="node_modules/foundation-sites/dist/js/foundation.js" type="application/javascript"></script>
+<script src="static/js/app.js"></script>
+</body>
+<body>
+
+</body>
+</html>

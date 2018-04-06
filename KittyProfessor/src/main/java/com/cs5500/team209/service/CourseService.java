@@ -32,10 +32,14 @@ public class CourseService {
 
     /**
      * delete course
-     * @param course the id of the course to be deleted
+     * @param courseId the id of the course to be deleted
      */
-    public void deleteCourse(Course course) {
-        courseRepository.delete(course);
+    public void deleteCourse(String courseId) {
+        courseRepository.deleteById(courseId);
+    }
+
+    public void deleteCourseByUserName(String userName) {
+        courseRepository.deleteCourseByUserName(userName);
     }
 
     /**

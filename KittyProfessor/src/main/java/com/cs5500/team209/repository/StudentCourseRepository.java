@@ -1,6 +1,7 @@
 package com.cs5500.team209.repository;
 
 import com.cs5500.team209.model.Course;
+import com.cs5500.team209.model.StudentCourse;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.repository.query.Param;
 
@@ -11,15 +12,16 @@ import java.util.List;
  *
  * java repo for Course in mongodb Course table
  */
-public interface CourseRepository extends MongoRepository<Course, String> {
+public interface StudentCourseRepository extends MongoRepository<StudentCourse, String> {
     /**
      * find course by id
      * @param id the courseId for query
      * @return the course found
      */
-    Course findCourseByCourseId(@Param("courseId") String id);
+    StudentCourse findStudentCourseByStudentCourseId(@Param("studentCourseId") String id);
 
-    List<Course> findCourseByUserName(@Param("userName") String userName);
+    List<StudentCourse> findStudentCourseByCourseId(@Param("courseId") String id);
 
-    void deleteCourseByUserName(@Param("userName") String userName);
+    List<StudentCourse> findStudentCourseByUserName(@Param("userName") String userName);
+
 }
