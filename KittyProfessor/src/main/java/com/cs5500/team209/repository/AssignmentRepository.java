@@ -17,16 +17,16 @@ import java.util.List;
 public interface AssignmentRepository extends MongoRepository<Assignment, String> {
     /**
      * find assignments by courseId
-     * @param assignmentId the courseId for query
+     * @param courseId the courseId for query
      * @return the assignments found
      */
-    Assignment findAssignmentByAssignmentId(String assignmentId);
+
+    List<Assignment> findAssignmentsByCourseID(@Param("courseID") String courseId);
+
     /**
      * find assignment by id
-     * @param courseId the id for query
+     * @param assignmentId the id for query
      * @return the assignment found
      */
-    List<Assignment> findAssignmentsByCourseId(@Param("courseId") String courseId);
-    void deleteAssignmentByUserName(@Param("userName") String userName);
-
+    Assignment findAssignmentByAssignmentId(String assignmentId);
 }
