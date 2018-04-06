@@ -1,9 +1,5 @@
 package com.cs5500.team209.api;
 
-import com.amazonaws.regions.Regions;
-import com.amazonaws.services.simpleemail.AmazonSimpleEmailService;
-import com.amazonaws.services.simpleemail.AmazonSimpleEmailServiceClientBuilder;
-import com.amazonaws.services.simpleemail.model.*;
 import com.cs5500.team209.Driver;
 import com.cs5500.team209.model.User;
 import com.cs5500.team209.model.dto.FetchUserResult;
@@ -31,7 +27,6 @@ import org.springframework.web.context.WebApplicationContext;
 
 import static org.junit.Assert.*;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.*;
-import static sun.security.x509.X509CertInfo.SUBJECT;
 
 /**
  * Created by mengtao on 2/28/18.
@@ -175,4 +170,5 @@ public class AdminRestControllerTest {
         assertEquals("{\"data\":\"User deleted successfully.\",\"success\":true}", response.getContentAsString());
 
     }
+
 }

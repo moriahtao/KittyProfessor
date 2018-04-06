@@ -37,12 +37,6 @@ public class Driver implements CommandLineRunner {
 	private SubmissionRepository submissionRepository;
 
 	@Autowired
-	private StudentCourseRepository studentCourseRepository;
-
-	@Autowired
-	private ReportRepository reportRepository;
-
-	@Autowired
 	private RoleRepository roleRepository;
 
 	public static void main(String[] args) {
@@ -57,35 +51,31 @@ public class Driver implements CommandLineRunner {
 	@Override
 	public void run(String... args) throws Exception {
 
-		//Uncomment this to clean up db
+//		repository.deleteAll();
+//		courseRepository.deleteAll();
+//		assignmentRepository.deleteAll();
+//		roleRepository.deleteAll();
+//
+//		// save a couple of users
+//		roleRepository.save(new Role("ROLE_ADMIN"));
+//		roleRepository.save(new Role("ROLE_USER"));
+//		ArrayList<Role> aliceRoles = new ArrayList<>();
+//		aliceRoles.add(new Role("ROLE_ADMIN"));
+//		repository.save(new User("alice", "test123", aliceRoles, "admin"));
+//
+//
+//
+//		// fetch all users
+//		logger.info("Customers found with findAll():");
+//		logger.info("-------------------------------");
+//		for (User user : repository.findAll()) {
+//			logger.info(user);
+//		}
+//
+//		// fetch an individual user
+//		logger.info("Users found with findByUsername('alice'):");
+//		logger.info("--------------------------------");
+//		logger.info(repository.findByUsername("alice"));
 
-		repository.deleteAll();
-		courseRepository.deleteAll();
-		assignmentRepository.deleteAll();
-		roleRepository.deleteAll();
-		studentCourseRepository.deleteAll();
-		submissionRepository.deleteAll();
-		reportRepository.deleteAll();
-
-		// save a couple of users
-		roleRepository.save(new Role("ROLE_ADMIN"));
-		roleRepository.save(new Role("ROLE_USER"));
-		ArrayList<Role> aliceRoles = new ArrayList<>();
-		aliceRoles.add(new Role("ROLE_ADMIN"));
-		repository.save(new User("alice", "test123", aliceRoles, "admin"));
-
-
-		// fetch all users
-		System.out.println("Customers found with findAll():");
-		System.out.println("-------------------------------");
-		for (User user : repository.findAll()) {
-			System.out.println(user);
-		}
-		System.out.println();
-
-		// fetch an individual user
-		System.out.println("Users found with findByUsername('alice'):");
-		System.out.println("--------------------------------");
-		System.out.println(repository.findByUsername("alice"));
 	}
 }

@@ -51,10 +51,9 @@ public class UserService {
      * delete user
      * @param user the user to be deleted
      */
-    public void deleteUser(String username) {
-        userRepository.deleteById(username);
+    public void deleteUser(User user) {
+        userRepository.delete(user);
     }
-
 
     /**
      * get user by username
