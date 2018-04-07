@@ -28,7 +28,7 @@ public class FileSystemStorageService implements StorageService {
     }
 
     @Override
-    public void store(MultipartFile file, Path filePath) {
+    public void store(MultipartFile file, Path filePath, String fileName) {
         String filename = StringUtils.cleanPath(file.getOriginalFilename());
         try {
             if (file.isEmpty()) {
@@ -40,7 +40,7 @@ public class FileSystemStorageService implements StorageService {
                         "Cannot store file with relative path outside current directory "
                                 + filename);
             }
-            Files.copy(file.getInputStream(), filePath.resolve(filename),
+            Files.copy(file.getInputStream(), filePath.resolve(fileName),
                     StandardCopyOption.REPLACE_EXISTING);
         }
         catch (IOException e) {

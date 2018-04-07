@@ -32,6 +32,46 @@ public class SubmissionService {
     }
 
     /**
+     * find the specific submission
+     * @param id the query submission id
+     * @return the submission to be queried
+     */
+    public Submission getSubmissionById(String id) {
+        return submissionRepository.findSubmissionBySubmissionId(id);
+    }
+
+
+    /**
+     * add new file to one submission
+     * and store new file path
+     * @param filePath the path for the new file
+     * @param submission the submission to add file path
+     * @return the updated submission with new list of file paths
+     */
+    public UpdateSubmissionResult addFileToSubmission(String filePath, Submission submission) {
+        List<String> currentFiles = submission.getFilePaths();
+        currentFiles.add(filePath);
+        submission.setFilePaths(currentFiles);
+        return new UpdateSubmissionResult(submissionRepository.save(submission));
+    }
+
+    /**
+     * find all assignments for the course
+     * @return a list of assignments
+     */
+    public List<Submission> getSubmissionsForAssignment(String assignmentId, String username) {
+        return submissionRepository.findSubmissionsByCriteria(assignmentId, username);
+    }
+
+    public List<Submission> getOtherStudentSubmissions(String submissionId, String username) {
+        return submissionRepository.findOtherStudentSubmissions(submissionId, username);
+    }
+
+    public List<Submission> getSubmissionByUsername(String username) {
+        return submissionRepository.findSubmissionByUsername(username);
+    }
+
+    /**
      * validate submission having the required fields
      * @param submission the submission to be validated
      * @return the error messages if any
@@ -40,8 +80,7 @@ public class SubmissionService {
         List<String> errorMessages = new ArrayList<>();
         if (submission == null) {
             errorMessages.add("Assignment field can't be null.");
-        }
-        if (submission.getUser() == null) {
+        } else if (submission.getUsername().isEmpty()) {
             errorMessages.add("User field can't be null.");
         }
         return errorMessages;

@@ -1,7 +1,6 @@
 package com.cs5500.team209.model;
 
-import org.springframework.data.annotation.*;
-import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.annotation.Id;
 
 import java.util.ArrayList;
 import java.util.List;

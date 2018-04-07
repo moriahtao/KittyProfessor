@@ -5,6 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Log in</title>
     <link type="text/css" href="css/app.css" rel="stylesheet"/>
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"/>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"/>
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
   </head>
   <body>
 
@@ -35,7 +41,16 @@
             <div class="course--content">
               <div class="prompt--add">Click here to add a new course</div>
               <div class="course--heading">
-                <div class="course--info"><span th:text="*{user.username}"/></div>
+                <div class="course--info">
+                  <span th:text="*{user.username}"/>
+                </div>
+                <div class="block-options" >
+                  <i class="fa fa-edit edit-user-icon"
+                     th:attr="data-username=*{user.username},
+                     data-role=*{user.joinAs}"></i>
+                  <i class="fa fa-trash delete-user-icon"
+                     th:attr="data-username=*{user.username}"></i>
+                </div>
               </div>
               <div class="course--details">
                 <div class="hw--info">
@@ -48,8 +63,86 @@
       </div>
     </div>
   </div>
+  <div id="edit-user-dialog" title="Change user role">
+    <form id="editUser" action="#" th:action="@{/editUser}" th:object="${editUser}" method="post">
+      <p>Name:      <input type="text" th:field="*{username}" /></p>
 
-  <footer>
+      <p>Role:      <select th:field="*{joinAs}" name="joinAs">
+                      <option value="instructor" >Instructor</option>
+                      <option value="student">Student</option>
+                    </select>
+      </p>
+    </form>
+  </div>
+  <div id="delete-user-dialog" title="Delete Assignment">
+    <p>All the information about this user will be deleted.
+      Do you want to continue?
+    </p>
+    <form th:action="@{/deleteUser}" id="deleteUser" th:object="${deleteUser}" method="post">
+      <input type="hidden" th:field="*{username}"/>
+    </form>
+  </div>
+
+  <script type="application/javascript">
+      function editUser() {
+          $("#editUser").submit();
+      }
+
+      function deleteUser() {
+          $("#deleteUser").submit();
+      }
+
+      deleteDialog = $( "#delete-user-dialog" ).dialog({
+          autoOpen: false,
+          height: 200,
+          width: 600,
+          modal: true,
+          dialogClass: "kitty-dialog",
+          resizable: false,
+          draggable: false,
+          buttons: {
+              "Delete": deleteUser,
+              Cancel: function() {
+                  deleteDialog.dialog( "close" );
+              }
+          },
+          open: function(event, ui) {
+              $(".ui-dialog-titlebar-close", ui.dialog | ui).hide();
+          }
+      });
+
+      editDialog = $( "#edit-user-dialog" ).dialog({
+          autoOpen: false,
+          height: 500,
+          width: 600,
+          modal: true,
+          dialogClass: "kitty-dialog",
+          resizable: false,
+          draggable: false,
+          buttons: {
+              "Update": editUser,
+              Cancel: function() {
+                  editDialog.dialog( "close" );
+              }
+          },
+          open: function(event, ui) {
+              $(".ui-dialog-titlebar-close", ui.dialog | ui).hide();
+          }
+      });
+      $(".edit-user-icon").on("click", function() {
+          $("#editUser [name='username']").val($(this).attr("data-username"));
+          $("#editUser [name='joinAs'] option[value="+$(this).attr("data-role")+"]").attr("selected", "selected");
+          editDialog.dialog("open");
+      });
+
+      $(".delete-user-icon").on("click", function() {
+          $("#deleteUser [name='username']").val($(this).attr("data-username"));
+          deleteDialog.dialog("open");
+      });
+
+  </script>
+
+      <footer>
   <div class="row expanded footer">
     <div class="columns">
       <div class="footer--links">

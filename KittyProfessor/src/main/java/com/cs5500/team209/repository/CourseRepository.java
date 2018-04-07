@@ -20,4 +20,6 @@ public interface CourseRepository extends MongoRepository<Course, String> {
     Course findCourseByCourseId(@Param("courseId") String id);
 
     List<Course> findCourseByUserName(@Param("userName") String userName);
+
+    void deleteCourseByUserName(@Param("userName") String userName);
 }

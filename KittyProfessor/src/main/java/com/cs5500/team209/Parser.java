@@ -1,9 +1,13 @@
 package com.cs5500.team209;
 
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.PutObjectRequest;
 import jplag.ExitException;
 import jplag.Program;
 import jplag.options.CommandLineOptions;
-//import org.apache.log4j.Logger;
+import org.apache.log4j.Logger;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
@@ -11,25 +15,25 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.logging.Logger;
 
 /**
  * Created by mengtao on 3/23/18.
  */
 public class Parser {
-    //final static Logger logger = Logger.getLogger(Parser.class);
-    public static void parse() throws IOException {
+    final static Logger logger = Logger.getLogger(Parser.class);
+    final static AmazonS3 s3 = AmazonS3ClientBuilder.standard().withRegion("us-east-1").build();
+    public static double parse(String reportFilePath) throws IOException {
 
         try {
             String[] input = new String[]{"-l", "c/c++", "-r", "result", "exercise1"};
             CommandLineOptions options = new CommandLineOptions(input, null);
             Program program = new Program(options);
 
-            System.out.println("initialize ok");
+            logger.info("initialize ok");
             program.run();
         }
         catch(ExitException ex) {
-            System.out.println("Error: "+ex.getReport());
+            logger.info("Error: "+ex.getReport());
             System.exit(1);
         }
 
@@ -46,9 +50,9 @@ public class Parser {
 
         Document student2CodePage = Jsoup.parse(new File(student2Path), "utf-8");
         String student2Code = student2CodePage.select("pre").html();
-        File file = new File("src/main/resources/static/full-result.html");
+        File file = new File(reportFilePath);
 
-        //logger.info("This is info" + percentage);
+        logger.info("This is info" + percentage);
 
         String newdata =
                 "<html>" +
@@ -132,15 +136,20 @@ public class Parser {
                 "</body>\n" +
                 "</html>";
 
-        BufferedWriter writer = null;
+        BufferedWriter writer = new BufferedWriter(new FileWriter(file));
         try{
-            writer = new BufferedWriter(new FileWriter(file));
             writer.write( newdata );
+
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.warn(e);
         } finally {
             writer.close();
         }
+        ObjectMetadata metadata = new ObjectMetadata();
+        metadata.setContentType("text/html");
+        s3.putObject(new PutObjectRequest("kittyprofessor",
+                file.getName(), file).withMetadata(metadata));
+        return Double.parseDouble(percentage.split("%")[0]);
 
     }
 }

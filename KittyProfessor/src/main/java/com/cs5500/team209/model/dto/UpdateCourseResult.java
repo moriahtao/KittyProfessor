@@ -1,7 +1,6 @@
 package com.cs5500.team209.model.dto;
 
 import com.cs5500.team209.model.Course;
-import com.cs5500.team209.model.User;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,6 +1,5 @@
 package com.cs5500.team209.service;
 
-import com.cs5500.team209.model.Role;
 import com.cs5500.team209.model.User;
 import com.cs5500.team209.model.dto.FetchUserResult;
 import com.cs5500.team209.model.dto.UpdateUserResult;
@@ -33,27 +32,18 @@ public class UserService {
      * @return the Spring Security
      */
     public UpdateUserResult createUser(User user) {
-        List<String> errorMessages = validateUser(user);
-        if (errorMessages == null || errorMessages.isEmpty()) {
-            if (user.getRoles() == null || user.getRoles().isEmpty()) {
-                List<Role> roles = new ArrayList<>();
-                roles.add(new Role("ROLE_USER"));
-                user.setRoles(roles);
-            }
             User createdUser = userRepository.save(user);
             return new UpdateUserResult(createdUser);
-        } else {
-            return new UpdateUserResult(errorMessages);
-        }
     }
 
     /**
      * delete user
      * @param user the user to be deleted
      */
-    public void deleteUser(User user) {
-        userRepository.delete(user);
+    public void deleteUser(String username) {
+        userRepository.deleteById(username);
     }
+
 
     /**
      * get user by username
