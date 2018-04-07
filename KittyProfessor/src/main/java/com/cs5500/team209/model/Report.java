@@ -2,8 +2,6 @@ package com.cs5500.team209.model;
 
 import org.springframework.data.annotation.Id;
 
-import java.util.List;
-
 /**
  * Created by mengtao on 4/3/18.
  */

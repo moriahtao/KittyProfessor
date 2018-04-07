@@ -1,6 +1,5 @@
 package com.cs5500.team209.repository;
 
-import com.cs5500.team209.model.Assignment;
 import com.cs5500.team209.model.Submission;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;

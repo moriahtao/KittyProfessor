@@ -4,15 +4,16 @@ import com.amazonaws.regions.Regions;
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailService;
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailServiceClientBuilder;
 import com.amazonaws.services.simpleemail.model.*;
-import com.cs5500.team209.model.*;
+import com.cs5500.team209.model.Assignment;
+import com.cs5500.team209.model.Course;
+import com.cs5500.team209.model.Login;
+import com.cs5500.team209.model.User;
 import com.cs5500.team209.model.dto.FetchUserResult;
-
-import org.apache.log4j.Logger;
 import com.cs5500.team209.service.AssignmentService;
 import com.cs5500.team209.service.CourseService;
 import com.cs5500.team209.service.StudentCourseService;
 import com.cs5500.team209.service.UserService;
-
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.security.core.Authentication;
@@ -26,9 +27,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
-
-import java.util.*;
+import java.util.Set;
 
 import static sun.security.x509.X509CertInfo.SUBJECT;
 

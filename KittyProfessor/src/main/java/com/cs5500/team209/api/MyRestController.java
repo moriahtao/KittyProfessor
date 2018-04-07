@@ -1,14 +1,16 @@
 package com.cs5500.team209.api;
 
-import com.cs5500.team209.repository.UserRepository;
 import com.cs5500.team209.WebUtils;
+import com.cs5500.team209.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 
-import static org.springframework.web.bind.annotation.RequestMethod.*;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 /**
  * Created by mengtao on 2/20/18.

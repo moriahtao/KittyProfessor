@@ -1,7 +1,6 @@
 package com.cs5500.team209.model.dto;
 
 import com.cs5500.team209.model.Assignment;
-import com.cs5500.team209.model.Course;
 
 import java.util.ArrayList;
 import java.util.List;

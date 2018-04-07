@@ -5,13 +5,17 @@ import com.amazonaws.services.simpleemail.AmazonSimpleEmailService;
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailServiceClientBuilder;
 import com.amazonaws.services.simpleemail.model.*;
 import com.cs5500.team209.Parser;
-
-import com.cs5500.team209.model.*;
+import com.cs5500.team209.model.Assignment;
+import com.cs5500.team209.model.Course;
+import com.cs5500.team209.model.Submission;
+import com.cs5500.team209.model.User;
 import com.cs5500.team209.model.dto.ReportDisplay;
 import com.cs5500.team209.model.dto.UpdateSubmissionResult;
-import com.cs5500.team209.service.*;
+import com.cs5500.team209.service.AssignmentService;
+import com.cs5500.team209.service.CourseService;
+import com.cs5500.team209.service.SubmissionService;
+import com.cs5500.team209.service.UserService;
 import com.cs5500.team209.storage.StorageService;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
@@ -32,9 +36,6 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-import java.util.zip.ZipInputStream;
-
-import static sun.security.x509.X509CertInfo.SUBJECT;
 
 /**
  * Created by mengtao on 4/4/18.

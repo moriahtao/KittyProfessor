@@ -26,10 +26,12 @@
     </div>
 </div>
 
-<div th:if="${session.role} == 'student'">
-<form id="submission-form" action="#" th:action="@{/addSubmissions}" th:object="${submission}" method="post">
-    <input type="hidden" th:field="*{assignmentId}" />
-    <input type="hidden" th:field="*{submissionNum}" />
+<div th:if="${session.role} == 'instructor'">
+<form action="#" th:action="@{/addAssignments}" th:object="${assignment}" method="post">
+    <p>Name:      <input type="text" th:field="*{name}" /></p>
+    <p>Due:       <input type="datetime-local" th:field="*{due}" /></p>
+    <p>Threshold: <input type="text" th:field="*{threshold}" /></p>
+    <input type="hidden" th:field="*{courseID}" />
     <p><input type="submit" value="Submit" /> <input type="reset" value="Reset" /></p>
 </form>
 </div>
@@ -43,24 +45,23 @@
                         <li><a href="#">Courses</a></li>
                         <li><a href="#">CS5500 | Managing Software Development</a></li>
                         <li>
-                            <span class="show-for-sr">Current: </span> Submissions
+                            <span class="show-for-sr">Current: </span> Assignments
                         </li>
                     </ul>
                 </nav>
             </h2>
-            <div class="row  data-equalizer" data-equalize-by-row="true" th:each="submission : ${submissions}">
+            <div class="row  data-equalizer" data-equalize-by-row="true" th:each="assignment : ${assignments}">
                 <div class="column large-4  add--course course--added data-equalizer-watch"  data-open="exampleModal1">
                     <div class="course--content">
                         <div class="prompt--add">Click here to add a new course</div>
                         <div class="course--heading">
-                            <div class="course--info"><span th:text="*{submission.submissionNum}"/></div>
+                            <div class="course--info"><span th:text="*{assignment.name}"/></div>
                         </div>
                         <div class="course--details">
                             <div class="hw--info">
+                                <p th:text="'Due :' + *{assignment.due}"/>
                                 <div th:if="${session.role} == 'student'">
-                                    <div><span th:text="*{submission.submissionNum}"/></div>
-                                    <form method="POST" enctype="multipart/form-data" action="#" th:action="@{/upload}">
-                                        <input type="hidden" name="submissionId" th:value="*{submission.submissionId}"/>
+                                    <form method="POST" enctype="multipart/form-data" action="/upload">
                                         <input type="file" name="file" />
                                         <input type="submit" value="Upload" />
                                     </form>
@@ -90,23 +91,9 @@
     </div>
 </footer>
 
-<script src="https://code.jquery.com/jquery-3.3.1.min.js"
-        integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
-        crossorigin="anonymous"></script>
-<script type="application/javascript">
-    $("#submission-form").submit(function(e){
-        e.preventDefault();
-        var url = $(this).attr('action');
-        var data = $(this).serialize();
-        $.ajax({
-            url: url,
-            type: "post",
-            data: data,
-            success: function(){
-                location.reload();
-            }
-        });
-    })
-</script>
+<script src="node_modules/jquery/dist/jquery.js" type="application/javascript"></script>
+<script src="node_modules/what-input/dist/what-input.js" type="application/javascript"></script>
+<script src="node_modules/foundation-sites/dist/js/foundation.js" type="application/javascript"></script>
+<script src="static/js/app.js"></script>
 </body>
 </html>
