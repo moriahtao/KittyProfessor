@@ -1,0 +1,295 @@
+<html><head><title>Results</title><link rel="stylesheet" href="/css/app.css"></head><div class="row expanded">
+    <div class="columns">
+        <div class="main--content">
+            <h2 class="inner--heading">
+                <nav aria-label="You are here:" role="navigation">
+                    <ul class="breadcrumbs innerpage--breadcrumbs">
+                        <li><a href="#">Courses</a></li>
+                        <li><a href="#">CS5500 | Managing Software Development</a></li>
+                        <li><a href="#">Assignemnts</a></li>
+                        <li><a href="#">Homework1 | Working with git</a></li>
+                        <li><a href="#">Student Report</a></li>
+                        <li>
+                            <span class="show-for-sr">Current: </span> Complete Report
+                        </li>
+                    </ul>
+                </nav>
+            </h2>
+            <div class="row expanded">
+                <div class="columns large-4">
+                    <div class="similarity-percent">
+                        <h1><span>83.0%</span></h1>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="columns large-5 generate--report">
+                    <a href=""><button class=" button btn--primary right">Generate Report</button></a>
+                </div>
+            </div>
+
+            <div class="row expanded comparison--report">
+                <div class="columns">
+                    <div class="student-code">
+
+<pre>/*
+ * file:        image.c
+ * description: skeleton code for CS 5600 Homework 2
+ *
+ * Peter Desnoyers, Northeastern Computer Science, 2011
+ * $Id: image.c 421 2011-11-15 12:45:06Z pjd $
+ */
+
+#define _XOPEN_SOURCE 600
+
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;string.h&gt;
+#include &lt;assert.h&gt;
+#include &lt;errno.h&gt;
+
+#include &lt;unistd.h&gt;
+#include &lt;fcntl.h&gt;
+#include &lt;sys/stat.h&gt;
+
+#include "blkdev.h"
+<a name="2"></a>
+#define IMAGE_DEV_MAGIC 0x12340001
+
+<font color="#77bfc7"><a href="javascript:ZweiFrames('match0-1.html#2',3,'match0-top.html#2',1)"><img SRC="forward.gif" ALT="other" BORDER="0" ALIGN="right"></a><b>struct image_dev { int magic; char *path; int fd; int nblks; }; int image_devs_open; /* used for debugging */ int image_test(struct blkdev *dev) { struct image_dev *im = dev-&gt;private; if (im-&gt;fd == -1) return E_UNAVAIL; else return 0; } /* The blkdev operations - num_blocks, read, write, and close. */ static int image_num_blocks(struct blkdev *dev) { <a name="3"></a> struct image_dev *im = dev-&gt;private; assert(im != NULL &amp;&amp; im-&gt;magic == IMAGE_DEV_MAGIC); return im-&gt;nblks;</b></font>
+<font color="#6cc417"><a href="javascript:ZweiFrames('match0-1.html#3',3,'match0-top.html#3',1)"><img SRC="forward.gif" ALT="other" BORDER="0" ALIGN="right"></a><b>} static int image_read(struct blkdev *dev, int offset, int len, void *buf) { struct image_dev *im = dev-&gt;private; assert(im-&gt;magic == IMAGE_DEV_MAGIC); /* to fail a disk we close its file descriptor and set it to -1 */ if (im-&gt;fd == -1) return E_UNAVAIL; if (offset &lt; 0 || offset+len &gt; im-&gt;nblks) return E_BADADDR; int result = pread(im-&gt;fd, buf, len*BLOCK_SIZE, offset*BLOCK_SIZE); /* Since I'm not asking for the code that calls this to handle * errors other than E_BADADDR and E_UNAVAIL, we report errors and * then exit. Since we already checked the address, this shouldn't * happen very often. */ if (result &lt; 0) { fprintf(stderr, "read error on %s: %s\n", im-&gt;path, strerror(errno)); assert(0); } if (result != len*BLOCK_SIZE) { fprintf(stderr, "short read on %s: %s\n", im-&gt;path, strerror(errno)); assert(0); } return SUCCESS; } static int image_write(struct blkdev * dev, int offset, int len, void *buf) { struct image_dev *im = dev-&gt;private; assert(im-&gt;magic == IMAGE_DEV_MAGIC); /* to fail a disk we close its file descriptor and set it to -1 */ if (im-&gt;fd == -1) return E_UNAVAIL; if (offset &lt; 0 || offset+len &gt; im-&gt;nblks) return E_BADADDR; int result = pwrite(im-&gt;fd, buf, len*BLOCK_SIZE, offset*BLOCK_SIZE); /* again, report the error and then exit with an assert */ if (result != len*BLOCK_SIZE) { fprintf(stderr, "write error on %s: %s\n", im-&gt;path, strerror(errno)); assert(0); } return SUCCESS; }</b></font>
+
+void image_close(struct blkdev *dev)
+{
+    struct image_dev *im = dev-&gt;private;
+    assert(im-&gt;magic == IMAGE_DEV_MAGIC);
+
+    if (im-&gt;fd != -1)
+        close(im-&gt;fd);
+    free(im-&gt;path);
+    free(im);
+    dev-&gt;private = NULL;        /* crash any attempts to access */
+    free(dev);
+    
+    image_devs_open--;   /* to find upper layers that don't close() */
+}
+
+struct blkdev_ops image_ops = {
+    .num_blocks = image_num_blocks,
+    .read = image_read,
+    .write = image_write,
+    .close = image_close
+};
+<a name="4"></a>
+/* create an image blkdev reading from a specified image file.
+ */
+<font color="#151b8d"><a href="javascript:ZweiFrames('match0-1.html#4',3,'match0-top.html#4',1)"><img SRC="forward.gif" ALT="other" BORDER="0" ALIGN="right"></a><b>struct blkdev *image_create(char *path) { struct blkdev *dev = malloc(sizeof(*dev)); struct image_dev *im = malloc(sizeof(*im)); if (dev == NULL || im == NULL) return NULL; im-&gt;path = strdup(path); /* save a copy for error reporting */ im-&gt;fd = open(path, O_RDWR); if (im-&gt;fd &lt; 0) { fprintf(stderr, "can't open image %s: %s\n", path, strerror(errno)); return NULL; } struct stat sb; if (fstat(im-&gt;fd, &amp;sb) &lt; 0) { fprintf(stderr, "can't access image %s: %s\n", path, strerror(errno)); return NULL; } /* print a warning if file is not a multiple of the block size - * this isn't a fatal error, as extra bytes beyond the last full * block will be ignored by read and write. */ if (sb.st_size % BLOCK_SIZE != 0) fprintf(stderr, "warning: file %s not a multiple of %d bytes\n", path, BLOCK_SIZE); im-&gt;nblks = sb.st_size / BLOCK_SIZE; im-&gt;magic = IMAGE_DEV_MAGIC; dev-&gt;private = im; dev-&gt;ops = &amp;image_ops; image_devs_open++; /* to find upper layers that don't close() */ return dev; }</b></font>
+
+/* force an image blkdev into failure. after this any further access
+ * to that device will return E_UNAVAIL.
+ */
+void image_fail(struct blkdev *dev)
+{
+    struct image_dev *im = dev-&gt;private;
+    assert(im-&gt;magic == IMAGE_DEV_MAGIC);
+
+    if (im-&gt;fd != -1)
+        close(im-&gt;fd);
+    im-&gt;fd = -1;
+}
+/*
+ * file:        qthread.c
+ * description: assignment - simple emulation of POSIX threads
+ * class:       CS 5600, Fall 2017
+ */
+
+/* a bunch of includes which will be useful */
+
+#include &lt;stdlib.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;string.h&gt;
+#include &lt;assert.h&gt;
+#include &lt;sys/time.h&gt;
+#include &lt;fcntl.h&gt;
+#include &lt;sys/select.h&gt;
+#include &lt;errno.h&gt;
+#include "qthread.h"
+
+<a name="0"></a>/* prototypes for stack.c and switch.s
+ * see source files for additional details
+ */
+<font color="#0000ff"><a href="javascript:ZweiFrames('match0-1.html#0',3,'match0-top.html#0',1)"><img SRC="forward.gif" ALT="other" BORDER="0" ALIGN="right"></a><b>extern void switch_to(void **location_for_old_sp, void *new_value); extern void *setup_stack(int *stack, void *func, void *arg1, void *arg2); /* qthread_start, qthread_create - see video for difference. * (function passed to qthread_create is allowed to return) */ qthread_t qthread_start(void (*f)(void*, void*), void *arg1, void *arg2); qthread_t qthread_create(void* (*f)(void*), void *arg1); /* see the video for description */ void schedule(void *save_location) { } /* qthread_run - run until the last thread exits */ void qthread_run(void); /* qthread_yield - yield to the next runnable thread. */ void qthread_yield(void); /* qthread_exit, qthread_join - exit argument is returned by * qthread_join. Note that join blocks if thread hasn't exited yet, * and may crash if thread doesn't exist. */ void qthread_exit(void *val); void *qthread_join(qthread_t thread); /* qthread_mutex_init/lock/unlock */ void qthread_mutex_init(qthread_mutex_t *mutex); void qthread_mutex_lock(qthread_mutex_t *mutex); void qthread_mutex_unlock(qthread_mutex_t *mutex); /* qthread_cond_init/wait/signal/broadcast */ void qthread_cond_init(qthread_cond_t *cond); void qthread_cond_wait(qthread_cond_t *cond, qthread_mutex_t *mutex); void qthread_cond_signal(qthread_cond_t *cond); void qthread_cond_broadcast(qthread_cond_t *cond); /* POSIX replacement API. These are all the functions (well, the ones * used by the sample application) that might block. * * If there are no runnable threads, your scheduler needs to block * waiting for one of these blocking functions to return. You should * probably do this using the select() system call, indicating all the * file descriptors that threads are blocked on, and with a timeout * for the earliest thread waiting in qthread_usleep() */ /* You'll need to tell time in order to implement qthread_usleep. * Here's an easy way to do it. */ static unsigned get_usecs(void) { struct timeval tv; gettimeofday(&amp;tv, NULL); return tv.tv_sec*1000000 + tv.tv_usec; }</b></font>
+
+<a name="1"></a>/* qthread_usleep - yield to next runnable thread, making arrangements
+ * to be put back on the active list after 'usecs' timeout. 
+ */
+<font color="#f63526"><a href="javascript:ZweiFrames('match0-1.html#1',3,'match0-top.html#1',1)"><img SRC="forward.gif" ALT="other" BORDER="0" ALIGN="right"></a><b>void qthread_usleep(long int usecs); /* make sure that the file descriptor is in non-blocking mode, try to * read from it, if you get -1 / EAGAIN then add it to the list of * file descriptors to go in the big scheduling 'select()' and switch * to another thread. */ ssize_t qthread_io(ssize_t (*op)(int, void*, size_t), int fd, void *buf, size_t len) { /* set non-blocking mode every time. If we added some more * wrappers we could set non-blocking mode from the beginning, but * this is a lot simpler (if less efficient). Do this for _write * and _accept, too. */ int val, tmp = fcntl(fd, F_GETFL, 0); fcntl(fd, F_SETFL, tmp | O_NONBLOCK); /* your code here */ } /* like read - make sure the descriptor is in non-blocking mode, check * if if there's anything there - if so, return it, otherwise save fd * and switch to another thread. Note that accept() counts as a 'read' * for the select call. */ int qthread_accept(int fd, struct sockaddr *addr, socklen_t *addrlen);</b></font>
+
+/* Like read, again. Note that this is an output, rather than an input
+ * - it can block if the network is slow, although it's not likely to
+ * in most of our testing.
+ */
+ssize_t qthread_write(int fd, void *buf, size_t len);</pre>                    </div>
+                </div>
+                <div class="columns ">
+                    <div class="student-code">
+
+<pre>/*
+ * file:        image.c
+ * description: skeleton code for CS 5600 Homework 2
+ *
+ * Peter Desnoyers, Northeastern Computer Science, 2011
+ * $Id: image.c 421 2011-11-15 12:45:06Z pjd $
+ */
+
+#define _XOPEN_SOURCE 600
+
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;string.h&gt;
+#include &lt;assert.h&gt;
+#include &lt;errno.h&gt;
+
+#include &lt;unistd.h&gt;
+#include &lt;fcntl.h&gt;
+#include &lt;sys/stat.h&gt;
+
+#include "blkdev.h"
+<a name="2"></a>
+#define IMAGE_DEV_MAGIC 0x12340001
+
+<font color="#77bfc7">
+ <div style="position:absolute;left:0">
+  <a href="javascript:ZweiFrames('match0-0.html#2',2,'match0-top.html#2',1)"><img SRC="back.gif" ALT="other" BORDER="0" ALIGN="left"></a>
+ </div><b>struct image_dev { int magic; char *path; int fd; int nblks; }; int image_devs_open; /* used for debugging */ int image_test(struct blkdev *dev) { struct image_dev *im = dev-&gt;private; if (im-&gt;fd == -1) return E_UNAVAIL; else return 0; } /* The blkdev operations - num_blocks, read, write, and close. */ static int image_num_blocks(struct blkdev *dev) { struct image_dev *im = dev-&gt;private; assert(im != NULL &amp;&amp; im-&gt;magic == IMAGE_DEV_MAGIC); return im-&gt;nblks;</b></font>
+}
+
+
+void image_close(struct blkdev *dev)
+{
+    struct image_dev *im = dev-&gt;private;
+    assert(im-&gt;magic == IMAGE_DEV_MAGIC);
+
+    if (im-&gt;fd != -1)
+        close(im-&gt;fd);
+    free(im-&gt;path);
+    free(im);
+    dev-&gt;private = NULL;        /* crash any attempts to access */
+<a name="3"></a>    free(dev);
+    
+    image_devs_open--;   /* to find upper layers that don't close() */
+<font color="#6cc417">
+ <div style="position:absolute;left:0">
+  <a href="javascript:ZweiFrames('match0-0.html#3',2,'match0-top.html#3',1)"><img SRC="back.gif" ALT="other" BORDER="0" ALIGN="left"></a>
+ </div><b>} static int image_read(struct blkdev *dev, int offset, int len, void *buf) { struct image_dev *im = dev-&gt;private; assert(im-&gt;magic == IMAGE_DEV_MAGIC); /* to fail a disk we close its file descriptor and set it to -1 */ if (im-&gt;fd == -1) return E_UNAVAIL; if (offset &lt; 0 || offset+len &gt; im-&gt;nblks) return E_BADADDR; int result = pread(im-&gt;fd, buf, len*BLOCK_SIZE, offset*BLOCK_SIZE); /* Since I'm not asking for the code that calls this to handle * errors other than E_BADADDR and E_UNAVAIL, we report errors and * then exit. Since we already checked the address, this shouldn't * happen very often. */ if (result &lt; 0) { fprintf(stderr, "read error on %s: %s\n", im-&gt;path, strerror(errno)); assert(0); } if (result != len*BLOCK_SIZE) { fprintf(stderr, "short read on %s: %s\n", im-&gt;path, strerror(errno)); assert(0); } return SUCCESS; } static int image_write(struct blkdev * dev, int offset, int len, void *buf) { struct image_dev *im = dev-&gt;private; assert(im-&gt;magic == IMAGE_DEV_MAGIC); /* to fail a disk we close its file descriptor and set it to -1 */ if (im-&gt;fd == -1) return E_UNAVAIL; if (offset &lt; 0 || offset+len &gt; im-&gt;nblks) return E_BADADDR; int result = pwrite(im-&gt;fd, buf, len*BLOCK_SIZE, offset*BLOCK_SIZE); /* again, report the error and then exit with an assert */ if (result != len*BLOCK_SIZE) { fprintf(stderr, "write error on %s: %s\n", im-&gt;path, strerror(errno)); assert(0); } return SUCCESS; <a name="4"></a>}</b></font>
+/* create an image blkdev reading from a specified image file.
+ */
+<font color="#151b8d">
+ <div style="position:absolute;left:0">
+  <a href="javascript:ZweiFrames('match0-0.html#4',2,'match0-top.html#4',1)"><img SRC="back.gif" ALT="other" BORDER="0" ALIGN="left"></a>
+ </div><b>struct blkdev *image_create(char *path) { struct blkdev *dev = malloc(sizeof(*dev)); struct image_dev *im = malloc(sizeof(*im)); if (dev == NULL || im == NULL) return NULL; im-&gt;path = strdup(path); /* save a copy for error reporting */ im-&gt;fd = open(path, O_RDWR); if (im-&gt;fd &lt; 0) { fprintf(stderr, "can't open image %s: %s\n", path, strerror(errno)); return NULL; } struct stat sb; if (fstat(im-&gt;fd, &amp;sb) &lt; 0) { fprintf(stderr, "can't access image %s: %s\n", path, strerror(errno)); return NULL; } /* print a warning if file is not a multiple of the block size - * this isn't a fatal error, as extra bytes beyond the last full * block will be ignored by read and write. */ if (sb.st_size % BLOCK_SIZE != 0) fprintf(stderr, "warning: file %s not a multiple of %d bytes\n", path, BLOCK_SIZE); im-&gt;nblks = sb.st_size / BLOCK_SIZE; im-&gt;magic = IMAGE_DEV_MAGIC; dev-&gt;private = im; dev-&gt;ops = &amp;image_ops; image_devs_open++; /* to find upper layers that don't close() */ return dev; }</b></font>
+
+
+struct blkdev_ops image_ops = {
+    .num_blocks = image_num_blocks,
+    .read = image_read,
+    .write = image_write,
+    .close = image_close
+};
+
+
+
+/* force an image blkdev into failure. after this any further access
+ * to that device will return E_UNAVAIL.
+ */
+void image_fail(struct blkdev *dev)
+{
+    struct image_dev *im = dev-&gt;private;
+    assert(im-&gt;magic == IMAGE_DEV_MAGIC);
+
+    if (im-&gt;fd != -1)
+        close(im-&gt;fd);
+    im-&gt;fd = -1;
+}
+/*
+ * file:        qthread.c
+ * description: assignment - simple emulation of POSIX threads
+ * class:       CS 5600, Fall 2017
+ */
+
+/* a bunch of includes which will be useful */
+
+#include &lt;stdlib.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;string.h&gt;
+#include &lt;assert.h&gt;
+#include &lt;sys/time.h&gt;
+#include &lt;fcntl.h&gt;
+#include &lt;sys/select.h&gt;
+#include &lt;errno.h&gt;
+#include "qthread.h"
+
+<a name="0"></a>/* prototypes for stack.c and switch.s
+ * see source files for additional details
+ */
+<font color="#0000ff">
+ <div style="position:absolute;left:0">
+  <a href="javascript:ZweiFrames('match0-0.html#0',2,'match0-top.html#0',1)"><img SRC="back.gif" ALT="other" BORDER="0" ALIGN="left"></a>
+ </div><b>extern void switch_to(void **location_for_old_sp, void *new_value); extern void *setup_stack(int *stack, void *func, void *arg1, void *arg2); /* qthread_start, qthread_create - see video for difference. * (function passed to qthread_create is allowed to return) */ qthread_t qthread_start(void (*f)(void*, void*), void *arg1, void *arg2); qthread_t qthread_create(void* (*f)(void*), void *arg1); /* see the video for description */ void schedule(void *save_location) { } /* qthread_run - run until the last thread exits */ void qthread_run(void); /* qthread_yield - yield to the next runnable thread. */ void qthread_yield(void); /* qthread_exit, qthread_join - exit argument is returned by * qthread_join. Note that join blocks if thread hasn't exited yet, * and may crash if thread doesn't exist. */ void qthread_exit(void *val); void *qthread_join(qthread_t thread); /* qthread_mutex_init/lock/unlock */ void qthread_mutex_init(qthread_mutex_t *mutex); void qthread_mutex_lock(qthread_mutex_t *mutex); void qthread_mutex_unlock(qthread_mutex_t *mutex); /* qthread_cond_init/wait/signal/broadcast */ void qthread_cond_init(qthread_cond_t *cond); void qthread_cond_wait(qthread_cond_t *cond, qthread_mutex_t *mutex); void qthread_cond_signal(qthread_cond_t *cond); void qthread_cond_broadcast(qthread_cond_t *cond); /* POSIX replacement API. These are all the functions (well, the ones * used by the sample application) that might block. * * If there are no runnable threads, your scheduler needs to block * waiting for one of these blocking functions to return. You should * probably do this using the select() system call, indicating all the * file descriptors that threads are blocked on, and with a timeout * for the earliest thread waiting in qthread_usleep() */ /* You'll need to tell time in order to implement qthread_usleep. * Here's an easy way to do it. */ static unsigned get_usecs(void) { struct timeval tv; gettimeofday(&amp;tv, NULL); return tv.tv_sec*1000000 + tv.tv_usec; }</b></font>
+ssize_t qthread_write(int fd, void *buf, size_t len);
+<a name="1"></a>/* qthread_usleep - yield to next runnable thread, making arrangements
+ * to be put back on the active list after 'usecs' timeout. 
+ */
+<font color="#f63526">
+ <div style="position:absolute;left:0">
+  <a href="javascript:ZweiFrames('match0-0.html#1',2,'match0-top.html#1',1)"><img SRC="back.gif" ALT="other" BORDER="0" ALIGN="left"></a>
+ </div><b>void qthread_usleep(long int usecs); /* make sure that the file descriptor is in non-blocking mode, try to * read from it, if you get -1 / EAGAIN then add it to the list of * file descriptors to go in the big scheduling 'select()' and switch * to another thread. */ ssize_t qthread_io(ssize_t (*op)(int, void*, size_t), int fd, void *buf, size_t len) { /* set non-blocking mode every time. If we added some more * wrappers we could set non-blocking mode from the beginning, but * this is a lot simpler (if less efficient). Do this for _write * and _accept, too. */ int val, tmp = fcntl(fd, F_GETFL, 0); fcntl(fd, F_SETFL, tmp | O_NONBLOCK); /* your code here */ } ssize_t qthread_read(int fd, void *buf, size_t len);</b></font>
+
+/* like read - make sure the descriptor is in non-blocking mode, check
+ * if if there's anything there - if so, return it, otherwise save fd
+ * and switch to another thread. Note that accept() counts as a 'read'
+ * for the select call.
+ */
+int qthread_accept(int fd, struct sockaddr *addr, socklen_t *addrlen);
+
+/* Like read, again. Note that this is an output, rather than an input
+ * - it can block if the network is slow, although it's not likely to
+ * in most of our testing.
+ */</pre>                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="columns large-5 generate--report">
+                    <a href="mailto:student@example.com?Subject=Hello%20again"><button class=" button btn--primary right">Email Report</button></a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<footer>
+    <div class="row expanded footer">
+        <div class="columns">
+            <div class="footer--links">
+                <a href="#">
+                    Feedback
+                </a>
+                <a href="">
+                    Contact us
+                </a>
+            </div>
+
+        </div>
+    </div>
+</footer>
+
+<script src="/node_modules/jquery/dist/jquery.js"></script>
+<script src="/node_modules/what-input/dist/what-input.js"></script>
+<script src="/node_modules/foundation-sites/dist/js/foundation.js"></script>
+<script src="/js/app.js"></script>
+</body>
+</html>

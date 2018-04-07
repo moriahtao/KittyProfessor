@@ -90,9 +90,15 @@ public class KittyController {
     @PostMapping("/editUser")
     public String editUser(@ModelAttribute User editUser,
                            Model model) {
+        System.out.println("-----------------------");
+        System.out.println(editUser.getUsername());
+        System.out.println(editUser.getJoinAs());
+        System.out.println("-----------------------");
         FetchUserResult userResult = userService.getUserByUsername(editUser.getUsername());
-        User user = userResult.getUserList().get(0);
+        User user = userResult.getUser();
         user.setJoinAs(editUser.getJoinAs());
+
+        userService.createUser(user);
         userService.createUser(user);
 
         List<User> users = userService.getAllUsers();
@@ -243,7 +249,7 @@ public class KittyController {
                               Model model) {
         courseService.deleteCourse(deleteCourse.getCourseId());
         model.addAttribute("courses", courseService.getAllCourses(
-                (String) request.getAttribute("userName")));
+                (String) request.getSession().getAttribute("userName")));
         model.addAttribute("course", new Course());
         model.addAttribute("editCourse", new Course());
         model.addAttribute("deleteCourse", new Course());

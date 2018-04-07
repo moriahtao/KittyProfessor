@@ -63,7 +63,7 @@
                     </div>
                     <div class="row" th:each="report : ${reports}">
                         <div class="columns small-12 ">
-                            <a th:href="'/reports/'+ ${report.report.filePath}">
+                            <a href="'http://kittyprofessor.s3-website-us-east-1.amazonaws.com/'+${report.report.filePath}">
                                 <div class="row student-submission">
                                     <div class=" columns large-10">
                                         <span th:text="*{report.user1}"> </span>
@@ -78,7 +78,8 @@
                     </div>
                     <div class="row other-reports" th:each="report : ${otherReports}">
                         <div class="columns small-12 ">
-                            <a th:href="'/reports/'+ ${report.report.filePath}">
+                            <a
+                               th:href="'http://kittyprofessor.s3-website-us-east-1.amazonaws.com/'+${report.report.filePath}">
                                 <div class="row student-submission">
                                     <div class=" columns large-10">
                                         <span th:text="*{report.user1}"> </span>

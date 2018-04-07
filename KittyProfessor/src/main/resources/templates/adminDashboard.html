@@ -65,7 +65,7 @@
   </div>
   <div id="edit-user-dialog" title="Change user role">
     <form id="editUser" action="#" th:action="@{/editUser}" th:object="${editUser}" method="post">
-      <p>Name:      <input type="text" disabled="disabled" th:field="*{username}" /></p>
+      <p>Name:      <input type="text" th:field="*{username}" /></p>
 
       <p>Role:      <select th:field="*{joinAs}" name="joinAs">
                       <option value="instructor" >Instructor</option>
@@ -136,7 +136,7 @@
       });
 
       $(".delete-user-icon").on("click", function() {
-          $("#deleteUser [name='username']").val($(this).attr("username"));
+          $("#deleteUser [name='username']").val($(this).attr("data-username"));
           deleteDialog.dialog("open");
       });
 

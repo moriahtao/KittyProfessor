@@ -1,5 +1,10 @@
 package com.cs5500.team209;
 
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.PutObjectRequest;
 import jplag.ExitException;
 import jplag.Program;
 import jplag.options.CommandLineOptions;
@@ -7,16 +12,14 @@ import org.apache.log4j.Logger;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 
 /**
  * Created by mengtao on 3/23/18.
  */
 public class Parser {
     final static Logger logger = Logger.getLogger(Parser.class);
+    final static AmazonS3 s3 = AmazonS3ClientBuilder.defaultClient();
     public static double parse(String reportFilePath) throws IOException {
 
         try {
@@ -134,12 +137,16 @@ public class Parser {
         BufferedWriter writer = new BufferedWriter(new FileWriter(file));
         try{
             writer.write( newdata );
+
         } catch (IOException e) {
             logger.warn(e);
         } finally {
             writer.close();
         }
-
+        ObjectMetadata metadata = new ObjectMetadata();
+        metadata.setContentType("text/html");
+        s3.putObject(new PutObjectRequest("kittyprofessor",
+                file.getName(), file).withMetadata(metadata));
         return Double.parseDouble(percentage.split("%")[0]);
 
     }
