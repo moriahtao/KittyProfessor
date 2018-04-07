@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title><!doctype html>
+        <html class="no-js" lang="en">
+        <head>
+            <meta charset="utf-8">
+            <meta http-equiv="x-ua-compatible" content="ie=edge">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Submitted Assignment Prof</title>
+            <link rel="stylesheet" href="css/app.css">
+        </head>
+<body>
+
+<div class="top-bar row expanded" id="responsive-menu">
+    <div class="columns  large-7 large-offset-1 top-bar-left">
+        <ul class="dropdown menu data-dropdown-menu">
+            <li class="menu-text"><h2>Kitty Professor</h2></li>
+        </ul>
+    </div>
+    <div class="top-bar-right columns large-4">
+        <ul class="menu">
+            <li> <a href="#" class="logged--as" th:text="${session.userName}"/></li>
+            <li>
+                <form action="#" th:action = "@{/logout}" method = "post">
+                    <input type="submit" name="logout" value="logout" class="button btn--primary right" />
+                </form></li>
+        </ul>
+    </div>
+</div>
+
+<div class="row">
+    <div class="columns">
+        <div class="main--content">
+            <div class="row">
+                <div class="columns large-6 list--students ">
+                    <h2>The List of Students in this course</h2>
+                    <div class="row" th:each="student : ${students}">
+                        <div class="columns small-12 ">
+                            <a th:href="'/studentSubmissions?studentUsername='+ ${student}">
+                                <div class="row student-submission">
+                                    <div class=" columns large-10">
+                                        <span th:text="*{student}"> </span>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<footer>
+    <div class="row expanded footer">
+        <div class="columns">
+            <div class="footer--links">
+                <a href="#">
+                    Feedback
+                </a>
+                <a href="">
+                    Contact us
+                </a>
+            </div>
+
+        </div>
+    </div>
+</footer>
+
+<script src="node_modules/jquery/dist/jquery.js"></script>
+<script src="node_modules/what-input/dist/what-input.js"></script>
+<script src="node_modules/foundation-sites/dist/js/foundation.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
+</title>
+</head>
+<body>
+
+</body>
+</html>

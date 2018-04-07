@@ -5,6 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Log in</title>
     <link type="text/css" href="css/app.css" rel="stylesheet"/>
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"/>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"/>
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
   </head>
   <body>
 
@@ -35,7 +41,16 @@
             <div class="course--content">
               <div class="prompt--add">Click here to add a new course</div>
               <div class="course--heading">
-                <div class="course--info"><span th:text="*{user.username}"/></div>
+                <div class="course--info">
+                  <span th:text="*{user.username}"/>
+                </div>
+                <div class="block-options" >
+                  <i class="fa fa-edit edit-user-icon"
+                     th:attr="data-username=*{user.username},
+                     data-role=*{user.joinAs}"></i>
+                  <i class="fa fa-trash delete-user-icon"
+                     th:attr="data-username=*{user.username}"></i>
+                </div>
               </div>
               <div class="course--details">
                 <div class="hw--info">
@@ -48,7 +63,6 @@
       </div>
     </div>
   </div>
-<<<<<<< HEAD
   <div id="edit-user-dialog" title="Change user role">
     <form id="editUser" action="#" th:action="@{/editUser}" th:object="${editUser}" method="post">
       <p>Name:      <input type="text" th:field="*{username}" /></p>
@@ -127,10 +141,8 @@
       });
 
   </script>
-=======
->>>>>>> 92c6ebe844aa129de377fd05584842a417a2ffdd
 
-  <footer>
+      <footer>
   <div class="row expanded footer">
     <div class="columns">
       <div class="footer--links">

@@ -1,11 +1,8 @@
 package com.cs5500.team209.service;
 
 import com.cs5500.team209.model.Assignment;
-import com.cs5500.team209.model.Course;
 import com.cs5500.team209.model.dto.UpdateAssignmentResult;
-import com.cs5500.team209.model.dto.UpdateCourseResult;
 import com.cs5500.team209.repository.AssignmentRepository;
-import com.cs5500.team209.repository.CourseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -36,12 +33,24 @@ public class AssignmentService {
         }
     }
 
+    public Assignment getAssignmentById(String assignmentId) {
+        return assignmentRepository.findAssignmentByAssignmentId(assignmentId);
+    }
+
     /**
      * find all assignments for the course
      * @return a list of assignments
      */
     public List<Assignment> getAssignmentsForCourse(String courseId) {
-        return assignmentRepository.findAssignmentsByCourseID(courseId);
+        return assignmentRepository.findAssignmentsByCourseId(courseId);
+    }
+
+    public void deleteAssignment(String assignmentId) {
+        assignmentRepository.deleteById(assignmentId);
+    }
+
+    public void deleteAssignmentByUserName(String userName) {
+        assignmentRepository.deleteAssignmentByUserName(userName);
     }
 
     /**

@@ -17,8 +17,11 @@ public class RoleTest {
     @Test
     public void getRole() {
         Role role = new Role("ROLE_ADMIN");
+        Role role1 = new Role();
+        role1.setAuthority("ROLE_FACULTY");
         role.setAuthority("ROLE_USER");
         assertEquals("ROLE_USER", role.getAuthority());
+        assertEquals("ROLE_FACULTY", role1.getAuthority());
     }
 
 }
