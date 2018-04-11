@@ -22,10 +22,10 @@ import java.io.IOException;
 public class Parser {
     final static Logger logger = Logger.getLogger(Parser.class);
     final static AmazonS3 s3 = AmazonS3ClientBuilder.standard().withRegion("us-east-1").build();
-    public static double parse(String reportFilePath) throws IOException {
+    public static double parse(String reportFilePath, String language) throws IOException {
 
         try {
-            String[] input = new String[]{"-l", "c/c++", "-r", "result", "exercise1"};
+            String[] input = new String[]{"-l", language, "-r", "result", "exercise1"};
             CommandLineOptions options = new CommandLineOptions(input, null);
             Program program = new Program(options);
 
@@ -64,18 +64,6 @@ public class Parser {
                 "    <div class=\"columns\">\n" +
                 "        <div class=\"main--content\">\n" +
                 "            <h2 class=\"inner--heading\">\n" +
-                "                <nav aria-label=\"You are here:\" role=\"navigation\">\n" +
-                "                    <ul class=\"breadcrumbs innerpage--breadcrumbs\">\n" +
-                "                        <li><a href=\"#\">Courses</a></li>\n" +
-                "                        <li><a href=\"#\">CS5500 | Managing Software Development</a></li>\n" +
-                "                        <li><a href=\"#\">Assignemnts</a></li>\n" +
-                "                        <li><a href=\"#\">Homework1 | Working with git</a></li>\n" +
-                "                        <li><a href=\"#\">Student Report</a></li>\n" +
-                "                        <li>\n" +
-                "                            <span class=\"show-for-sr\">Current: </span> Complete Report\n" +
-                "                        </li>\n" +
-                "                    </ul>\n" +
-                "                </nav>\n" +
                 "            </h2>\n" +
                 "            <div class=\"row expanded\">\n" +
                 "                <div class=\"columns large-4\">\n" +

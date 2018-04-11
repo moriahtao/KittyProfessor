@@ -25,6 +25,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
@@ -61,7 +64,8 @@ public class SubmissionController {
     CourseService courseService;
 
     @GetMapping("/submissions")
-    public String getSubmissionList(HttpServletRequest request, @RequestParam("assignmentId") String assignmentId,
+    public String getSubmissionList(HttpServletRequest request,
+                                    @RequestParam("assignmentId") String assignmentId,
                                     Model model) {
         String username = (String) request.getSession().getAttribute("userName");
         List<Submission> submissionList = submissionService.getSubmissionsForAssignment(assignmentId, username);
@@ -82,9 +86,11 @@ public class SubmissionController {
         Assignment assignment = assignmentService.getAssignmentById(assignmentId);
         for (Report r: reportList) {
             ReportDisplay rDisplay = new ReportDisplay(r);
-            String username1 = submissionService.getSubmissionById(rDisplay.getReport().getSubmissionId1()).getUsername();
+            String username1 = submissionService.getSubmissionById(rDisplay.getReport()
+                    .getSubmissionId1()).getUsername();
             String email1 = userService.getUserByUsername(username1).getUser().getEmail();
-            String username2 = submissionService.getSubmissionById(rDisplay.getReport().getSubmissionId2()).getUsername();
+            String username2 = submissionService.getSubmissionById(rDisplay.getReport()
+                    .getSubmissionId2()).getUsername();
             String email2 = userService.getUserByUsername(username2).getUser().getEmail();
             rDisplay.setUser1(email1);
             rDisplay.setUser2(email2);
@@ -111,20 +117,60 @@ public class SubmissionController {
     }
 
     @PostMapping("/addSubmissions")
-    public String createSubmissionForAssignment(HttpServletRequest request, @ModelAttribute Submission submission,
+    public String createSubmissionForAssignment(HttpServletRequest request,
+                                                @ModelAttribute Submission submission,
                                                 Model model) {
         String username = (String) request.getSession().getAttribute("userName");
-        Submission submissionWithFields = new Submission(submission.getAssignmentId(), username, submission.getSubmissionNum());
+        Submission submissionWithFields = new Submission(submission.getAssignmentId(),
+                username, submission.getSubmissionNum());
         submissionService.createSubmission(submissionWithFields);
         return "submission";
     }
 
+    @PostMapping("/uploadZipFile")
+    public String uploadZipFile(HttpServletRequest request,
+                                @RequestParam("assignmentId") String assignmentId,
+                                @RequestParam("file") MultipartFile file,
+                                Model model) throws IOException {
+
+        String userName = (String) request.getSession().getAttribute("userName");
+        Assignment assignment = assignmentService.getAssignmentById(assignmentId);
+        Course course = courseService.getCourseByCourseId(assignment.getCourseId());
+        List<Submission> submissions = submissionService.getSubmissionsForAssignment
+                (assignmentId, userName);
+        int noSubmission = submissions.size() + 1;
+
+        assignmentService.createAssignment(assignment);
+        String courseId = course.getCourseId();
+        String instructor = course.getUserName();
+        String term = course.getTerm();
+        String path = "data/"+instructor+"/"+
+                term+"/"+courseId+"/"+assignmentId+"/"+userName+"/"+"s"+noSubmission;
+        Files.createDirectories(Paths.get(path));
+        storageService.store(file, Paths.get(path), file.getOriginalFilename());
+        model.addAttribute("assignments", assignmentService.getAssignmentsForCourse(courseId));
+        return "assignment";
+    }
+
     @PostMapping("/upload")
-    public String handleFileUpload(HttpServletRequest request, @RequestParam("submissionId") String submissionId,
+    public String handleFileUpload(HttpServletRequest request,
+                                   @RequestParam("submissionId") String submissionId,
                                    @RequestParam("file") MultipartFile file) throws IOException {
         String userName = (String) request.getSession().getAttribute("userName");
         Submission queriedSubmission = submissionService.getSubmissionById(submissionId);
+
+        String student = queriedSubmission.getUsername();
+        String assignmentId = queriedSubmission.getAssignmentId();
+        Course course = courseService.getCourseByCourseId(
+                assignmentService.getAssignmentById(assignmentId).getCourseId());
+        String courseId = course.getCourseId();
+        String instructor = course.getUserName();
+        String term = course.getTerm();
+        String path = "data/"+instructor+"/"+
+                term+"/"+courseId+"/"+assignmentId+"/"+student+"/"+submissionId;
+        // change into unique name
         if (queriedSubmission != null) {
+
             Files.createDirectories(Paths.get("data/"));
             // change into unique name
             String fileName = transformFileName(file.getOriginalFilename());
@@ -133,16 +179,15 @@ public class SubmissionController {
             UpdateSubmissionResult updateSubmissionResult =
                     submissionService.addFileToSubmission(currentFilePath, queriedSubmission);
             if (updateSubmissionResult.isSuccess()) {
-                //store
                 storageService.store(file, Paths.get("data/"), fileName);
-                compareSubmissions(currentFilePath, submissionId, queriedSubmission.getAssignmentId(), userName);
+                //compareSubmissions(currentFilePath, submissionId, queriedSubmission.getAssignmentId(), userName);
             } else {
                 logger.warn("updateSubmission fail");
             }
         } else {
             logger.warn("fetch submission fail");
         }
-        return "redirect:/";
+        return "assignment";
     }
 
     /**
@@ -152,11 +197,15 @@ public class SubmissionController {
      * @param userName the username of the student submitted
      * @throws IOException
      */
-    private void compareSubmissions(String submissionPath, String submissionId, String assignmentId, String userName) throws IOException {
+    private void compareSubmissions(String submissionPath,
+                                    String submissionId,
+                                    String assignmentId,
+                                    String userName) throws IOException {
         HashMap<String, String> submissionFileIdMap = new HashMap<>();
         // query: same assignmentId, different username
         List<Submission> otherSubmissions =
-                new ArrayList<>(submissionService.getOtherStudentSubmissions(assignmentId, userName));
+                submissionService.getOtherStudentSubmissions(assignmentId, userName);
+        String language = assignmentService.getAssignmentById(assignmentId).getLanguage();
         List<String> otherSubmissionFilePaths = new ArrayList<>();
         for (Submission s : otherSubmissions) {
             // one submission has at least one file
@@ -180,11 +229,11 @@ public class SubmissionController {
                 copyIntoPath(s, targetPath);
                 //extract
                 unzip(targetPath, targetFolder);
-                String reportPath = "dummy.html";
-                String transformedPath = transformFileName(reportPath);
+
+                String transformedPath = transformFileName("");
                 //String urlPath = "reports/" + transformedPath; //for web rendering
-                reportPath = "src/main/resources/static/reports/" + transformedPath; // for file storing
-                double score = Parser.parse(reportPath);
+                String reportPath = "src/main/resources/static/reports/" + transformedPath; // for file storing
+                double score = Parser.parse(reportPath, language);
                 // save compared report
                 reportService.createReport(new Report(assignmentId, submissionId, submissionFileIdMap.get(s),
                         transformedPath, score));
@@ -203,7 +252,7 @@ public class SubmissionController {
         }
     }
 
-    private String sendEmail(String to, String path) {
+    private void sendEmail(String to, String path) {
 
         String from = "report@kittyprofessor.com";
         String TEXTBODY = "Autogenerated email";
@@ -220,8 +269,6 @@ public class SubmissionController {
 
         AmazonSimpleEmailService client =
                 AmazonSimpleEmailServiceClientBuilder.standard()
-                        // Replace US_WEST_2 with the AWS Region you're using for
-                        // Amazon SES.
                         .withRegion(Regions.US_EAST_1).build();
         SendEmailRequest request = new SendEmailRequest()
                 .withDestination(
@@ -236,8 +283,6 @@ public class SubmissionController {
                 .withSource(from);
 
         client.sendEmail(request);
-        System.out.println("Email sent!");
-        return "";
     }
 
 
@@ -282,15 +327,9 @@ public class SubmissionController {
      * @param file the file for changing name
      * @return transformed name
      */
-    private String transformFileName(String file) {
+    private String transformFileName(String abc) {
         String fileName = UUID.randomUUID().toString();
-        String extension = "";
-
-        int i = file.lastIndexOf('.');
-        if (i > 0) {
-            extension = file.substring(i + 1);
-        }
-
+        String extension = "html";
         fileName = fileName + "." + extension;
         return fileName;
     }
@@ -320,8 +359,9 @@ public class SubmissionController {
     }
 
     @GetMapping("/allStudents")
-    public String getAllSubmissionList(HttpServletRequest request, @RequestParam("courseId") String courseId,
-                                    Model model) {
+    public String getAllSubmissionList(HttpServletRequest request,
+                                       @RequestParam("courseId") String courseId,
+                                        Model model) {
         List<StudentCourse> studentCourses = studentCourseService.getCourseByCourseId(courseId);
         List<String> studentList = new ArrayList<>();
         for(StudentCourse sc: studentCourses) {
@@ -334,11 +374,45 @@ public class SubmissionController {
 
 
     @GetMapping("/studentSubmissions")
-    public String getStudentSubmissionList(HttpServletRequest request, @RequestParam("studentUsername") String studentUsername,
+    public String getStudentSubmissionList(HttpServletRequest request,
+                                           @RequestParam("studentUsername") String studentUsername,
                                        Model model) {
         List<Submission> submissionList = submissionService.getSubmissionByUsername(studentUsername);
         model.addAttribute("submissions", submissionList);
 
         return "submission-list";
+    }
+
+    private static boolean isRedirected( Map<String, List<String>> header ) {
+        for( String hv : header.get( null )) {
+            if(   hv.contains( " 301 " )
+                    || hv.contains( " 302 " )) return true;
+        }
+        return false;
+    }
+
+    private void downloadFromExternalURL() throws IOException {
+        String link =
+                "http://github.com/downloads/TheHolyWaffle/ChampionHelper/" +
+                        "ChampionHelper-4.jar";
+        String            fileName = "ChampionHelper-4.jar";
+        URL url  = new URL( link );
+        HttpURLConnection http = (HttpURLConnection)url.openConnection();
+        Map< String, List< String >> header = http.getHeaderFields();
+        while( isRedirected( header )) {
+            link = header.get( "Location" ).get( 0 );
+            url    = new URL( link );
+            http   = (HttpURLConnection)url.openConnection();
+            header = http.getHeaderFields();
+        }
+        InputStream  input  = http.getInputStream();
+        byte[]       buffer = new byte[4096];
+        int          n      = -1;
+        OutputStream output = new FileOutputStream( new File( fileName ));
+        while ((n = input.read(buffer)) != -1) {
+            output.write( buffer, 0, n );
+        }
+        output.close();
+
     }
 }
