@@ -11,6 +11,7 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.junit.Assert.*;
@@ -45,6 +46,7 @@ public class MyUserDetailServiceTest {
         User alex = new User("alex", "1234", "admin");
         userRepository.save(alex);
         Mockito.when(userRepository.findByUsername(alex.getUsername())).thenReturn(alex);
+        Mockito.when(userRepository.findByUsername("bob")).thenReturn(null);
     }
 
     /**
@@ -57,4 +59,11 @@ public class MyUserDetailServiceTest {
         assertEquals(name, found.getUsername());
     }
 
+    /**
+     * should load user by username
+     */
+    @Test(expected = UsernameNotFoundException.class)
+    public void whenInvalidUsername_thenReturnNull() {
+        UserDetails found = myUserDetailService.loadUserByUsername("bob");
+    }
 }

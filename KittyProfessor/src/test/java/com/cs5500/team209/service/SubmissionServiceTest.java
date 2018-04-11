@@ -93,6 +93,19 @@ public class SubmissionServiceTest {
         assertEquals("alex", result.getSubmission().getUsername());
     }
 
+    /**
+     * should return user after successfully create user
+     */
+    @Test
+    public void wheninValidSubmission_thenSubmissionShouldBeFound() {
+        List<String> paths = new ArrayList<>();
+        paths.add("admin");
+        Submission submission = new Submission("1", "alex", paths);
+        submission.setUsername(null);
+        UpdateSubmissionResult result = submissionService.createSubmission(submission);
+        assertEquals(1, result.getErrorMessages().size());
+    }
+
 
     /**
      * should return user after successfully create user

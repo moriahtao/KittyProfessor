@@ -78,11 +78,8 @@ public class SubmissionService {
      */
     private List<String> validateSubmission(Submission submission) {
         List<String> errorMessages = new ArrayList<>();
-        if (submission == null) {
-            errorMessages.add("Assignment field can't be null.");
-        } else if (submission.getUsername().isEmpty()) {
-            errorMessages.add("User field can't be null.");
-        }
+        checkNull(errorMessages, submission.getAssignmentId(), "assignmentId");
+        checkNull(errorMessages, submission.getUsername(), "username");
         return errorMessages;
     }
 
