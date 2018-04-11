@@ -38,7 +38,7 @@ public class UserService {
 
     /**
      * delete user
-     * @param user the user to be deleted
+     * @param username the user to be deleted
      */
     public void deleteUser(String username) {
         userRepository.deleteById(username);
@@ -56,28 +56,5 @@ public class UserService {
 
     public List<User> getAllUsers(){
         return userRepository.findAll();
-    }
-    /**
-     * validate user having the required fields
-     * @param user the user to be validated
-     * @return the error messages if any
-     */
-    private List<String> validateUser(User user) {
-        List<String> errorMessages = new ArrayList<>();
-        checkNull(errorMessages, user.getPassword(), "Password");
-        checkNull(errorMessages, user.getUsername(), "Username");
-        return errorMessages;
-    }
-
-    /**
-     * check if fields are null
-     * @param errorMessages error msg
-     * @param value the value to be checked
-     * @param fieldName the field to be checked
-     */
-    private void checkNull(List<String> errorMessages, String value, String fieldName) {
-        if (StringUtils.isEmpty(value)) {
-            errorMessages.add(fieldName + " can't be null.");
-        }
     }
 }
