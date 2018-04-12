@@ -1,5 +1,14 @@
 package com.cs5500.team209;
 
+import com.amazonaws.AmazonServiceException;
+import com.amazonaws.event.ProgressEvent;
+import com.amazonaws.event.ProgressListener;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import com.amazonaws.services.s3.transfer.MultipleFileUpload;
+import com.amazonaws.services.s3.transfer.TransferManager;
+import com.amazonaws.services.s3.transfer.TransferManagerBuilder;
+import com.amazonaws.services.s3.transfer.Upload;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.junit.Test;
@@ -26,42 +35,12 @@ public class DemoApplicationTests {
 	public void contextLoads() {
 	}
 
-	private static boolean isRedirected( Map<String, List<String>> header ) {
-		for( String hv : header.get( null )) {
-			if(   hv.contains( " 301 " )
-					|| hv.contains( " 302 " )) return true;
-		}
-		return false;
-	}
-
 	@Test
-	public void run() throws IOException, GitAPIException {
-		String link =
-				"https://github.com/balarajv/CodeMirror";
-		Git.cloneRepository()
-				.setURI(link)
-				.setDirectory(Paths.get("data1/").toFile())
-				.call();
+	public void isRedirected(  ) throws InterruptedException {
 
-		String            fileName = "aws";
-		/*URL url  = new URL( link );
-		HttpURLConnection http = (HttpURLConnection)url.openConnection();
-		Map< String, List< String >> header = http.getHeaderFields();
-		while( isRedirected( header )) {
-			link = header.get( "Location" ).get( 0 );
-			url    = new URL( link );
-			http   = (HttpURLConnection)url.openConnection();
-			header = http.getHeaderFields();
-		}
-		InputStream input  = http.getInputStream();
-		byte[]       buffer = new byte[4096];
-		int          n      = -1;
-		OutputStream output = new FileOutputStream( new File( fileName ));
-		while ((n = input.read(buffer)) != -1) {
-			output.write( buffer, 0, n );
-		}
-		output.close();*/
+
+
+
 	}
-
 }
 

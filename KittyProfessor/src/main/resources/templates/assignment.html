@@ -58,7 +58,9 @@
                                 <div th:if="${session.role} == 'student'">
                                     <!--<a th:href="'/submissions?assignmentId='+${assignment.assignmentId}"
                                        th:text= "'submit your homework'" />-->
-                                    <a href="#" id="submit-your-ass"> Submit Assignment</a>
+                                    <a href="#" id="submit-your-ass"
+                                       th:attr="data-assignmentId=${assignment.assignmentId}">
+                                        Submit Assignment</a>
                                 </div>
                                 <div th:if="${session.role} == 'instructor'">
                                     <a th:href="'/reports?assignmentId='+${assignment.assignmentId}"
@@ -96,21 +98,17 @@
             <ul>
                 <li><a href="#zip-file">Zip file</a></li>
                 <li><a href="#github-url">Github URL</a></li>
-                <li><a href="#multiple-files">Multiple files</a></li>
             </ul>
             <div id="zip-file">
-                <form id="zip-file-form" th:action="@{/uploadZipFile}">
-                    <p>Zip file: <input id="file-upload" type="file"/></p>
+                <form id="zip-file-form" enctype="multipart/form-data" th:action="@{/uploadZipFile}" method="post">
+                    <p>Zip file: <input id="file-upload" type="file" name="file"/></p>
+                    <input type="hidden" name="assignmentId" />
                 </form>
             </div>
-            <div id="github-url" th:action="@{/uploadGithubURL}">
-                <form id="github-url-form">
-                    <p>Github URL:      <input type="text"  /></p>
-                </form>
-            </div>
-            <div id="multiple-files">
-                <form id="multiple-files-form">
-                    <p>File:      <input type="text"  /></p>
+            <div id="github-url" >
+                <form id="github-url-form" th:action="@{/uploadGithubURL}" method="post">
+                    <p>Github URL: <input type="text"  name="githubURL"/></p>
+                    <input type="hidden" name="assignmentId" />
                 </form>
             </div>
         </div>
@@ -118,7 +116,11 @@
 
     <script>
     function submitAssignmentForm() {
-
+        var tab = $("li.ui-tabs-active a").text();
+        if(tab == "Zip file") {
+            $("#zip-file-form").submit();
+        } else
+            $("#github-url-form").submit();
     }
 
     submitDialog = $( "#submit-assignment-dialog" ).dialog({
@@ -141,6 +143,7 @@
     });
 
     $("#submit-your-ass").on("click", function() {
+        $("[name=assignmentId]").val($(this).attr("data-assignmentId"));
         submitDialog.dialog("open");
     });
 

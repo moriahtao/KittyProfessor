@@ -88,10 +88,6 @@ public class KittyController {
     @PostMapping("/editUser")
     public String editUser(@ModelAttribute User editUser,
                            Model model) {
-        System.out.println("-----------------------");
-        System.out.println(editUser.getUsername());
-        System.out.println(editUser.getJoinAs());
-        System.out.println("-----------------------");
         FetchUserResult userResult = userService.getUserByUsername(editUser.getUsername());
         User user = userResult.getUser();
         user.setJoinAs(editUser.getJoinAs());
@@ -115,6 +111,7 @@ public class KittyController {
         return "adminDashboard";
     }
 
+
     @PostMapping("/deleteUser")
     public String deleteUser(@ModelAttribute User deleteUser,
                              Model model) {
@@ -134,41 +131,6 @@ public class KittyController {
         model.addAttribute("editUser", new User());
         model.addAttribute("deleteUser", new User());
         return "adminDashboard";
-    }
-
-    public String sendEmail(Model model) {
-        String to = "balarajv12@gmail.com";
-        String from = "report@kittyprofessor.com";
-        String TEXTBODY = "This is how we send email";
-
-        String BODY_HTML = "<html>"
-                + "<head></head>"
-                + "<body>"
-                + "<h1>Hello!</h1>"
-                + "<p>Please see the attached file for a "
-                + "list of customers to contact.</p>"
-                + "</body>"
-                + "</html>";
-
-        AmazonSimpleEmailService client =
-                AmazonSimpleEmailServiceClientBuilder.standard()
-                        // Replace US_WEST_2 with the AWS Region you're using for
-                        // Amazon SES.
-                        .withRegion(Regions.US_WEST_2).build();
-        SendEmailRequest request = new SendEmailRequest()
-                .withDestination(
-                        new Destination().withToAddresses(to))
-                .withMessage(new Message()
-                        .withBody(new Body()
-                                .withText(new Content().withCharset("UTF-8").withData(TEXTBODY)))
-
-                        .withSubject(new Content()
-                                .withCharset("UTF-8").withData(SUBJECT)))
-                .withSource(from);
-
-        client.sendEmail(request);
-        System.out.println("Email sent!");
-        return "";
     }
 
     @PostMapping("/courses")

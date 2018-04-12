@@ -49,9 +49,6 @@ public class SubmissionService {
      * @return the updated submission with new list of file paths
      */
     public UpdateSubmissionResult addFileToSubmission(String filePath, Submission submission) {
-        List<String> currentFiles = submission.getFilePaths();
-        currentFiles.add(filePath);
-        submission.setFilePaths(currentFiles);
         return new UpdateSubmissionResult(submissionRepository.save(submission));
     }
 

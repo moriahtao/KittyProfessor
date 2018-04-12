@@ -53,7 +53,7 @@ public class SubmissionServiceTest {
         List<String> paths = new ArrayList<>();
         List<Submission> submissionList = new ArrayList<>();
         paths.add("admin");
-        Submission submission = new Submission("1", "alex", paths);
+        Submission submission = new Submission("1", "alex", 1, "");
         submissionList.add(submission);
         submissionRepository.save(submission);
         Mockito.when(submissionRepository.findSubmissionBySubmissionId(submission.getSubmissionId())).thenReturn(submission);
@@ -88,7 +88,7 @@ public class SubmissionServiceTest {
     public void whenValidSubmission_thenSubmissionShouldBeFound() {
         List<String> paths = new ArrayList<>();
         paths.add("admin");
-        Submission submission = new Submission("1", "alex", paths);
+        Submission submission = new Submission("1", "alex", 1, "");
         UpdateSubmissionResult result = submissionService.createSubmission(submission);
         assertEquals("alex", result.getSubmission().getUsername());
     }
@@ -101,7 +101,7 @@ public class SubmissionServiceTest {
     public void whenValidUpdateSubmission_thenSubmissionShouldBeFound() {
         List<String> paths = new ArrayList<>();
         paths.add("admin");
-        Submission submission = new Submission("1", "alex", paths);
+        Submission submission = new Submission("1", "alex", 1, "");
         UpdateSubmissionResult result = submissionService.addFileToSubmission("admin", submission);
         assertEquals("alex", result.getSubmission().getUsername());
     }
@@ -113,7 +113,7 @@ public class SubmissionServiceTest {
     public void whenQuerySubmission_thenSubmissionShouldBeFound() {
         List<String> paths = new ArrayList<>();
         paths.add("admin");
-        Submission submission = new Submission("1", "alex", paths);
+        Submission submission = new Submission("1", "alex", 1, "");
         List<Submission> result = submissionService.getSubmissionByUsername("alex");
         assertEquals(1, result.size());
     }
