@@ -100,7 +100,7 @@ public class SubmissionServiceTest {
     public void wheninValidSubmission_thenSubmissionShouldBeFound() {
         List<String> paths = new ArrayList<>();
         paths.add("admin");
-        Submission submission = new Submission("1", "alex", paths);
+        Submission submission = new Submission("1", "alex", 1, "");
         submission.setUsername(null);
         UpdateSubmissionResult result = submissionService.createSubmission(submission);
         assertEquals(1, result.getErrorMessages().size());
