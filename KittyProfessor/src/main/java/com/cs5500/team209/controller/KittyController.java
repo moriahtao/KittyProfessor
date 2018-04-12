@@ -329,7 +329,8 @@ public class KittyController {
         if(role.equals("instructor")) {
             Assignment newAss = new Assignment();
             newAss.setCourseId(assignment.getCourseId());
-
+            model.addAttribute("courseName", course.getName());
+            model.addAttribute("courseCode", course.getCourseCode());
             model.addAttribute("assignment", newAss);
             model.addAttribute("editAssignment", new Assignment());
             model.addAttribute("deleteAssignment", new Assignment());
@@ -363,7 +364,12 @@ public class KittyController {
                 deleteAssignment.getCourseId());
 
         Assignment newAss = new Assignment();
-        newAss.setCourseId(newAss.getCourseId());
+        newAss.setCourseId(deleteAssignment.getCourseId());
+
+        Course course = courseService.getCourseByCourseId(
+                deleteAssignment.getCourseId());
+        course.setNumAssignments(course.getNumAssignments() -1);
+        courseService.createCourse(course);
 
         model.addAttribute("assignment", newAss);
         model.addAttribute("assignments", assignments);

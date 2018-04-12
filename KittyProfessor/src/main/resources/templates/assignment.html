@@ -59,7 +59,8 @@
                                             data-due=*{assignment.due},
                                             data-courseId=*{assignment.courseId}"></i>
                                 <i class="fa fa-trash delete-course-icon"
-                                   th:attr="data-assignmentId=${assignment.assignmentId}"></i>
+                                   th:attr="data-assignmentId=${assignment.assignmentId},
+                                            data-courseId=*{assignment.courseId}"></i>
                             </div>
                         </div>
                         <div class="course--details">
@@ -185,6 +186,7 @@
         </p>
         <form th:action="@{/deleteAssignment}" id="deleteAssignment" th:object="${deleteAssignment}" method="post">
             <input type="hidden" th:field="*{assignmentId}"/>
+            <input type="hidden" th:field="*{courseId}"/>
         </form>
     </div>
     <div id="edit-assignment-dialog" title="Update assignment">
@@ -280,6 +282,7 @@
 
         $(".delete-course-icon").on("click", function () {
             $("#deleteAssignment [name='assignmentId']").val($(this).attr("data-assignmentId"));
+            $("#deleteAssignment [name='courseId']").val($(this).attr("data-courseId"));
             deleteDialog.dialog("open");
         });
 
@@ -291,7 +294,7 @@
             $("#editAssignment [name='threshold']").val($(this).attr("data-threshold"));
             $("#editAssignment [name='due']").val($(this).attr("data-due"));
             var language = $(this).attr("data-language");
-            $("#editAssignment [name='language'] option[value="+language+"]").attr("selected", "selected");
+            $("#editAssignment [name='language'] option[value='"+language+"']").attr("selected", "selected");
             editDialog.dialog("open");
         });
 
