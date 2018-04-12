@@ -1,11 +1,18 @@
 package com.cs5500.team209.api;
 
+import com.amazonaws.regions.Regions;
+import com.amazonaws.services.simpleemail.AmazonSimpleEmailService;
+import com.amazonaws.services.simpleemail.AmazonSimpleEmailServiceClientBuilder;
+import com.amazonaws.services.simpleemail.model.*;
 import com.cs5500.team209.WebUtils;
+import com.cs5500.team209.controller.SubmissionController;
 import com.cs5500.team209.model.Course;
 import com.cs5500.team209.repository.UserRepository;
 import com.cs5500.team209.service.CourseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -64,6 +71,46 @@ public class MyRestController {
                      "</b></span><br>");
         }
         return str.toString();
+    }
+
+
+    @PostMapping("sendEmailStudent")
+    public String sendEmailStudent(@RequestParam("email1") String email1,
+                                   @RequestParam("email2") String email2,
+                                   @RequestParam("message") String message,
+                                   @RequestParam("filePath") String filePath) {
+        System.out.println(email1);
+        System.out.println(email2);
+        sendEmail(email1,email2, message, filePath);
+        return "student-report";
+    }
+
+    private void sendEmail(String email2,String email1, String message, String link) {
+
+        String html_body = "<html>"
+                + "<head></head>"
+                + "<body>"
+                + "<h3>"+message+"</h3>"
+                + "<a href="+link+">"+link+"</a>"+
+                "</body>"
+                + "</html>";
+
+
+        AmazonSimpleEmailService client =
+                AmazonSimpleEmailServiceClientBuilder.standard()
+                        .withRegion(Regions.US_EAST_1).build();
+        SendEmailRequest request = new SendEmailRequest()
+                .withDestination(
+                        new Destination().withToAddresses(email1)
+                                .withCcAddresses(email2))
+                .withMessage(new Message()
+                        .withBody(new Body().withHtml(new Content().withCharset("UTF-8")
+                                .withData(html_body.toString())))
+                        .withSubject(new Content()
+                                .withCharset("UTF-8").withData("report for assignment")))
+                .withSource("busted@kittyprofessor.com");
+
+        client.sendEmail(request);
     }
 
 }

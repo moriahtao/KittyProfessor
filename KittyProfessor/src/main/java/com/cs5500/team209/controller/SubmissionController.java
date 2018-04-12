@@ -100,13 +100,19 @@ public class SubmissionController {
                 reportDisplayList.add(rDisplay);
             }
         }
+        Course course = courseService.getCourseByCourseId(assignment.getCourseId());
+        List<Course> courses = courseService.findCourseByCriteria(course.getCourseCode(),
+                course.getCourseId());
 
 
         model.addAttribute("reports", reportDisplayList);
         model.addAttribute("assignment", assignment);
         model.addAttribute("otherReports", reportNotDisplayList);
+        model.addAttribute("courses", courses);
         return "student-report";
     }
+
+
 
     @GetMapping("/report")
     public String getReport(@RequestParam("reportId") String reportId,
@@ -154,6 +160,7 @@ public class SubmissionController {
         model.addAttribute("assignments", assignmentService.getAssignmentsForCourse(courseId));
         return "assignment";
     }
+
 
     @PostMapping("/uploadGithubURL")
     public String uploadGithubURL(HttpServletRequest request,
@@ -274,7 +281,7 @@ public class SubmissionController {
                 + "<head></head>"
                 + "<body>"
                 + "<h1>The following students are adventurous in doing their work</h1>"
-                + "<table>"
+                + "<table border='1'>"
                 + "<tr>"
                 + "<th>User</th>"
                 + "<th>User</th>"
