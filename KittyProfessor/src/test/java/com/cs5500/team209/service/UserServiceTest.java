@@ -51,13 +51,16 @@ public class UserServiceTest {
      */
     @Before
     public void setUp() {
+        List<User> userList = new ArrayList<>();
         User alex = new User("alex", "1234", "admin");
         User ann = new User("ann", "1234", "student", "neu", "example@gmail");
+        userList.add(alex);
+        userList.add(ann);
         userRepository.save(alex);
         Mockito.when(userRepository.findByUsername(alex.getUsername())).thenReturn(alex);
         Mockito.when(userRepository.findByUsername("joe")).thenReturn(null);
         Mockito.when(userRepository.save(Mockito.any(User.class))).thenReturn(ann);
-
+        Mockito.when(userRepository.findAll()).thenReturn(userList);
 
     }
 
@@ -107,5 +110,10 @@ public class UserServiceTest {
         userService.deleteUser(user.getUsername());
     }
 
+    @Test
+    public void whenFindAll_thenUserListShouldBeFound() {
+        List<User> userList = userService.getAllUsers();
+        assertEquals(2, userList.size());
+    }
 
 }
