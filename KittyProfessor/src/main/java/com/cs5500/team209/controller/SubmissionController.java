@@ -100,11 +100,16 @@ public class SubmissionController {
                 reportDisplayList.add(rDisplay);
             }
         }
+
         Course course = courseService.getCourseByCourseId(assignment.getCourseId());
         List<Course> courses = courseService.findCourseByCriteria(course.getCourseCode(),
                 course.getCourseId());
-
-
+        String courseId = assignment.getCourseId();
+        Course course1 = courseService.getCourseByCourseId(courseId);
+        String courseName = course1.getName();
+        String courseCode = course1.getCourseCode();
+        model.addAttribute("courseName", courseName);
+        model.addAttribute("courseCode", courseCode);
         model.addAttribute("reports", reportDisplayList);
         model.addAttribute("assignment", assignment);
         model.addAttribute("otherReports", reportNotDisplayList);
