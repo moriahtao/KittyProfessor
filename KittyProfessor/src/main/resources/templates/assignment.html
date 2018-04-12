@@ -34,7 +34,17 @@
 <div class="row">
     <div class="columns">
         <div class="main--content">
-            <h2 class="inner--heading"> Courses</h2>
+            <h2 class="inner--heading">
+                <nav aria-label="You are here:" role="navigation">
+                    <ul class="breadcrumbs innerpage--breadcrumbs">
+                        <li><a href="#">Courses</a></li>
+                        <li><a href="#" th:text="*{courseCode} +' | ' + *{courseName}" > </a></li>
+                        <li>
+                            <span class="show-for-sr">Current: </span> Assignments
+                        </li>
+                    </ul>
+                </nav>
+            </h2>
             <div class="row  data-equalizer" data-equalize-by-row="true" th:each="assignment : ${assignments}">
                 <div class="column large-4  add--course course--added data-equalizer-watch"  data-open="exampleModal1">
                     <div class="course--content">

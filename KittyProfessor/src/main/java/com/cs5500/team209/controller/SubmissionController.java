@@ -94,8 +94,12 @@ public class SubmissionController {
                 reportDisplayList.add(rDisplay);
             }
         }
-
-
+        String courseId = assignment.getCourseId();
+        Course course1 = courseService.getCourseByCourseId(courseId);
+        String courseName = course1.getName();
+        String courseCode = course1.getCourseCode();
+        model.addAttribute("courseName", courseName);
+        model.addAttribute("courseCode", courseCode);
         model.addAttribute("reports", reportDisplayList);
         model.addAttribute("assignment", assignment);
         model.addAttribute("otherReports", reportNotDisplayList);
