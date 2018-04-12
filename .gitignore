@@ -16,7 +16,8 @@
 *.idea
 out
 target
-
+KittyProfessor/data/
+KittyProfessor/src/main/resources/static/report/
 # ignore all . files and . folders
 .*
 

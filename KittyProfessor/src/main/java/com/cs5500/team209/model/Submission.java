@@ -16,22 +16,16 @@ public class Submission {
     private String submissionId;
     private String assignmentId;
     private String username;
-    private List<String> filePaths;
+    private String filePath;
     private int submissionNum;
 
     public Submission(){}
 
-    public Submission(String assignmentId, String username, List<String> filePaths) {
+    public Submission(String assignmentId, String username, int num, String filePath) {
         this.assignmentId = assignmentId;
         this.username = username;
-        this.filePaths = new ArrayList<>(filePaths);
-    }
-
-    public Submission(String assignmentId, String username, int num) {
-        this.assignmentId = assignmentId;
-        this.username = username;
-        this.filePaths = new ArrayList<>();
         this.submissionNum = num;
+        this.filePath = filePath;
     }
     /**
      * Setter and getters
@@ -52,12 +46,12 @@ public class Submission {
         this.username = username;
     }
 
-    public List<String> getFilePaths() {
-        return filePaths;
+    public String getFilePath() {
+        return filePath;
     }
 
-    public void setFilePaths(List<String> filePaths) {
-        this.filePaths = new ArrayList<>(filePaths);
+    public void setFilePath(String filePath) {
+        this.filePath = filePath;
     }
 
     public String getAssignmentId() {

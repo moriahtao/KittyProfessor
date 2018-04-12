@@ -88,10 +88,6 @@ public class KittyController {
     @PostMapping("/editUser")
     public String editUser(@ModelAttribute User editUser,
                            Model model) {
-        System.out.println("-----------------------");
-        System.out.println(editUser.getUsername());
-        System.out.println(editUser.getJoinAs());
-        System.out.println("-----------------------");
         FetchUserResult userResult = userService.getUserByUsername(editUser.getUsername());
         User user = userResult.getUser();
         user.setJoinAs(editUser.getJoinAs());
@@ -115,6 +111,7 @@ public class KittyController {
         return "adminDashboard";
     }
 
+
     @PostMapping("/deleteUser")
     public String deleteUser(@ModelAttribute User deleteUser,
                              Model model) {
@@ -135,7 +132,6 @@ public class KittyController {
         model.addAttribute("deleteUser", new User());
         return "adminDashboard";
     }
-
 
     @PostMapping("/courses")
     public String login(HttpServletRequest request,
@@ -281,8 +277,7 @@ public class KittyController {
         course.setTerm("spring18");
         course.setNumAssignments(0);
         course.setNumStudents(0);
-        course.setCourseId(course.getUserName()+course.getCourseCode()
-                +course.getTerm());
+        course.setCourseId("course"+String.valueOf(System.currentTimeMillis() / 1000L));
 
         courseService.createCourse(course);
         model.addAttribute("courses", courseService.getAllCourses(course.getUserName()));
@@ -315,10 +310,11 @@ public class KittyController {
     }
 
     @PostMapping("/addAssignments")
-    public String addAssignmentsPage(@ModelAttribute Assignment assignment,
-                                  Model model) {
-
-        assignment.setAssignmentId(assignment.getCourseId() +
+    public String addAssignmentsPage(HttpServletRequest request,
+                                    @ModelAttribute Assignment assignment,
+                                    Model model) {
+        String role = (String)request.getSession().getAttribute("role");
+        assignment.setAssignmentId("assignment" +
                 String.valueOf(System.currentTimeMillis() / 1000L));
 
         Course course = courseService.getCourseByCourseId(
@@ -328,14 +324,16 @@ public class KittyController {
 
         assignmentService.createAssignment(assignment);
         List<Assignment> assignments = assignmentService.getAssignmentsForCourse(assignment.getCourseId());
-
-        Assignment newAss = new Assignment();
-        newAss.setCourseId(assignment.getCourseId());
-
-        model.addAttribute("assignment", newAss);
         model.addAttribute("assignments", assignments);
-        model.addAttribute("editAssignment", new Assignment());
-        model.addAttribute("deleteAssignment", new Assignment());
+
+        if(role.equals("instructor")) {
+            Assignment newAss = new Assignment();
+            newAss.setCourseId(assignment.getCourseId());
+
+            model.addAttribute("assignment", newAss);
+            model.addAttribute("editAssignment", new Assignment());
+            model.addAttribute("deleteAssignment", new Assignment());
+        }
         return "assignment";
     }
 
