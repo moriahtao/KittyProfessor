@@ -51,7 +51,9 @@
                     <h2>The students below need your attention!</h2>
                     <div class="row">
                         <div class="small-2 columns">
-                            <input type="number" id="sliderOutput1" th:attr="value=${assignment.threshold}">
+                            <input type="button" name="Generate Report" value="Generate Report"
+                                    class="button btn--primary right" />
+                            <a href="" id="generate-options">generate-options</a>
                         </div>
                     </div>
                     <div class="row" th:each="report : ${reports}">
@@ -108,10 +110,51 @@
     </div>
 </footer>
 
-<script src="node_modules/jquery/dist/jquery.js"></script>
+<div id="similar-courses" title="Similar courses">
+    <form>
+        <div th:each="course : ${courses}">
+            <input type="checkbox" th:name="*{course.courseId}"/> " +
+            <span th:text="*{course.courseId}  + *{course.Name}><b>"+course.getName()+"</b> by <b>"+course.getUserName()+"</b> during <b>" +
+                     course.getTerm() +
+                     "</b></span><br>"
+        </div>
+    </form>
+</div>
+
 <script src="node_modules/what-input/dist/what-input.js"></script>
 <script src="node_modules/foundation-sites/dist/js/foundation.js"></script>
 <script src="js/app.js"></script>
+
+<script>
+    function submitSimilarCourses() {
+
+    }
+
+    submitDialog = $( "#similar-courses" ).dialog({
+        autoOpen: false,
+        height: "auto",
+        width: 600,
+        modal: true,
+        dialogClass: "kitty-dialog",
+        resizable: false,
+        draggable: false,
+        buttons: {
+            "Add": submitAssignmentForm,
+            Cancel: function() {
+                submitDialog.dialog( "close" );
+            }
+        },
+        open: function(event, ui) {
+            $(".ui-dialog-titlebar-close", ui.dialog | ui).hide();
+        }
+    });
+
+    $("#generate-options").on("click", function () {
+        submitDialog.dialog("open");
+    });
+
+
+</script>
 </body>
 </html>
 </title>
