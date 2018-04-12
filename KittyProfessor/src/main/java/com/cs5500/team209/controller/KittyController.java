@@ -28,7 +28,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static sun.security.x509.X509CertInfo.SUBJECT;
+//import static sun.security.x509.X509CertInfo.SUBJECT;
 
 @Controller
 @Scope("session")
@@ -293,9 +293,12 @@ public class KittyController {
                                   Model model) {
         String role = (String)request.getSession().getAttribute("role");
         List<Assignment> assignments = assignmentService.getAssignmentsForCourse(courseId);
-
+        Course course1 = courseService.getCourseByCourseId(courseId);
+        String courseName = course1.getName();
+        String courseCode = course1.getCourseCode();
         model.addAttribute("assignments", assignments);
-
+        model.addAttribute("courseName", courseName);
+        model.addAttribute("courseCode", courseCode);
         if(role.equals("instructor")) {
             Assignment assignment = new Assignment();
             assignment.setCourseId(courseId);
