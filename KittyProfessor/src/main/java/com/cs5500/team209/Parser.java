@@ -13,10 +13,7 @@ import org.apache.log4j.Logger;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 
 /**
  * Created by mengtao on 3/23/18.
@@ -25,7 +22,9 @@ public class Parser {
     final static Logger logger = Logger.getLogger(Parser.class);
     final static AmazonS3 s3 = AmazonS3ClientBuilder.standard().withRegion("us-east-1").build();
     final static TransferManager tx = new TransferManager(s3);
-    public static double parse(String reportFilePath, String language) throws IOException {
+    public static double parse(String reportFilePath, String language, String user1,
+                               String user2, String assignmentName)
+            throws IOException {
 
         try {
             String[] input = new String[]{"-l", language, "-r", reportFilePath, "-s", "exercise1"};
@@ -44,6 +43,33 @@ public class Parser {
 
         Document scorePage = Jsoup.parse(new File(path), "utf-8");
         String percentage = scorePage.select("h1").text();
+
+        String matchTop = "<html> <body><h1>Similarity "+percentage+"</h1><br>" +
+                "<h3>Between "+user1+" "+user2+" for "+ assignmentName +" </h3></body> </html>";
+        PrintWriter writer = new PrintWriter(reportFilePath+"/match-top-custom.html", "UTF-8");
+        writer.println(matchTop);
+        writer.close();
+
+
+        PrintWriter writer1 = new PrintWriter(reportFilePath+"/match0.html", "UTF-8");
+        writer1.println("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">\n" +
+                "<HTML><HEAD><TITLE>Matches for target & src</TITLE>\n" +
+                "<META http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\">\n" +
+                "\n" +
+                "</HEAD>\n" +
+                "<FRAMESET ROWS=\"130,*\">\n" +
+                "<FRAMESET COLS=\"70%,30%\">" +
+                "  <FRAME SRC=\"match-top-custom.html\" NAME=\"link\" FRAMEBORDER=0>\n" +
+                "\n" +
+                " </FRAMESET>\n" +
+                " <FRAMESET COLS=\"50%,50%\">\n" +
+                "  <FRAME SRC=\"match0-0.html\" NAME=\"0\">\n" +
+                "  <FRAME SRC=\"match0-1.html\" NAME=\"1\">\n" +
+                " </FRAMESET>\n" +
+                "</FRAMESET>\n" +
+                "</HTML>\n");
+        writer1.close();
+
 
         MultipleFileUpload upload = tx.uploadDirectory("kittyprofessor-report",
                 reportFilePath.split("/")[reportFilePath.split("/").length -1],
