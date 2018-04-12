@@ -42,6 +42,9 @@ public class CourseService {
         courseRepository.deleteCourseByUserName(userName);
     }
 
+    public List<Course> findCourseByCriteria(String courseCode, String courseId) {
+        return courseRepository.findCourseByCriteria(courseCode, courseId);
+    }
     /**
      * get course by id
      * @param id the id of the course to be got

@@ -55,7 +55,9 @@
                                        th:attr="data-courseId=${course.courseId},
                                        data-courseCode=${course.courseCode},
                                        data-name=${course.name},
-                                       data-term=${course.term}"
+                                       data-term=${course.term},
+                                       data-numAssignments=${course.numAssignments},
+                                       data-numStudents=${course.numStudents}"
                                        th:if="${session.role} == 'instructor'">
                                     </i>
                                     <i class="fa fa-trash delete-course-icon"
@@ -65,7 +67,7 @@
                         <div class="course--details">
                             <div class="hw--info">
                                 <a th:href="'/assignments?courseId='+${course.courseId}"
-                                   th:text= "${course.numAssignments} + ' Assignments'" />
+                                   th:text= "${course.numAssignments} + ' Assignments'" /> </br>
 
                                 <a th:href="'/allStudents?courseId='+${course.courseId}" th:if="${session.role} == 'instructor'"
                                    th:text="${course.numStudents} + ' Students'"/>
@@ -96,6 +98,7 @@
                 <p>Course code: <input type="text" th:field="*{courseCode}" /></p>
                 <p>Name: <input type="text" th:field="*{name}" /></p>
                 <p>Term: <input type="text" value="spring18" disabled="true"/></p>
+                <div id="similar-courses-add"></div>
             </form>
         </div>
 
@@ -114,6 +117,9 @@
                 <p>Name: <input type="text" th:field="*{name}" /></p>
                 <p>Term: <input type="text" th:field="*{term}" /></p>
                 <input type="hidden" th:field="*{courseId}">
+                <input type="hidden" th:field="*{numAssignments}">
+                <input type="hidden" th:field="*{numStudents}">
+
             </form>
         </div>
         <script type="application/javascript">
@@ -201,8 +207,21 @@
                 $("#editCourse [name='name']").val($(this).attr("data-name"));
                 $("#editCourse [name='courseId']").val($(this).attr("data-courseId"));
                 $("#editCourse [name='term']").val($(this).attr("data-term"));
+                $("#editCourse [name='numAssignments']").val($(this).attr("data-numAssignments"));
+                $("#editCourse [name='numStudents']").val($(this).attr("data-numStudents"));
                 editDialog.dialog("open");
             });
+
+            /*$("[name=courseCode]").on("keyup", function() {
+                if($(this).val().length > 3) {
+                   $.ajax({
+                     url: "/getRelatedCourses",
+                     data: {courseCode : $(this).val(), courseId:""}
+                   }).done(function (msg) {
+                           $("#similar-courses-add").text(msg);
+                       });
+                }
+            });*/
 
 
         </script>
@@ -311,10 +330,10 @@
 </footer>
 
 <script type="application/javascript">
-    /*$("[name='term']").on("change", function(){
+    $("select[name='term']").on("change", function(){
         $("[data-term]").hide();
         $("[data-term="+$(this).val()+"]").show();
-    });*/
+    });
 </script>
 <script src="node_modules/what-input/dist/what-input.js" type="application/javascript"></script>
 <script src="node_modules/foundation-sites/dist/js/foundation.js" type="application/javascript"></script>

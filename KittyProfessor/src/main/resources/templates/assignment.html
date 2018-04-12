@@ -56,8 +56,11 @@
                             <div class="hw--info">
                                 <p th:text="'Due :' + *{assignment.due}"/>
                                 <div th:if="${session.role} == 'student'">
-                                    <a th:href="'/submissions?assignmentId='+${assignment.assignmentId}"
-                                       th:text= "'submit your homework'" />
+                                    <!--<a th:href="'/submissions?assignmentId='+${assignment.assignmentId}"
+                                       th:text= "'submit your homework'" />-->
+                                    <a href="#" id="submit-your-ass"
+                                       th:attr="data-assignmentId=${assignment.assignmentId}">
+                                        Submit Assignment</a>
                                 </div>
                                 <div th:if="${session.role} == 'instructor'">
                                     <a th:href="'/reports?assignmentId='+${assignment.assignmentId}"
@@ -88,6 +91,67 @@
 
 <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+<div th:if="${session.role} == 'student'">
+    <div id="submit-assignment-dialog" title="Upload assignment">
+        <div id="submit-options">
+            <ul>
+                <li><a href="#zip-file">Zip file</a></li>
+                <li><a href="#github-url">Github URL</a></li>
+            </ul>
+            <div id="zip-file">
+                <form id="zip-file-form" enctype="multipart/form-data" th:action="@{/uploadZipFile}" method="post">
+                    <p>Zip file: <input id="file-upload" type="file" name="file"/></p>
+                    <input type="hidden" name="assignmentId" />
+                </form>
+            </div>
+            <div id="github-url" >
+                <form id="github-url-form" th:action="@{/uploadGithubURL}" method="post">
+                    <p>Github URL: <input type="text"  name="githubURL"/></p>
+                    <input type="hidden" name="assignmentId" />
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    function submitAssignmentForm() {
+        var tab = $("li.ui-tabs-active a").text();
+        if(tab == "Zip file") {
+            $("#zip-file-form").submit();
+        } else
+            $("#github-url-form").submit();
+    }
+
+    submitDialog = $( "#submit-assignment-dialog" ).dialog({
+        autoOpen: false,
+        height: "auto",
+        width: 600,
+        modal: true,
+        dialogClass: "kitty-dialog",
+        resizable: false,
+        draggable: false,
+        buttons: {
+            "Upload": submitAssignmentForm,
+            Cancel: function() {
+                submitDialog.dialog( "close" );
+            }
+        },
+        open: function(event, ui) {
+            $(".ui-dialog-titlebar-close", ui.dialog | ui).hide();
+        }
+    });
+
+    $("#submit-your-ass").on("click", function() {
+        $("[name=assignmentId]").val($(this).attr("data-assignmentId"));
+        submitDialog.dialog("open");
+    });
+
+    $("#submit-options").tabs();
+    </script>
+</div>
+
+
 <div th:if="${session.role} == 'instructor'">
     <div id="add-assignment-dialog" title="Add new assignment">
         <form id="addAssignment" action="#" th:action="@{/addAssignments}" th:object="${assignment}" method="post">

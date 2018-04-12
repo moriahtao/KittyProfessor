@@ -1,7 +1,9 @@
 package com.cs5500.team209.api;
 
 import com.cs5500.team209.WebUtils;
+import com.cs5500.team209.model.Course;
 import com.cs5500.team209.repository.UserRepository;
+import com.cs5500.team209.service.CourseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -9,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+
+import java.util.List;
 
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
@@ -23,6 +27,8 @@ public class MyRestController {
     @Autowired
     private UserRepository repository;
 
+    @Autowired
+    private CourseService courseService;
     /**
      * the sample api
      * @param name the name sent from client
@@ -45,5 +51,19 @@ public class MyRestController {
         return WebUtils.successMap(name);
     }
 
+    @RequestMapping(method=GET, path="/getRelatedCourses")
+    public String getRelatedCourses(@RequestParam("courseCode") String courseCode,
+                                    @RequestParam("courseId") String courseId) {
+
+        List<Course> courses = courseService.findCourseByCriteria(courseCode, courseId);
+        StringBuffer str = new StringBuffer("");
+        for (Course course: courses) {
+             str.append("<input type=\"checkbox\" nam=\"+course.getCourseId()+\"/> " +
+                     "<span><b>"+course.getName()+"</b> by <b>"+course.getUserName()+"</b> during <b>" +
+                     course.getTerm() +
+                     "</b></span><br>");
+        }
+        return str.toString();
+    }
 
 }

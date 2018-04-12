@@ -2,6 +2,7 @@ package com.cs5500.team209.repository;
 
 import com.cs5500.team209.model.Course;
 import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
@@ -22,4 +23,8 @@ public interface CourseRepository extends MongoRepository<Course, String> {
     List<Course> findCourseByUserName(@Param("userName") String userName);
 
     void deleteCourseByUserName(@Param("userName") String userName);
+
+    @Query("{courseCode: ?0, courseId:{ $ne: ?1 }}")
+    List<Course> findCourseByCriteria
+            (String courseCode, String courseId);
 }

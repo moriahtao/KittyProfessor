@@ -2,6 +2,8 @@ package com.cs5500.team209.model;
 
 import org.springframework.data.annotation.Id;
 
+import java.util.List;
+
 /**
  * Created by mengtao on 3/18/18.
  *
@@ -23,6 +25,8 @@ public class Course {
     private int numStudents;
 
     private String userName;
+
+    private List<String> relatedCourses;
 
     public String getUserName() {
         return userName;
@@ -88,6 +92,13 @@ public class Course {
         this.term = term;
     }
 
+    public List<String> getRelatedCourses() {
+        return relatedCourses;
+    }
+
+    public void setRelatedCourses(List<String> relatedCourses) {
+        this.relatedCourses = relatedCourses;
+    }
 
 
 }
