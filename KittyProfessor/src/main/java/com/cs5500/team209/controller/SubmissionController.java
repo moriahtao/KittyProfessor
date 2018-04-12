@@ -199,44 +199,6 @@ public class SubmissionController {
         return "";
     }
 
-    @PostMapping("/upload")
-    public String handleFileUpload(HttpServletRequest request,
-                                   @RequestParam("submissionId") String submissionId,
-                                   @RequestParam("file") MultipartFile file) throws IOException {
-        String userName = (String) request.getSession().getAttribute("userName");
-        Submission queriedSubmission = submissionService.getSubmissionById(submissionId);
-
-        String student = queriedSubmission.getUsername();
-        String assignmentId = queriedSubmission.getAssignmentId();
-        Course course = courseService.getCourseByCourseId(
-                assignmentService.getAssignmentById(assignmentId).getCourseId());
-        String courseId = course.getCourseId();
-        String instructor = course.getUserName();
-        String term = course.getTerm();
-        String path = "data/"+instructor+"/"+
-                term+"/"+courseId+"/"+assignmentId+"/"+student+"/"+submissionId;
-        // change into unique name
-        if (queriedSubmission != null) {
-
-            Files.createDirectories(Paths.get("data/"));
-            // change into unique name
-            String fileName = transformFileName();
-            String currentFilePath = "data/" + fileName;
-            // save file path into submission
-            UpdateSubmissionResult updateSubmissionResult =
-                    submissionService.addFileToSubmission(currentFilePath, queriedSubmission);
-            if (updateSubmissionResult.isSuccess()) {
-                storageService.store(file, Paths.get("data/"), fileName);
-                //compareSubmissions(currentFilePath, submissionId, queriedSubmission.getAssignmentId(), userName);
-            } else {
-                logger.warn("updateSubmission fail");
-            }
-        } else {
-            logger.warn("fetch submission fail");
-        }
-        return "assignment";
-    }
-
     /**
      * Incremental comparison strategy
      * @param submissionPath submission file path (under data/)
@@ -267,7 +229,8 @@ public class SubmissionController {
             String reportPath = "src/main/resources/static/report/"+ transformedPath; // for file storing
             Files.createDirectories(Paths.get(reportPath));
 
-            double score = Parser.parse(reportPath, language);
+            double score = Parser.parse(reportPath, language,
+                    submission.getUsername(), oSubmission.getUsername(), assignment.getName());
             // save compared report
             reportService.createReport(new Report(assignmentId, submissionId,
                     oSubmission.getSubmissionId(),
@@ -321,10 +284,10 @@ public class SubmissionController {
 
         StringBuffer html_body = new StringBuffer(BODY_HTML);
         for(EmailReport emailReport : emailReports) {
-            html_body.append("<tr>"+emailReport.student1+
-                    "</tr><tr>"+emailReport.student2+"</tr>"+
-                    "<tr>"+emailReport.score+"</tr>"+
-                    "<tr>"+emailReport.url+"</tr>");
+            html_body.append("<tr><td>"+emailReport.student1+
+                    "</td><td>"+emailReport.student2+"</td>"+
+                    "<td>"+emailReport.score+"</td>"+
+                    "<td>"+emailReport.url+"</td></tr>");
         }
         html_body.append("</body>"
                 + "</html>");
@@ -344,6 +307,7 @@ public class SubmissionController {
 
         client.sendEmail(request);
     }
+
 
     /**
      * Transform input file name into a unique name
