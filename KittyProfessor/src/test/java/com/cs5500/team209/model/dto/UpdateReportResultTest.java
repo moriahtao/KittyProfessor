@@ -12,7 +12,9 @@ public class UpdateReportResultTest {
     @Test
     public void getReport() {
         UpdateReportResult updateReportResult = new UpdateReportResult();
-        Report report = new Report("Assignment1","student1","student2","result",45.0);
+        Report report = new Report("Assignment1","student1",
+                "student2","courseInfo1", "courseInfo2",
+                "result",45.0);
         UpdateReportResult updateReportResult1 = new UpdateReportResult(report);
         ArrayList<String> errors = new ArrayList<String>();
         errors.add("file too big");

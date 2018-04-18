@@ -9,7 +9,8 @@ public class ReportDisplayTest {
 
     @Test
     public void getReport() {
-        Report report = new Report("Assignment1","student1","student2","result",45.0);
+        Report report = new Report("Assignment1","student1","student2",
+                "courseInfo1", "courseInfo2","result",45.0);
         ReportDisplay reportDisplay = new ReportDisplay(report);
         reportDisplay.setReport(report);
         reportDisplay.setUser1("username1");

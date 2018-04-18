@@ -51,18 +51,35 @@ public class KittyController {
 
     String[] terms = new String[]{"fall17", "spring18"};
 
+    /**
+     * Home page
+     * @param model to send data ro front end
+     * @return login html page
+     */
     @GetMapping("/")
     public String greeting(Model model) {
         model.addAttribute(new Login());
         return "login";
     }
 
+    /**
+     * admin page login
+     * @param model model to send data to front end
+     * @return admin login html page
+     */
     @GetMapping("/admin")
-    public String admin(Model model) throws IOException, InterruptedException {
+    public String admin(Model model)  {
         model.addAttribute(new Login());
         return "adminlogin";
     }
 
+    /**
+     * Admin dashboard
+     * @param request request for username
+     * @param login login model sent from front end
+     * @param model model to output data
+     * @return admin dashboard page
+     */
     @PostMapping("/adminDashboard")
     public String adminDashboard(HttpServletRequest request,
                                  @ModelAttribute Login login,
@@ -85,6 +102,12 @@ public class KittyController {
         return "adminDashboard";
     }
 
+    /**
+     * when user submits edit user option
+     * @param editUser edit user details
+     * @param model model to send data back
+     * @return admin dashboard to display
+     */
     @PostMapping("/editUser")
     public String editUser(@ModelAttribute User editUser,
                            Model model) {
@@ -111,7 +134,12 @@ public class KittyController {
         return "adminDashboard";
     }
 
-
+    /**
+     * Delete user on request from admin
+     * @param deleteUser delete user details
+     * @param model model to send back data
+     * @return admin dashboard
+     */
     @PostMapping("/deleteUser")
     public String deleteUser(@ModelAttribute User deleteUser,
                              Model model) {
@@ -184,6 +212,11 @@ public class KittyController {
         return allCourses;
     }
 
+    /**
+     * Returns list of courses
+     * @param allScs student course info
+     * @return returns list of courses
+     */
     private List<Course> getCourses(List<StudentCourse> allScs) {
         List<Course> allCourses = new ArrayList<>();
         for(StudentCourse sc : allScs) {
@@ -192,9 +225,18 @@ public class KittyController {
         return allCourses;
     }
 
+    /**
+     * edit course
+     * @param course
+     * @param model
+     * @return
+     */
     @PostMapping("/editCourse")
-    public String editCourse(@ModelAttribute Course course,
+    public String editCourse(HttpServletRequest request,
+                             @ModelAttribute Course course,
                              Model model) {
+        course.setUserName((String)request.getSession().getAttribute("userName"));
+        course.setTerm("spring18");
         courseService.createCourse(course);
         model.addAttribute("courses", courseService.getAllCourses(course.getUserName()));
         model.addAttribute("course", new Course());
@@ -313,6 +355,7 @@ public class KittyController {
     public String addAssignmentsPage(HttpServletRequest request,
                                     @ModelAttribute Assignment assignment,
                                     Model model) {
+
         String role = (String)request.getSession().getAttribute("role");
         assignment.setAssignmentId("assignment" +
                 String.valueOf(System.currentTimeMillis() / 1000L));

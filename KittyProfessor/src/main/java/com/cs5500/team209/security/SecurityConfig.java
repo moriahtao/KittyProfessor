@@ -43,10 +43,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 .antMatchers("/", "/home", "/signup", "/*", "/reports/*").permitAll()
-                //.antMatchers("/currentuser").access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
-                //.antMatchers("/greeting").access("hasRole('ROLE_ADMIN')")
-                //.antMatchers("/api/users").permitAll()
-                //.antMatchers("/admin/**").access("hasRole('ROLE_ADMIN')")
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()
@@ -94,20 +90,4 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         authProvider.setUserDetailsService(userDetailsService);
         return authProvider;
     }
-
-//    /**
-//     * add a header to all response
-//     * tell browser to trust the client
-//     * @return Configure cross origin requests processing
-//     */
-//    @Bean
-//    public WebMvcConfigurer corsConfigurer() {
-//        return new WebMvcConfigurerAdapter() {
-//            @Override
-//            public void addCorsMappings(CorsRegistry registry) {
-//                registry.addMapping("/**").allowedOrigins("*");
-//            }
-//        };
-//    }
-
 }

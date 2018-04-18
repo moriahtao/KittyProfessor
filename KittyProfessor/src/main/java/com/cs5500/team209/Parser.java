@@ -44,7 +44,7 @@ public class Parser {
         Document scorePage = Jsoup.parse(new File(path), "utf-8");
         String percentage = scorePage.select("h1").text();
 
-        String matchTop = "<html> <body><h1>Similarity "+percentage+"</h1><br>" +
+        String matchTop = "<html> <body><h2>Similarity "+percentage+"</h2><br>" +
                 "<h3>Between "+user1+" "+user2+" for "+ assignmentName +" </h3></body> </html>";
         PrintWriter writer = new PrintWriter(reportFilePath+"/match-top-custom.html", "UTF-8");
         writer.println(matchTop);

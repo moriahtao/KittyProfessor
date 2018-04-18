@@ -65,7 +65,7 @@ public class MyRestController {
         List<Course> courses = courseService.findCourseByCriteria(courseCode, courseId);
         StringBuffer str = new StringBuffer("");
         for (Course course: courses) {
-             str.append("<input type=\"checkbox\" nam=\"+course.getCourseId()+\"/> " +
+             str.append("<input type=\"checkbox\" name=\""+course.getCourseId()+"\" class=\"similar-courses\"/> " +
                      "<span><b>"+course.getName()+"</b> by <b>"+course.getUserName()+"</b> during <b>" +
                      course.getTerm() +
                      "</b></span><br>");
@@ -75,14 +75,11 @@ public class MyRestController {
 
 
     @PostMapping("sendEmailStudent")
-    public String sendEmailStudent(@RequestParam("email1") String email1,
+    public void sendEmailStudent(@RequestParam("email1") String email1,
                                    @RequestParam("email2") String email2,
                                    @RequestParam("message") String message,
                                    @RequestParam("filePath") String filePath) {
-        System.out.println(email1);
-        System.out.println(email2);
         sendEmail(email1,email2, message, filePath);
-        return "student-report";
     }
 
     private void sendEmail(String email2,String email1, String message, String link) {

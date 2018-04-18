@@ -63,9 +63,13 @@
                         <div class="columns small-12 ">
                             <a th:href="${report.report.filePath}">
                                 <div class="row student-submission">
-                                    <div class=" columns large-8">
+                                    <div class=" columns large-4">
                                         <span th:text="*{report.user1}"> </span>
-                                        <span th:text="*{report.user2}"></span>
+                                        <span th:text="*{report.courseInfo1}"></span>
+                                    </div>
+                                    <div class=" columns large-4">
+                                        <span th:text="*{report.user2}"> </span>
+                                        <span th:text="*{report.courseInfo2}"></span>
                                     </div>
                                     <div class="report-percent columns large-2">
                                         <span th:text="*{report.report.score}"></span>
