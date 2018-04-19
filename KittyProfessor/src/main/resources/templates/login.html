@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Log in</title>
     <link type="text/css" href="css/app.css" rel="stylesheet"/>
+      <link type="text/css" href="css/options.css" rel="stylesheet"/>
     <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"/>
@@ -71,21 +72,22 @@
       </p>
   </div>
 
-  <div id="About" title="About">
+  <div id="about-dialog" title="About">
       <p>
          KittyProfessor is an academic project developed for Course CS5500 at
           Northeastern University Boston for the purpose of detecting plagiarism
           between students in an academic setting and of course grades.
+      </p>
 
-          If you found any feature not working as expected  you can send us a
+      <p>If you found any feature not working as expected  you can send us a
           feedback we will look into it.
+      </p>
 
-          Thanks,
+      <p>
+          Thanks,<br/>
           Team kitty
       </p>
   </div>
-
-
       <div class="row expanded footer">
     <div class="columns">
       <div class="footer--links">
@@ -99,97 +101,97 @@
 
     </div>
   </div>
+      <script type="application/javascript">
+          function sendFeedback() {
+              $.ajax({
+                  type: 'POST',
+                  url: '/sendFeedback',
+                  data: {"feedback":$("[name='feedback']").val()}
+              });
+              feedbackDialog.dialog("close");
+          }
+
+          function sendQuery() {
+              $.ajax({
+                  type: 'POST',
+                  url: '/contactKitty',
+                  data: {"query":$("[name='query']").val()}
+              });
+              queryDialog.dialog("close");
+          }
+          $("[name='send-feedback']").on("click", function(e){
+              e.preventDefault();
+              feedbackDialog.dialog("open");
+          });
+
+          $("[name='contactKitty']").on("click", function(e){
+              e.preventDefault();
+              queryDialog.dialog("open");
+          });
+
+          $("[name='about']").on("click", function(e) {
+              e.preventDefault();
+              aboutDialog.dialog("open");
+          });
+
+          feedbackDialog = $( "#send-feedback-dialog" ).dialog({
+              autoOpen: false,
+              height: "auto",
+              width: 600,
+              modal: true,
+              dialogClass: "kitty-dialog",
+              resizable: false,
+              draggable: false,
+              buttons: {
+                  "Send": sendFeedback,
+                  Cancel: function() {
+                      feedbackDialog.dialog( "close" );
+                  }
+              },
+              open: function(event, ui) {
+                  $(".ui-dialog-titlebar-close", ui.dialog | ui).hide();
+              }
+          });
+
+          queryDialog = $( "#send-query-dialog" ).dialog({
+              autoOpen: false,
+              height: "auto",
+              width: 600,
+              modal: true,
+              dialogClass: "kitty-dialog",
+              resizable: false,
+              draggable: false,
+              buttons: {
+                  "Send": sendQuery,
+                  Cancel: function() {
+                      queryDialog.dialog( "close" );
+                  }
+              },
+              open: function(event, ui) {
+                  $(".ui-dialog-titlebar-close", ui.dialog | ui).hide();
+              }
+          });
+
+          aboutDialog = $( "#about-dialog" ).dialog({
+              autoOpen: false,
+              height: "auto",
+              width: 600,
+              modal: true,
+              dialogClass: "kitty-dialog",
+              resizable: false,
+              draggable: false,
+              buttons: {
+                  Close: function() {
+                      aboutDialog.dialog( "close" );
+                  }
+              },
+              open: function(event, ui) {
+                  $(".ui-dialog-titlebar-close", ui.dialog | ui).hide();
+              }
+          });
+
+      </script>
+
   </footer>
-  <script type="application/javascript">
-      function sendFeedback() {
-          $.ajax({
-              type: 'POST',
-              url: '/sendFeedback',
-              data: {"feedback":$("[name='feedback']").val()}
-          });
-          feedbackDialog.dialog("close");
-      }
-
-      function sendQuery() {
-          $.ajax({
-              type: 'POST',
-              url: '/contactKitty',
-              data: {"query":$("[name='query']").val()}
-          });
-          queryDialog.dialog("close");
-      }
-      $("[name='send-feedback']").on("click", function(e){
-          e.preventDefault();
-          feedbackDialog.dialog("open");
-      });
-
-      $("[name='contactkitty']").on("click", function(e){
-          e.preventDefault();
-          queryDialog.dialog("open");
-      });
-
-      $("[name='about']").on("click", function(e) {
-          e.preventDefault();
-          aboutDialog.dialog("open");
-      });
-
-      feedbackDialog = $( "#send-feedback-dialog" ).dialog({
-          autoOpen: false,
-          height: "auto",
-          width: 600,
-          modal: true,
-          dialogClass: "kitty-dialog",
-          resizable: false,
-          draggable: false,
-          buttons: {
-              "Send": sendFeedback,
-              Cancel: function() {
-                  feedbackDialog.dialog( "close" );
-              }
-          },
-          open: function(event, ui) {
-              $(".ui-dialog-titlebar-close", ui.dialog | ui).hide();
-          }
-      });
-
-      queryDialog = $( "#send-feedback-dialog" ).dialog({
-          autoOpen: false,
-          height: "auto",
-          width: 600,
-          modal: true,
-          dialogClass: "kitty-dialog",
-          resizable: false,
-          draggable: false,
-          buttons: {
-              "Send": sendQuery,
-              Cancel: function() {
-                  queryDialog.dialog( "close" );
-              }
-          },
-          open: function(event, ui) {
-              $(".ui-dialog-titlebar-close", ui.dialog | ui).hide();
-          }
-      });
-
-      aboutDialog = $( "#about" ).dialog({
-          autoOpen: false,
-          height: "auto",
-          width: 600,
-          modal: true,
-          dialogClass: "kitty-dialog",
-          resizable: false,
-          draggable: false,
-          buttons: {
-              Close: function() {
-                  aboutDialog.dialog( "close" );
-              }
-          },
-          open: function(event, ui) {
-              $(".ui-dialog-titlebar-close", ui.dialog | ui).hide();
-          }
-      });
-
-  </script>
-
   </body>
 </html>

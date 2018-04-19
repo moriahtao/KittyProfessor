@@ -68,7 +68,7 @@ public class KittyRestController {
 
     @PostMapping("contactKitty")
     public void sendQuery(@RequestParam("query") String query) {
-        sendMessage("query@kittyprofessor.com", query, "Feedback from user");
+        sendMessage("query@kittyprofessor.com", query, "Query from user");
     }
 
     private void sendMessage(String to, String message, String subject) {
