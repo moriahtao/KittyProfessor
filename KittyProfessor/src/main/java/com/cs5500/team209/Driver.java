@@ -55,8 +55,8 @@ public class Driver implements CommandLineRunner {
 	public void run(String... args) throws Exception {
 
 		//Uncomment this to clean up db
-
-		/*repository.deleteAll();
+		/*
+		repository.deleteAll();
 		courseRepository.deleteAll();
 		assignmentRepository.deleteAll();
 		roleRepository.deleteAll();

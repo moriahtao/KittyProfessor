@@ -46,4 +46,5 @@ public class StudentCourseService {
     public List<StudentCourse> getAllCourses(String userName) {
         return studentCourseRepository.findStudentCourseByUserName(userName);
     }
+
 }

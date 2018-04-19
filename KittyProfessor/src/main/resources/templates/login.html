@@ -5,6 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Log in</title>
     <link type="text/css" href="css/app.css" rel="stylesheet"/>
+      <link type="text/css" href="css/options.css" rel="stylesheet"/>
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"/>
+
   </head>
   <body>
 
@@ -16,29 +21,12 @@
     </div>
       <div class="top-bar-right columns large-4  ">
         <ul class="menu">
-          <li><a href="#" class="right">About</a></li>
+          <li><a href="#" class="right" name="about">About</a></li>
           <li><a href="login.html" class="right">Login</a></li>
           <li><a href="/signup"><button class=" button btn--primary right">Sign up</button></a></li>
         </ul>
       </div>
   </div>
-  <script>
-      window.fbAsyncInit = function() {
-          FB.init({
-              appId      : '159307434762389',
-              xfbml      : true,
-              version    : 'v2.12'
-          });
-          FB.AppEvents.logPageView();
-      };
-      (function(d, s, id){
-          var js, fjs = d.getElementsByTagName(s)[0];
-          if (d.getElementById(id)) {return;}
-          js = d.createElement(s); js.id = id;
-          js.src = "https://connect.facebook.net/en_US/sdk.js";
-          fjs.parentNode.insertBefore(js, fjs);
-      }(document, 'script', 'facebook-jssdk'));
-  </script>
 
   <main class="main--content">
   <div class="large-5 large-centered columns">
@@ -59,7 +47,6 @@
                 <input class="input--field" type="password" th:field="*{password}"   />
               </div>
             </div>
-            <a href="">Forgot Password?</a>
             <div class="row">
               <div class="large-12 large-centered columns">
                 <input  type="submit" class=" expand button btn--primary" value="Log In"/>
@@ -72,19 +59,139 @@
   </div>
   </main>
   <footer>
-  <div class="row expanded footer">
+
+  <div id="send-feedback-dialog" title="Feedback">
+      <p>We value your honest feedback for this website.
+          <textarea name="feedback" width="100" height="100"></textarea>
+      </p>
+  </div>
+
+  <div id="send-query-dialog" title="Contact Us">
+      <p>Please type your query below.
+          <textarea name="query" width="100" height="100"></textarea>
+      </p>
+  </div>
+
+  <div id="about-dialog" title="About">
+      <p>
+         KittyProfessor is an academic project developed for Course CS5500 at
+          Northeastern University Boston for the purpose of detecting plagiarism
+          between students in an academic setting and of course grades.
+      </p>
+
+      <p>If you found any feature not working as expected  you can send us a
+          feedback we will look into it.
+      </p>
+
+      <p>
+          Thanks,<br/>
+          Team kitty
+      </p>
+  </div>
+      <div class="row expanded footer">
     <div class="columns">
       <div class="footer--links">
-        <a href="#">
+        <a href="#" name="send-feedback">
           Feedback
         </a>
-        <a href="">
+        <a href="#" name="contactKitty">
           Contact us
         </a>
       </div>
 
     </div>
   </div>
+      <script type="application/javascript">
+          function sendFeedback() {
+              $.ajax({
+                  type: 'POST',
+                  url: '/sendFeedback',
+                  data: {"feedback":$("[name='feedback']").val()}
+              });
+              feedbackDialog.dialog("close");
+          }
+
+          function sendQuery() {
+              $.ajax({
+                  type: 'POST',
+                  url: '/contactKitty',
+                  data: {"query":$("[name='query']").val()}
+              });
+              queryDialog.dialog("close");
+          }
+          $("[name='send-feedback']").on("click", function(e){
+              e.preventDefault();
+              feedbackDialog.dialog("open");
+          });
+
+          $("[name='contactKitty']").on("click", function(e){
+              e.preventDefault();
+              queryDialog.dialog("open");
+          });
+
+          $("[name='about']").on("click", function(e) {
+              e.preventDefault();
+              aboutDialog.dialog("open");
+          });
+
+          feedbackDialog = $( "#send-feedback-dialog" ).dialog({
+              autoOpen: false,
+              height: "auto",
+              width: 600,
+              modal: true,
+              dialogClass: "kitty-dialog",
+              resizable: false,
+              draggable: false,
+              buttons: {
+                  "Send": sendFeedback,
+                  Cancel: function() {
+                      feedbackDialog.dialog( "close" );
+                  }
+              },
+              open: function(event, ui) {
+                  $(".ui-dialog-titlebar-close", ui.dialog | ui).hide();
+              }
+          });
+
+          queryDialog = $( "#send-query-dialog" ).dialog({
+              autoOpen: false,
+              height: "auto",
+              width: 600,
+              modal: true,
+              dialogClass: "kitty-dialog",
+              resizable: false,
+              draggable: false,
+              buttons: {
+                  "Send": sendQuery,
+                  Cancel: function() {
+                      queryDialog.dialog( "close" );
+                  }
+              },
+              open: function(event, ui) {
+                  $(".ui-dialog-titlebar-close", ui.dialog | ui).hide();
+              }
+          });
+
+          aboutDialog = $( "#about-dialog" ).dialog({
+              autoOpen: false,
+              height: "auto",
+              width: 600,
+              modal: true,
+              dialogClass: "kitty-dialog",
+              resizable: false,
+              draggable: false,
+              buttons: {
+                  Close: function() {
+                      aboutDialog.dialog( "close" );
+                  }
+              },
+              open: function(event, ui) {
+                  $(".ui-dialog-titlebar-close", ui.dialog | ui).hide();
+              }
+          });
+
+      </script>
+
   </footer>
   </body>
 </html>

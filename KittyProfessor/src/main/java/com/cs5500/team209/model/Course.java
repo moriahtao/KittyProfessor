@@ -26,7 +26,7 @@ public class Course {
 
     private String userName;
 
-    private List<String> relatedCourses;
+    private String relatedCourses;
 
     public String getUserName() {
         return userName;
@@ -92,11 +92,11 @@ public class Course {
         this.term = term;
     }
 
-    public List<String> getRelatedCourses() {
+    public String getRelatedCourses() {
         return relatedCourses;
     }
 
-    public void setRelatedCourses(List<String> relatedCourses) {
+    public void setRelatedCourses(String relatedCourses) {
         this.relatedCourses = relatedCourses;
     }
 

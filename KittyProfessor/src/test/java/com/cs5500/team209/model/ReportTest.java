@@ -12,7 +12,8 @@ public class ReportTest {
 
     @Test
     public void reportTest() {
-        Report report = new Report("Assignment1","student1","student2","result",45.0);
+        Report report = new Report("Assignment1","student1",
+                "student2", "courseInfo1", "courseInfo2","result",45.0);
         report.setAssignmentId("Assignment1");
         report.setSubmissionId1("student1");
         report.setSubmissionId2("student2");

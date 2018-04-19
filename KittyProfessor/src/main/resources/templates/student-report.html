@@ -2,15 +2,19 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title><!doctype html>
-        <html class="no-js" lang="en">
-        <head>
+    <title>Report</title>
+
+
             <meta charset="utf-8">
             <meta http-equiv="x-ua-compatible" content="ie=edge">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <title>Submitted Assignment Prof</title>
             <link rel="stylesheet" href="css/app.css">
-        </head>
+            <link rel="stylesheet" href="css/options.css">
+            <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+            <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+            <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"/>
+</head>
 <body>
 
 <div class="top-bar row expanded" id="responsive-menu">
@@ -35,54 +39,75 @@
         <div class="main--content">
             <h2 class="inner--heading">
                 <nav aria-label="You are here:" role="navigation">
-                    <ul class="breadcrumbs innerpage--breadcrumbs">
-                        <li><a href="#">Courses</a></li>
-                        <li><a href="#" th:text="*{courseCode} +' | ' + *{courseName}" > </a></li>
-                        <li><a href="#">Assignments</a></li>
+                    <ul class="breadcrumbs innerpage--breadcrumbs" style="font-size:32px;">
+                        <li><a href="/goCourses" class="top-nav">Courses</a></li>
+                        <li><a th:href="'/assignments?courseId=' + *{courseId}"
+                               th:text="*{courseCode} +' | ' + *{courseName}" class="top-nav"> </a></li>
                         <li>
-                            <span class="show-for-sr">Current: </span><span th:text="${assignment.name}"> </span>
+                            <span class="show-for-sr top-nav">Current: </span>
+                            <span class="top-nav">Report</span> </span>
                         </li>
                     </ul>
                 </nav>
             </h2>
 
             <div class="row">
-                <div class="columns large-6 list--students ">
+                <div class="columns large-12 list--students ">
                     <h2>The students below need your attention!</h2>
-                    <div class="row">
-                        <div class="small-2 columns">
-                            <input type="number" id="sliderOutput1" th:attr="value=${assignment.threshold}">
-                        </div>
-                    </div>
+
                     <div class="row" th:each="report : ${reports}">
-                        <div class="columns small-12 ">
-                            <a th:href="${report.report.filePath}">
+                        <div class="columns large-12 ">
+
                                 <div class="row student-submission">
-                                    <div class=" columns large-10">
-                                        <span th:text="*{report.user1}"> </span>
-                                        <span th:text="*{report.user2}"></span>
+                                    <div class=" columns large-3">
+                                        <span th:text="*{report.user1}"> </span><br/>
+                                        <span th:text="*{report.report.courseInfo1}"></span>
+                                    </div>
+                                    <div class=" columns large-3">
+                                        <span th:text="*{report.user2}"> </span><br/>
+                                        <span th:text="*{report.report.courseInfo2}"></span>
                                     </div>
                                     <div class="report-percent columns large-2">
                                         <span th:text="*{report.report.score}"></span>
                                     </div>
+                                    <div class="report-percent columns large-2">
+                                        <a href="#" class="send-email"
+                                           th:attr="data-filePath=${report.report.filePath},
+                                                    data-email1=${report.user1},
+                                                    data-email2=${report.user2}">
+                                            Send email</a>
+                                    </div>
+                                    <div class="report-percent columns large-2">
+                                        <a th:href="${report.report.filePath}">View report </a>
+                                    </div>
                                 </div>
-                            </a>
                         </div>
                     </div>
                     <div class="row other-reports" th:each="report : ${otherReports}">
-                        <div class="columns small-12 ">
-                            <a
-                               th:href="${report.report.filePath}">
-                                <div class="row student-submission">
-                                    <div class=" columns large-10">
-                                        <span th:text="*{report.user1}"> </span>
-                                        <span th:text="*{report.user2}"></span>
-                                    </div>
-                                    <div class="report-percent columns large-2">
-                                        <span th:text="*{report.report.score}"></span>
-                                    </div>
+                        <div class="columns large-12 ">
+                            <div class="row student-submission">
+                                <div class=" columns large-3">
+                                    <span th:text="*{report.user1}"> </span><br/>
+                                    <span th:text="*{report.report.courseInfo1}"></span>
                                 </div>
-                            </a>
+                                <div class=" columns large-3">
+                                    <span th:text="*{report.user2}"> </span><br/>
+                                    <span th:text="*{report.report.courseInfo2}"></span>
+                                </div>
+                                <div class="report-percent columns large-2">
+                                    <span th:text="*{report.report.score}"></span>
+                                </div>
+                                <div class="report-percent columns large-2">
+                                    <a href="#" class="send-email"
+                                       th:attr="data-filePath=${report.report.filePath},
+                                                    data-email1=${report.user1},
+                                                    data-email2=${report.user2}">
+                                        Send email</a>
+                                </div>
+                                <div class="report-percent columns large-2">
+                                    <a th:href="${report.report.filePath}">View report </a>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -108,15 +133,104 @@
     </div>
 </footer>
 
-<script src="node_modules/jquery/dist/jquery.js"></script>
+<div id="similar-courses" title="Similar courses">
+    <form>
+        <div th:each="course : ${courses}">
+            <input type="checkbox" th:name="*{course.courseId}"/>
+            <span th:text="*{course.Name} +
+             ' by ' + *{course.userName}+
+             ' during '+ *{course.term}"+/>
+        </div>
+    </form>
+</div>
+
+<div id="sendEmail-dialog" title="Send email to students">
+
+        <form action="#" id="sendEmailStudent" th:action="@{/sendEmailStudent}"
+              method="post">
+            <p>Message: <input type="textarea" name="message" width="100" height="100"/>
+            <input type="hidden" name="email1"/>
+                <input type="hidden" name="email2"/>
+                <input type="hidden" name="filePath"/>
+
+        </form>
+</div>
+
 <script src="node_modules/what-input/dist/what-input.js"></script>
 <script src="node_modules/foundation-sites/dist/js/foundation.js"></script>
-<script src="js/app.js"></script>
-</body>
-</html>
-</title>
-</head>
-<body>
 
+<script>
+    function submitSimilarCourses() {
+
+    }
+
+    function sendEmailStudents() {
+        var email1 = $("#sendEmailStudent [name='email1']").val();
+        var email2 = $("#sendEmailStudent [name='email2']").val();
+        var filePath = $("#sendEmailStudent [name='filePath']").val();
+        var message = $("#sendEmailStudent [name='message']").val();
+
+        $.ajax({
+            type: 'POST',
+            url: '/sendEmailStudent',
+            data: {"email1":email1,"email2":email2,"message":message,
+                "filePath":filePath}});
+        emailDialog.dialog( "close" );
+    }
+
+    submitDialog = $( "#similar-courses" ).dialog({
+        autoOpen: false,
+        height: "auto",
+        width: 600,
+        modal: true,
+        dialogClass: "kitty-dialog",
+        resizable: false,
+        draggable: false,
+        buttons: {
+            "Add": submitSimilarCourses,
+            Cancel: function() {
+                submitDialog.dialog( "close" );
+            }
+        },
+        open: function(event, ui) {
+            $(".ui-dialog-titlebar-close", ui.dialog | ui).hide();
+        }
+    });
+
+    emailDialog = $( "#sendEmail-dialog" ).dialog({
+        autoOpen: false,
+        height: "auto",
+        width: 600,
+        modal: true,
+        dialogClass: "kitty-dialog",
+        resizable: false,
+        draggable: false,
+        buttons: {
+            "Send": sendEmailStudents,
+            Cancel: function() {
+                emailDialog.dialog( "close" );
+            }
+        },
+        open: function(event, ui) {
+            $(".ui-dialog-titlebar-close", ui.dialog | ui).hide();
+        }
+    });
+
+    $("#generate-options").on("click", function (e) {
+        e.preventDefault();
+        submitDialog.dialog("open");
+
+    });
+
+    $(".send-email").on("click", function (e) {
+        e.preventDefault();
+        $("#sendEmailStudent [name='email1']").val($(this).attr("data-email1"));
+        $("#sendEmailStudent [name='email2']").val($(this).attr("data-email2"));
+        $("#sendEmailStudent [name='filePath']").val($(this).attr("data-filePath"));
+        emailDialog.dialog("open");
+
+    });
+
+</script>
 </body>
 </html>

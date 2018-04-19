@@ -14,6 +14,9 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 
 /**
  * Created by mengtao on 3/23/18.
@@ -36,7 +39,6 @@ public class Parser {
         }
         catch(ExitException ex) {
             logger.info("Error: "+ex.getReport());
-            System.exit(1);
         }
 
         String path = reportFilePath+"/match0-link.html";
@@ -44,7 +46,7 @@ public class Parser {
         Document scorePage = Jsoup.parse(new File(path), "utf-8");
         String percentage = scorePage.select("h1").text();
 
-        String matchTop = "<html> <body><h1>Similarity "+percentage+"</h1><br>" +
+        String matchTop = "<html> <body><h2>Similarity "+percentage+"</h2><br>" +
                 "<h3>Between "+user1+" "+user2+" for "+ assignmentName +" </h3></body> </html>";
         PrintWriter writer = new PrintWriter(reportFilePath+"/match-top-custom.html", "UTF-8");
         writer.println(matchTop);
@@ -58,8 +60,9 @@ public class Parser {
                 "\n" +
                 "</HEAD>\n" +
                 "<FRAMESET ROWS=\"130,*\">\n" +
-                "<FRAMESET COLS=\"70%,30%\">" +
+                "<FRAMESET COLS=\"60%,40%\">" +
                 "  <FRAME SRC=\"match-top-custom.html\" NAME=\"link\" FRAMEBORDER=0>\n" +
+                "  <FRAME SRC=\"match0-top.html\" NAME=\"top\" FRAMEBORDER=0 style=\"visibility:hidden;\">\n" +
                 "\n" +
                 " </FRAMESET>\n" +
                 " <FRAMESET COLS=\"50%,50%\">\n" +
@@ -69,6 +72,19 @@ public class Parser {
                 "</FRAMESET>\n" +
                 "</HTML>\n");
         writer1.close();
+
+        String style = "<style> pre{ font-family: Verdana!important; font-size: 18px; } </style>";
+
+        try {
+            Files.write(Paths.get(reportFilePath+"/match0-0.html"),
+                    style.getBytes(), StandardOpenOption.APPEND);
+            Files.write(Paths.get(reportFilePath+"/match0-1.html"),
+                    style.getBytes(), StandardOpenOption.APPEND);
+        }catch (IOException e) {
+            logger.error("Error writing to file");
+        }
+
+
 
 
         MultipleFileUpload upload = tx.uploadDirectory("kittyprofessor-report",

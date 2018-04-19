@@ -1,11 +1,18 @@
 package com.cs5500.team209.api;
 
+import com.amazonaws.regions.Regions;
+import com.amazonaws.services.simpleemail.AmazonSimpleEmailService;
+import com.amazonaws.services.simpleemail.AmazonSimpleEmailServiceClientBuilder;
+import com.amazonaws.services.simpleemail.model.*;
 import com.cs5500.team209.WebUtils;
+import com.cs5500.team209.controller.SubmissionController;
 import com.cs5500.team209.model.Course;
 import com.cs5500.team209.repository.UserRepository;
 import com.cs5500.team209.service.CourseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -50,20 +57,4 @@ public class MyRestController {
         String name = request.getUserPrincipal().getName();
         return WebUtils.successMap(name);
     }
-
-    @RequestMapping(method=GET, path="/getRelatedCourses")
-    public String getRelatedCourses(@RequestParam("courseCode") String courseCode,
-                                    @RequestParam("courseId") String courseId) {
-
-        List<Course> courses = courseService.findCourseByCriteria(courseCode, courseId);
-        StringBuffer str = new StringBuffer("");
-        for (Course course: courses) {
-             str.append("<input type=\"checkbox\" nam=\"+course.getCourseId()+\"/> " +
-                     "<span><b>"+course.getName()+"</b> by <b>"+course.getUserName()+"</b> during <b>" +
-                     course.getTerm() +
-                     "</b></span><br>");
-        }
-        return str.toString();
-    }
-
 }

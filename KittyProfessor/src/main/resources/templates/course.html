@@ -57,7 +57,9 @@
                                        data-name=${course.name},
                                        data-term=${course.term},
                                        data-numAssignments=${course.numAssignments},
-                                       data-numStudents=${course.numStudents}"
+                                       data-numStudents=${course.numStudents},
+                                       data-relatedCourses=${course.relatedCourses},
+                                       data-userName=${session.userName}"
                                        th:if="${session.role} == 'instructor'">
                                     </i>
                                     <i class="fa fa-trash delete-course-icon"
@@ -67,7 +69,7 @@
                         <div class="course--details">
                             <div class="hw--info">
                                 <a th:href="'/assignments?courseId='+${course.courseId}"
-                                   th:text= "${course.numAssignments} + ' Assignments'" /> </br>
+                                   th:text= "${course.numAssignments} + ' Assignments'" />
 
                                 <a th:href="'/allStudents?courseId='+${course.courseId}" th:if="${session.role} == 'instructor'"
                                    th:text="${course.numStudents} + ' Students'"/>
@@ -98,7 +100,10 @@
                 <p>Course code: <input type="text" th:field="*{courseCode}" /></p>
                 <p>Name: <input type="text" th:field="*{name}" /></p>
                 <p>Term: <input type="text" value="spring18" disabled="true"/></p>
-                <div id="similar-courses-add"></div>
+                <input type="hidden" th:field="*{relatedCourses}"/>
+                <div class="similar-courses">
+
+                </div>
             </form>
         </div>
 
@@ -116,14 +121,26 @@
                 <p>Course code: <input type="text" th:field="*{courseCode}" /></p>
                 <p>Name: <input type="text" th:field="*{name}" /></p>
                 <p>Term: <input type="text" th:field="*{term}" /></p>
+                <input type="hidden" th:filed="*{userName}"/>
                 <input type="hidden" th:field="*{courseId}">
                 <input type="hidden" th:field="*{numAssignments}">
                 <input type="hidden" th:field="*{numStudents}">
+                <input type="hidden" th:field="*{relatedCourses}"/>
+                <div class="similar-courses">
 
+                </div>
             </form>
         </div>
         <script type="application/javascript">
             function addCourse() {
+                var relatedCourses = [];
+                $("#addCourse .similar-courses").each(function() {
+                    if($(this).is(":checked")) {
+                        relatedCourses.push($(this).attr("name"));
+                    }
+                });
+
+                $("#addCourse input[type='hidden'][name='relatedCourses']").val(relatedCourses.join(","));
                 $("#addCourse").submit();
             }
 
@@ -132,6 +149,14 @@
             }
 
             function editCourse() {
+                var relatedCourses = [];
+                $("[type='checkbox']").each(function() {
+                    if($(this).is(":checked")) {
+                        relatedCourses.push($(this).attr("name"));
+                    }
+                });
+
+                $("#editCourse input[type='hidden'][name='relatedCourses']").val(relatedCourses.join(","));
                 $("#editCourse").submit();
             }
 
@@ -193,6 +218,7 @@
             });
 
             $( "#create-course" ).on( "click", function() {
+                $("#similar-courses").html("");
                 dialog.dialog( "open" );
             });
 
@@ -202,26 +228,45 @@
             });
 
             $(".edit-course-icon").on("click", function () {
-                console.log("edit icon is pressed");
+                $("#similar-courses").html("");
                 $("#editCourse [name='courseCode']").val($(this).attr("data-courseCode"));
                 $("#editCourse [name='name']").val($(this).attr("data-name"));
                 $("#editCourse [name='courseId']").val($(this).attr("data-courseId"));
                 $("#editCourse [name='term']").val($(this).attr("data-term"));
                 $("#editCourse [name='numAssignments']").val($(this).attr("data-numAssignments"));
                 $("#editCourse [name='numStudents']").val($(this).attr("data-numStudents"));
+                $("#editCourse [name='relatedCourses']").val($(this).attr("data-relatedCourses"));
+                $("editCourse [name='userName']").val($(this).attr("data-userName"));
+
+                $.ajax({
+                    url: "/getRelatedCourses",
+                    data: {courseCode : $(this).attr("data-courseCode"),
+                        courseId:$(this).attr("data-courseId")}
+                }).done(function (msg) {
+                    console.log(msg);
+                    $("#editCourse .similar-courses").html(msg);
+                    relatedC = $("#editCourse [name='relatedCourses']").val();
+                    console.log(relatedC);
+                    relatedAll = relatedC.split(",");
+                    $("[type=checkbox]").each(function() {
+                        if(relatedAll.indexOf($(this).attr("name")) != -1) {
+                            $(this).attr("checked", "checked");
+                        }
+                    });
+                });
                 editDialog.dialog("open");
             });
 
-            /*$("[name=courseCode]").on("keyup", function() {
+            $("[name=courseCode]").on("keyup", function() {
                 if($(this).val().length > 3) {
                    $.ajax({
                      url: "/getRelatedCourses",
                      data: {courseCode : $(this).val(), courseId:""}
                    }).done(function (msg) {
-                           $("#similar-courses-add").text(msg);
+                           $(".similar-courses:visible").html(msg);
                        });
                 }
-            });*/
+            });
 
 
         </script>
@@ -330,9 +375,11 @@
 </footer>
 
 <script type="application/javascript">
+    $("[data-term='fall17']").parent("div.column").hide();
+
     $("select[name='term']").on("change", function(){
-        $("[data-term]").hide();
-        $("[data-term="+$(this).val()+"]").show();
+        $("[data-term]").parent("div.column").hide();
+        $("[data-term="+$(this).val()+"]").parent("div.column").show();
     });
 </script>
 <script src="node_modules/what-input/dist/what-input.js" type="application/javascript"></script>

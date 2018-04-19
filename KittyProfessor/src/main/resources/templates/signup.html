@@ -33,47 +33,64 @@
                     <div class="row">
                         <div class="large-12 columns">
                             <p>First Name</p>
-                            <input class="input--field" th:field="*{firstName}" type="text" />
+                            <input class="input--field" required="required"
+                                   pattern="[A-Za-z]{1,32}"
+                                   title="Please enter a valid first name"
+                                   th:field="*{firstName}" type="text" />
                         </div>
                     </div>
                     <div class="row">
                         <div class="large-12 columns">
                             <p>Last Name</p>
-                            <input class="input--field" type="text" th:field="*{lastName}" name="lastName" />
+                            <input class="input--field" required="required"
+                                   pattern="[A-Za-z]{1,32}"
+                                   title="Please enter a valid first name"
+                                   type="text" th:field="*{lastName}" name="lastName" />
                         </div>
                     </div>
                     <div class="row">
                         <div class="large-12 columns">
                         <p>Email</p>
-                        <input class="input--field" type="email" th:field="*{email}" name="email"  />
+                        <input class="input--field" type="email" required="required"
+                               th:field="*{email}" name="email"  />
                         </div>
                     </div>
                     <div class="row">
                         <div class="large-12 columns">
                             <p>Username</p>
-                            <input class="input--field" type="text" th:field="*{username}" name="username"  />
+                            <input class="input--field" type="text"
+                                   required="required" pattern="[A-Za-z0-9]{5,}"
+                                   title="Can be alphabet or a number value of 5 or more characters"
+                                   th:field="*{username}" name="username"  />
                         </div>
                     </div>
                     <div class="row">
                         <div class="large-12 columns">
                             <p>Password</p>
-                            <input class="input--field" type="password" th:field="*{password}" name="password"  />
+                            <input class="input--field" type="password"
+                                   required="required" th:field="*{password}" name="password"
+                                   pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}"
+                                   title="Must contain at least one number and one uppercase and
+                                    lowercase letter, and at least 6 or more characters"/>
                         </div>
                     </div>
 
                     <div class="row">
                         <div class="large-12 columns">
                             <p>University</p>
-                            <input class="input--field" type="text" th:field="*{university}" name="university"  />
+                            <input class="input--field" type="text"
+                                   required="required"
+                                   pattern="^[^-\s][a-zA-Z0-9_\s-].{1,32}"
+                                   title="Can be alphabet "
+                                   th:field="*{university}" name="university"  />
                         </div>
                     </div>
                     <div class="row">
                         <div class="large-12 columns">
                             <p>Join as</p>
-                            <select th:field="*{joinAs}" name="joinAs">
+                            <select th:field="*{joinAs}" name="joinAs" required="required">
                                 <option value="instructor" >Instructor</option>
                                 <option value="student">Student</option>
-                                <option value="admin">Admin</option>
                             </select>
                         </div>
                     </div>

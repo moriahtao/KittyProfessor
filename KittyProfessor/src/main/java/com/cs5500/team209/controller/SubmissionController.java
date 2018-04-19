@@ -1,14 +1,10 @@
 package com.cs5500.team209.controller;
 
-import com.amazonaws.AmazonServiceException;
-import com.amazonaws.auth.DefaultAWSCredentialsProviderChain;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.transfer.MultipleFileUpload;
 import com.amazonaws.services.s3.transfer.TransferManager;
-import com.amazonaws.services.s3.transfer.TransferManagerBuilder;
-import com.amazonaws.services.s3.transfer.Upload;
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailService;
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailServiceClientBuilder;
 import com.amazonaws.services.simpleemail.model.*;
@@ -19,7 +15,6 @@ import com.cs5500.team209.model.dto.UpdateSubmissionResult;
 import com.cs5500.team209.service.*;
 import com.cs5500.team209.storage.StorageService;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
@@ -28,16 +23,12 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
@@ -76,7 +67,12 @@ public class SubmissionController {
     @Autowired
     CourseService courseService;
 
-
+    /**
+     * Controller for reports
+     * @param assignmentId assignmentID from front end
+     * @param model model to send back data
+     * @return
+     */
     @GetMapping("/reports")
     public String getReportList(@RequestParam("assignmentId") String assignmentId,
                                     Model model) {
@@ -100,18 +96,31 @@ public class SubmissionController {
                 reportDisplayList.add(rDisplay);
             }
         }
+
+        Course course = courseService.getCourseByCourseId(assignment.getCourseId());
+        List<Course> courses = courseService.findCourseByCriteria(course.getCourseCode(),
+                course.getCourseId());
         String courseId = assignment.getCourseId();
         Course course1 = courseService.getCourseByCourseId(courseId);
         String courseName = course1.getName();
         String courseCode = course1.getCourseCode();
         model.addAttribute("courseName", courseName);
         model.addAttribute("courseCode", courseCode);
+        model.addAttribute("courseId", course1.getCourseId());
         model.addAttribute("reports", reportDisplayList);
         model.addAttribute("assignment", assignment);
         model.addAttribute("otherReports", reportNotDisplayList);
+        model.addAttribute("courses", courses);
         return "student-report";
     }
 
+
+    /**
+     * get individual report
+     * @param reportId id for the report
+     * @param model send data for model
+     * @return
+     */
     @GetMapping("/report")
     public String getReport(@RequestParam("reportId") String reportId,
                                 Model model) {
@@ -120,12 +129,21 @@ public class SubmissionController {
         return reportLink;
     }
 
-
+    /**
+     * Uploads zip file
+     * @param request for accessing session
+     * @param assignmentId assignmentID from front end
+     * @param file file to upload
+     * @param model model to send back data
+     * @return
+     * @throws IOException
+     * @throws InterruptedException
+     */
     @PostMapping("/uploadZipFile")
     public String uploadZipFile(HttpServletRequest request,
                                 @RequestParam("assignmentId") String assignmentId,
                                 @RequestParam("file") MultipartFile file,
-                                Model model) throws IOException, InterruptedException {
+                                Model model) {
 
         String userName = (String) request.getSession().getAttribute("userName");
         Assignment assignment = assignmentService.getAssignmentById(assignmentId);
@@ -139,9 +157,14 @@ public class SubmissionController {
         String term = course.getTerm();
         String path = "data/"+instructor+"/"+
                 term+"/"+courseId+"/"+assignmentId+"/"+userName+"/"+"s"+noSubmission;
-        Files.createDirectories(Paths.get(path));
-        storageService.store(file, Paths.get(path), file.getOriginalFilename());
-        extractFolder(path+"/"+file.getOriginalFilename());
+        try {
+            Files.createDirectories(Paths.get(path));
+            storageService.store(file, Paths.get(path), file.getOriginalFilename());
+            extractFolder(path+"/"+file.getOriginalFilename());
+        } catch (IOException e) {
+            logger.debug(e);
+        }
+
         new File(path+"/"+file.getOriginalFilename()).delete();
         Submission submission = new Submission(assignmentId, userName, noSubmission, path);
         UpdateSubmissionResult ups = submissionService.createSubmission(submission);
@@ -152,18 +175,58 @@ public class SubmissionController {
                         .substring(0, file.getOriginalFilename().length() - 4))),
                 true);
 
-        compareSubmissions(path, ups.getSubmission().getSubmissionId(),
-                ups.getSubmission().getAssignmentId(), userName);
+        try {
+            compareSubmissions(path, ups.getSubmission().getSubmissionId(),
+                    getSimilarAssignments(course.getRelatedCourses().split(","),
+                            assignment),
+                    assignment,
+                    userName);
+        } catch (IOException e) {
+            logger.debug(e);
+        }
 
+        model.addAttribute("courseName", course.getName());
+        model.addAttribute("courseCode", course.getCourseCode());
+        model.addAttribute("courseId", course.getCourseId());
         model.addAttribute("assignments", assignmentService.getAssignmentsForCourse(courseId));
         return "assignment";
     }
 
+    /**
+     *
+     * Helper function helps in accumulating similar Assignments
+     * @param courseIds List of related courses selected by professor
+     * @param assignment Assignment for which the new submission happened
+     * @return List of assignments
+     */
+    private List<Assignment> getSimilarAssignments(String[] courseIds, Assignment assignment) {
+        List<Assignment> rAssignments = new ArrayList<>();
+        rAssignments.add(assignment);
+        for(String courseId : courseIds) {
+            List<Assignment> assignments = assignmentService.getAssignmentsForCourse(courseId);
+            for (Assignment assignment1 : assignments) {
+                if(assignment.getName().equals(assignment1.getName())) {
+                    rAssignments.add(assignment1);
+                }
+            }
+        }
+        return rAssignments;
+    }
+
+    /**
+     *
+     * Uploads from github file
+     * @param request for accessing session
+     * @param assignmentId assignmentID from front end
+     * @param model model to send back data
+     * @return
+     * @throws GitAPIException
+     */
     @PostMapping("/uploadGithubURL")
     public String uploadGithubURL(HttpServletRequest request,
                                 @RequestParam("assignmentId") String assignmentId,
                                 @RequestParam("githubURL") String githubURL,
-                                Model model) throws GitAPIException {
+                                Model model) {
 
 
         String userName = (String) request.getSession().getAttribute("userName");
@@ -179,29 +242,40 @@ public class SubmissionController {
         String path = "data/"+instructor+"/"+
                 term+"/"+courseId+"/"+assignmentId+"/"+userName+"/"+"s"+noSubmission;
 
-        Git.cloneRepository()
-                .setURI(githubURL)
-                .setDirectory(Paths.get(path).toFile())
-                .call();
+        try {
+            Git.cloneRepository()
+                    .setURI(githubURL)
+                    .setDirectory(Paths.get(path).toFile())
+                    .call();
+        } catch (GitAPIException e) {
+            logger.error(e);
+        }
 
         Submission submission = new Submission(assignmentId, userName, noSubmission, path);
-        submissionService.createSubmission(submission);
+        UpdateSubmissionResult ups = submissionService.createSubmission(submission);
 
         MultipleFileUpload upload = tx.uploadDirectory("kittyprofessor",
                 path,
                 new File(path),
                 true);
 
+        try {
+            compareSubmissions(path, ups.getSubmission().getSubmissionId(),
+                    getSimilarAssignments(course.getRelatedCourses().split(","),
+                            assignment),
+                    assignment,
+                    userName);
+        } catch (IOException e) {
+            logger.error(e);
+        }
+
+        model.addAttribute("courseName", course.getName());
+        model.addAttribute("courseCode", course.getCourseCode());
+        model.addAttribute("courseId", course.getCourseId());
         model.addAttribute("assignments", assignmentService.getAssignmentsForCourse(courseId));
         return "assignment";
     }
 
-    @PostMapping("generateReport")
-    public String handleFileUpload(HttpServletRequest request,
-                                   @RequestParam("submissionId") String courseIds) {
-
-        return "";
-    }
 
     /**
      * Incremental comparison strategy
@@ -212,76 +286,113 @@ public class SubmissionController {
      */
     private void compareSubmissions(String submissionPath,
                                     String submissionId,
-                                    String assignmentId,
+                                    List<Assignment> assignments,
+                                    Assignment assignmentT,
                                     String userName) throws IOException {
-
-        List<Submission> otherSubmissions =
-                submissionService.getOtherStudentSubmissions(assignmentId, userName);
-        String language = assignmentService.getAssignmentById(assignmentId).getLanguage();
-        Submission submission = submissionService.getSubmissionById(submissionId);
-        Assignment assignment = assignmentService.getAssignmentById(assignmentId);
-        Course course = courseService.getCourseByCourseId(assignment.getCourseId());
-        User user = userService.getUserByUsername(course.getUserName()).getUser();
         String srcFolder = "exercise1/src";
-
         copyIntoPath(submissionPath, srcFolder);
         List<EmailReport> emailReports = new ArrayList<>();
-        for(Submission oSubmission : otherSubmissions) {
-            String targetFolder = "exercise1/target";
-            copyIntoPath(oSubmission.getFilePath(), targetFolder);
-            String transformedPath = transformFileName();
-            String reportPath = "src/main/resources/static/report/"+ transformedPath; // for file storing
-            Files.createDirectories(Paths.get(reportPath));
+        Course course1 = courseService.getCourseByCourseId(assignmentT.getCourseId());
+        String courseInfo1 = course1.getName() + " by " + course1.getUserName()
+                + " in " + course1.getTerm();
 
-            double score = Parser.parse(reportPath, language,
-                    submission.getUsername(), oSubmission.getUsername(), assignment.getName());
-            // save compared report
-            reportService.createReport(new Report(assignmentId, submissionId,
-                    oSubmission.getSubmissionId(),
-                    "http://kittyprofessor-report.s3-website-us-east-1.amazonaws.com/"
-                            +transformedPath+"/match0.html", score));
+        String language = assignmentT.getLanguage();
 
-            if(score >= assignment.getThreshold()) {
-                emailReports.add(new EmailReport(submission.getUsername(),
-                        oSubmission.getUsername(), score,
-                        "http://kittyprofessor-report.s3-website-us-east-1.amazonaws.com/"
-                                +transformedPath+"/match0.html"));
+        for(Assignment assignment : assignments) {
+            String assignmentId = assignment.getAssignmentId();
+            List<Submission> otherSubmissions =
+                    submissionService.getOtherStudentSubmissions(assignmentId, userName);
+            if (otherSubmissions.size() != 0) {
+                Assignment assignment2 = assignmentService.getAssignmentById(assignmentId);
+                Course course2 = courseService.getCourseByCourseId(assignment2.getCourseId());
+                String courseInfo2 = course2.getName() + " by " + course2.getUserName()
+                        + " in " + course2.getTerm();
+
+                Submission submission = submissionService.getSubmissionById(submissionId);
+
+                for (Submission oSubmission : otherSubmissions) {
+                    String targetFolder = "exercise1/target";
+                    copyIntoPath(oSubmission.getFilePath(), targetFolder);
+                    String transformedPath = transformFileName();
+                    String reportPath = "src/main/resources/static/report/" + transformedPath;
+                    // for file storing
+
+
+                    Files.createDirectories(Paths.get(reportPath));
+
+                    double score = Parser.parse(reportPath, language,
+                            submission.getUsername(),
+                            oSubmission.getUsername(),
+                            assignment.getName());
+                    // save compared report
+                    reportService.createReport(new Report(assignmentId, submissionId,
+                            oSubmission.getSubmissionId(),
+                            courseInfo1, courseInfo2,
+                            "http://kittyprofessor-report.s3-website-us-east-1.amazonaws.com/"
+                                    + transformedPath + "/match0.html", score));
+
+                    if (score >= assignment.getThreshold()) {
+                        emailReports.add(new EmailReport(submission.getUsername(),
+                                oSubmission.getUsername(), courseInfo1, courseInfo2,
+                                score,
+                                "http://kittyprofessor-report.s3-website-us-east-1.amazonaws.com/"
+                                        + transformedPath + "/match0.html"));
+                    }
+                    // only clean other submission folder if compare not end
+                    deleteTargetDirectory(targetFolder);
+                    //deleteTargetDirectory(reportPath);
+
+                }
             }
-            // only clean other submission folder if compare not end
-            deleteTargetDirectory(targetFolder);
-            //deleteTargetDirectory(reportPath);
-
         }
         deleteTargetDirectory("exercise1/");
+        User user = userService.getUserByUsername(course1.getUserName()).getUser();
+
         if (emailReports.size() > 0) {
             sendEmail(emailReports, user.getEmail());
         }
     }
 
+    /**
+     * Class as data structure for sending email
+     */
     public class EmailReport {
         String student1;
         String student2;
+        String courseInfo1;
+        String courseInfo2;
         double score;
         String url;
 
-        public EmailReport(String student1, String student2, double score, String url) {
+        public EmailReport(String student1, String student2,
+                           String courseInfo1, String courseInfo2,
+                           double score, String url) {
             this.student1 = student1;
             this.student2 = student2;
+            this.courseInfo1 = courseInfo1;
+            this.courseInfo2 = courseInfo2;
             this.score = score;
             this.url = url;
         }
     }
 
+    /**
+     * Function to send email
+     * @param emailReports report details
+     * @param to email address
+     */
     private void sendEmail(List<EmailReport> emailReports, String to) {
 
         String BODY_HTML = "<html>"
                 + "<head></head>"
                 + "<body>"
                 + "<h1>The following students are adventurous in doing their work</h1>"
-                + "<table>"
+                + "<table border='1'>"
                 + "<tr>"
-                + "<th>User</th>"
-                + "<th>User</th>"
+                + "<th>User1</th>"
+                + "<th>User2</th>"
+                + "<th>User1 from course</th>"
+                + "<th>User2 from course</th>"
                 + "<th>Score</th>"
                 + "<th>Link</th>"
                 + "</tr>";
@@ -290,8 +401,11 @@ public class SubmissionController {
         for(EmailReport emailReport : emailReports) {
             html_body.append("<tr><td>"+emailReport.student1+
                     "</td><td>"+emailReport.student2+"</td>"+
+                    "</td><td>"+emailReport.courseInfo1+"</td>"+
+                    "</td><td>"+emailReport.courseInfo2+"</td>"+
                     "<td>"+emailReport.score+"</td>"+
-                    "<td>"+emailReport.url+"</td></tr>");
+                    "<td><a href="+emailReport.url+">Link to report</a>" +
+                    "</td></tr>");
         }
         html_body.append("</body>"
                 + "</html>");
@@ -347,9 +461,14 @@ public class SubmissionController {
         FileUtils.deleteDirectory(new File(path));
     }
 
+    /**
+     * StudentList
+     * @param courseId course Id
+     * @param model model to send data for front end
+     * @return
+     */
     @GetMapping("/allStudents")
-    public String getAllSubmissionList(HttpServletRequest request,
-                                       @RequestParam("courseId") String courseId,
+    public String getAllSubmissionList(@RequestParam("courseId") String courseId,
                                         Model model) {
         List<StudentCourse> studentCourses = studentCourseService.getCourseByCourseId(courseId);
         List<String> studentList = new ArrayList<>();
@@ -361,10 +480,14 @@ public class SubmissionController {
         return "student-list";
     }
 
-
+    /**
+     * Student submission list
+     * @param studentUsername student user name
+     * @param model model to send data
+     * @return
+     */
     @GetMapping("/studentSubmissions")
-    public String getStudentSubmissionList(HttpServletRequest request,
-                                           @RequestParam("studentUsername") String studentUsername,
+    public String getStudentSubmissionList(@RequestParam("studentUsername") String studentUsername,
                                        Model model) {
         List<Submission> submissionList = submissionService.getSubmissionByUsername(studentUsername);
         model.addAttribute("submissions", submissionList);
@@ -372,38 +495,12 @@ public class SubmissionController {
         return "submission-list";
     }
 
-    private static boolean isRedirected( Map<String, List<String>> header ) {
-        for( String hv : header.get( null )) {
-            if(   hv.contains( " 301 " )
-                    || hv.contains( " 302 " )) return true;
-        }
-        return false;
-    }
-
-    private void downloadFromExternalURL() throws IOException {
-        String link =
-                "http://github.com/downloads/TheHolyWaffle/ChampionHelper/" +
-                        "ChampionHelper-4.jar";
-        String            fileName = "ChampionHelper-4.jar";
-        URL url  = new URL( link );
-        HttpURLConnection http = (HttpURLConnection)url.openConnection();
-        Map< String, List< String >> header = http.getHeaderFields();
-        while( isRedirected( header )) {
-            link = header.get( "Location" ).get( 0 );
-            url    = new URL( link );
-            http   = (HttpURLConnection)url.openConnection();
-            header = http.getHeaderFields();
-        }
-        InputStream  input  = http.getInputStream();
-        byte[]       buffer = new byte[4096];
-        int          n      = -1;
-        OutputStream output = new FileOutputStream( new File( fileName ));
-        while ((n = input.read(buffer)) != -1) {
-            output.write( buffer, 0, n );
-        }
-        output.close();
-    }
-
+    /**
+     * Extracts zip file
+     * @param zipFile location
+     * @throws ZipException
+     * @throws IOException
+     */
     private void extractFolder(String zipFile) throws ZipException, IOException
     {
         System.out.println(zipFile);

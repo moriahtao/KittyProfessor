@@ -48,7 +48,8 @@ public class ReportServiceTest {
 
     @Test
     public void createReport() {
-        Report report1 = new Report("Assignment1","student1","student2","result",45.0);
+        Report report1 = new Report("Assignment1","student1","student2",
+                "","","result",45.0);
         reportRepository.save(report1);
         Mockito.when(reportRepository.findReportByReportId(report1.getReportId())).thenReturn(report1);
         UpdateReportResult found = reportService.createReport(report1);
