@@ -55,14 +55,14 @@ public class Driver implements CommandLineRunner {
 	public void run(String... args) throws Exception {
 
 		//Uncomment this to clean up db
-
-		//repository.deleteAll();
+		/*
+		repository.deleteAll();
 		courseRepository.deleteAll();
 		assignmentRepository.deleteAll();
 		roleRepository.deleteAll();
 		studentCourseRepository.deleteAll();
 		submissionRepository.deleteAll();
-		reportRepository.deleteAll();
+		reportRepository.deleteAll();*/
 
 		// save a couple of users
 		roleRepository.save(new Role("ROLE_ADMIN"));

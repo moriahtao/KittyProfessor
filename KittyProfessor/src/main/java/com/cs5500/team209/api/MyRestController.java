@@ -88,7 +88,7 @@ public class MyRestController {
                 + "<head></head>"
                 + "<body>"
                 + "<h3>"+message+"</h3>"
-                + "<a href="+link+">"+link+"</a>"+
+                + "<a href="+link+">Report</a>"+
                 "</body>"
                 + "</html>";
 

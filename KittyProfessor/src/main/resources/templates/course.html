@@ -68,11 +68,8 @@
                         </div>
                         <div class="course--details">
                             <div class="hw--info">
-                                <a th:if="${course.numAssignments} != 0" th:href="'/assignments?courseId='+${course.courseId}"
+                                <a th:href="'/assignments?courseId='+${course.courseId}"
                                    th:text= "${course.numAssignments} + ' Assignments'" />
-
-                                <a th:if="${course.numAssignments} == 0" th:href="'/assignments?courseId='+${course.courseId}"
-                                   th:text= "'Add assignment'" /> </br>
 
                                 <a th:href="'/allStudents?courseId='+${course.courseId}" th:if="${session.role} == 'instructor'"
                                    th:text="${course.numStudents} + ' Students'"/>
@@ -378,9 +375,11 @@
 </footer>
 
 <script type="application/javascript">
+    $("[data-term='fall17']").parent("div.column").hide();
+
     $("select[name='term']").on("change", function(){
-        $("[data-term]").hide();
-        $("[data-term="+$(this).val()+"]").show();
+        $("[data-term]").parent("div.column").hide();
+        $("[data-term="+$(this).val()+"]").parent("div.column").show();
     });
 </script>
 <script src="node_modules/what-input/dist/what-input.js" type="application/javascript"></script>

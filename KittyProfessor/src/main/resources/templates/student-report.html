@@ -10,6 +10,7 @@
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <title>Submitted Assignment Prof</title>
             <link rel="stylesheet" href="css/app.css">
+            <link rel="stylesheet" href="css/options.css">
             <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
             <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
             <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"/>
@@ -38,38 +39,33 @@
         <div class="main--content">
             <h2 class="inner--heading">
                 <nav aria-label="You are here:" role="navigation">
-                    <ul class="breadcrumbs innerpage--breadcrumbs">
-                        <li><a href="#">Courses</a></li>
-                        <li><a href="#" th:text="*{courseCode} +' | ' + *{courseName}" > </a></li>
-                        <li><a href="#">Assignments</a></li>
+                    <ul class="breadcrumbs innerpage--breadcrumbs" style="font-size:32px;">
+                        <li><a href="/goCourses" class="top-nav">Courses</a></li>
+                        <li><a th:href="'/assignments?courseId=' + *{courseId}"
+                               th:text="*{courseCode} +' | ' + *{courseName}" class="top-nav"> </a></li>
                         <li>
-                            <span class="show-for-sr">Current: </span><span th:text="${assignment.name}"> </span>
+                            <span class="show-for-sr top-nav">Current: </span>
+                            <span class="top-nav">Report</span> </span>
                         </li>
                     </ul>
                 </nav>
             </h2>
 
             <div class="row">
-                <div class="columns large-6 list--students ">
+                <div class="columns large-12 list--students ">
                     <h2>The students below need your attention!</h2>
-                    <div class="row">
-                        <div class="small-2 columns">
-                            <input type="button" name="Generate Report" value="Generate Report"
-                                    class="button btn--primary right" />
-                            <a href="" id="generate-options">generate-options</a>
-                        </div>
-                    </div>
+
                     <div class="row" th:each="report : ${reports}">
-                        <div class="columns small-12 ">
-                            <a th:href="${report.report.filePath}">
+                        <div class="columns large-12 ">
+
                                 <div class="row student-submission">
-                                    <div class=" columns large-4">
-                                        <span th:text="*{report.user1}"> </span>
-                                        <span th:text="*{report.courseInfo1}"></span>
+                                    <div class=" columns large-3">
+                                        <span th:text="*{report.user1}"> </span><br/>
+                                        <span th:text="*{report.report.courseInfo1}"></span>
                                     </div>
-                                    <div class=" columns large-4">
-                                        <span th:text="*{report.user2}"> </span>
-                                        <span th:text="*{report.courseInfo2}"></span>
+                                    <div class=" columns large-3">
+                                        <span th:text="*{report.user2}"> </span><br/>
+                                        <span th:text="*{report.report.courseInfo2}"></span>
                                     </div>
                                     <div class="report-percent columns large-2">
                                         <span th:text="*{report.report.score}"></span>
@@ -81,24 +77,37 @@
                                                     data-email2=${report.user2}">
                                             Send email</a>
                                     </div>
+                                    <div class="report-percent columns large-2">
+                                        <a th:href="${report.report.filePath}">View report </a>
+                                    </div>
                                 </div>
-                            </a>
                         </div>
                     </div>
                     <div class="row other-reports" th:each="report : ${otherReports}">
-                        <div class="columns small-12 ">
-                            <a
-                               th:href="${report.report.filePath}">
-                                <div class="row student-submission">
-                                    <div class=" columns large-10">
-                                        <span th:text="*{report.user1}"> </span>
-                                        <span th:text="*{report.user2}"></span>
-                                    </div>
-                                    <div class="report-percent columns large-2">
-                                        <span th:text="*{report.report.score}"></span>
-                                    </div>
+                        <div class="columns large-12 ">
+                            <div class="row student-submission">
+                                <div class=" columns large-3">
+                                    <span th:text="*{report.user1}"> </span><br/>
+                                    <span th:text="*{report.report.courseInfo1}"></span>
                                 </div>
-                            </a>
+                                <div class=" columns large-3">
+                                    <span th:text="*{report.user2}"> </span><br/>
+                                    <span th:text="*{report.report.courseInfo2}"></span>
+                                </div>
+                                <div class="report-percent columns large-2">
+                                    <span th:text="*{report.report.score}"></span>
+                                </div>
+                                <div class="report-percent columns large-2">
+                                    <a href="#" class="send-email"
+                                       th:attr="data-filePath=${report.report.filePath},
+                                                    data-email1=${report.user1},
+                                                    data-email2=${report.user2}">
+                                        Send email</a>
+                                </div>
+                                <div class="report-percent columns large-2">
+                                    <a th:href="${report.report.filePath}">View report </a>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

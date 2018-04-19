@@ -106,6 +106,7 @@ public class SubmissionController {
         String courseCode = course1.getCourseCode();
         model.addAttribute("courseName", courseName);
         model.addAttribute("courseCode", courseCode);
+        model.addAttribute("courseId", course1.getCourseId());
         model.addAttribute("reports", reportDisplayList);
         model.addAttribute("assignment", assignment);
         model.addAttribute("otherReports", reportNotDisplayList);
@@ -176,13 +177,17 @@ public class SubmissionController {
 
         try {
             compareSubmissions(path, ups.getSubmission().getSubmissionId(),
-                    getSimilarAssignments(course.getRelatedCourses().split(","), assignment),
+                    getSimilarAssignments(course.getRelatedCourses().split(","),
+                            assignment),
                     assignment,
                     userName);
         } catch (IOException e) {
             logger.debug(e);
         }
 
+        model.addAttribute("courseName", course.getName());
+        model.addAttribute("courseCode", course.getCourseCode());
+        model.addAttribute("courseId", course.getCourseId());
         model.addAttribute("assignments", assignmentService.getAssignmentsForCourse(courseId));
         return "assignment";
     }
@@ -264,6 +269,9 @@ public class SubmissionController {
             logger.error(e);
         }
 
+        model.addAttribute("courseName", course.getName());
+        model.addAttribute("courseCode", course.getCourseCode());
+        model.addAttribute("courseId", course.getCourseId());
         model.addAttribute("assignments", assignmentService.getAssignmentsForCourse(courseId));
         return "assignment";
     }
@@ -285,8 +293,8 @@ public class SubmissionController {
         copyIntoPath(submissionPath, srcFolder);
         List<EmailReport> emailReports = new ArrayList<>();
         Course course1 = courseService.getCourseByCourseId(assignmentT.getCourseId());
-        String courseInfo1 = course1.getName() + "by" + course1.getUserName()
-                + "in" + course1.getTerm();
+        String courseInfo1 = course1.getName() + " by " + course1.getUserName()
+                + " in " + course1.getTerm();
 
         String language = assignmentT.getLanguage();
 
@@ -294,45 +302,47 @@ public class SubmissionController {
             String assignmentId = assignment.getAssignmentId();
             List<Submission> otherSubmissions =
                     submissionService.getOtherStudentSubmissions(assignmentId, userName);
-            Assignment assignment2 = assignmentService.getAssignmentById(assignmentId);
-            Course course2 = courseService.getCourseByCourseId(assignment2.getCourseId());
-            String courseInfo2 = course2.getName() + " by " + course2.getUserName()
-                    + " in " + course2.getTerm();
+            if (otherSubmissions.size() != 0) {
+                Assignment assignment2 = assignmentService.getAssignmentById(assignmentId);
+                Course course2 = courseService.getCourseByCourseId(assignment2.getCourseId());
+                String courseInfo2 = course2.getName() + " by " + course2.getUserName()
+                        + " in " + course2.getTerm();
 
-            Submission submission = submissionService.getSubmissionById(submissionId);
+                Submission submission = submissionService.getSubmissionById(submissionId);
 
-            for (Submission oSubmission : otherSubmissions) {
-                String targetFolder = "exercise1/target";
-                copyIntoPath(oSubmission.getFilePath(), targetFolder);
-                String transformedPath = transformFileName();
-                String reportPath = "src/main/resources/static/report/" + transformedPath;
-                // for file storing
+                for (Submission oSubmission : otherSubmissions) {
+                    String targetFolder = "exercise1/target";
+                    copyIntoPath(oSubmission.getFilePath(), targetFolder);
+                    String transformedPath = transformFileName();
+                    String reportPath = "src/main/resources/static/report/" + transformedPath;
+                    // for file storing
 
 
-                Files.createDirectories(Paths.get(reportPath));
+                    Files.createDirectories(Paths.get(reportPath));
 
-                double score = Parser.parse(reportPath, language,
-                        submission.getUsername(),
-                        oSubmission.getUsername(),
-                        assignment.getName());
-                // save compared report
-                reportService.createReport(new Report(assignmentId, submissionId,
-                        oSubmission.getSubmissionId(),
-                        courseInfo1, courseInfo2,
-                        "http://kittyprofessor-report.s3-website-us-east-1.amazonaws.com/"
-                                + transformedPath + "/match0.html", score));
-
-                if (score >= assignment.getThreshold()) {
-                    emailReports.add(new EmailReport(submission.getUsername(),
-                            oSubmission.getUsername(), courseInfo1, courseInfo2,
-                            score,
+                    double score = Parser.parse(reportPath, language,
+                            submission.getUsername(),
+                            oSubmission.getUsername(),
+                            assignment.getName());
+                    // save compared report
+                    reportService.createReport(new Report(assignmentId, submissionId,
+                            oSubmission.getSubmissionId(),
+                            courseInfo1, courseInfo2,
                             "http://kittyprofessor-report.s3-website-us-east-1.amazonaws.com/"
-                                    + transformedPath + "/match0.html"));
-                }
-                // only clean other submission folder if compare not end
-                deleteTargetDirectory(targetFolder);
-                //deleteTargetDirectory(reportPath);
+                                    + transformedPath + "/match0.html", score));
 
+                    if (score >= assignment.getThreshold()) {
+                        emailReports.add(new EmailReport(submission.getUsername(),
+                                oSubmission.getUsername(), courseInfo1, courseInfo2,
+                                score,
+                                "http://kittyprofessor-report.s3-website-us-east-1.amazonaws.com/"
+                                        + transformedPath + "/match0.html"));
+                    }
+                    // only clean other submission folder if compare not end
+                    deleteTargetDirectory(targetFolder);
+                    //deleteTargetDirectory(reportPath);
+
+                }
             }
         }
         deleteTargetDirectory("exercise1/");

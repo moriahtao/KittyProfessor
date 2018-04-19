@@ -68,3 +68,8 @@
     margin:10px;
 }
 
+.top-nav {
+    font-size: 24px !important;
+    font-family: "Source Sans Pro",sans-serif !important;
+    text-transform:none !important;
+}

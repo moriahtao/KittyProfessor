@@ -36,11 +36,11 @@
         <div class="main--content">
             <h2 class="inner--heading">
                 <nav aria-label="You are here:" role="navigation">
-                    <ul class="breadcrumbs innerpage--breadcrumbs">
-                        <li><a href="#">Courses</a></li>
-                        <li><a href="#" th:text="*{courseCode} +' | ' + *{courseName}" > </a></li>
-                        <li>
-                            <span class="show-for-sr">Current: </span> Assignments
+                    <ul class="breadcrumbs innerpage--breadcrumbs" style="font-size: 20px;">
+                        <li><a href="/goCourses" class="top-nav">Courses</a></li>
+                        <li><span class="show-for-sr top-nav">Current: </span>
+                            <span  class="top-nav"
+                                   th:text="*{courseCode} +' | ' + *{courseName}" />
                         </li>
                     </ul>
                 </nav>
@@ -65,7 +65,6 @@
                         </div>
                         <div class="course--details">
                             <div class="hw--info">
-                                <p th:text="'Due :' + *{assignment.due}"/>
                                 <div th:if="${session.role} == 'student'">
                                     <!--<a th:href="'/submissions?assignmentId='+${assignment.assignmentId}"
                                        th:text= "'submit your homework'" />-->
@@ -112,7 +111,7 @@
             </ul>
             <div id="zip-file">
                 <form id="zip-file-form" enctype="multipart/form-data" th:action="@{/uploadZipFile}" method="post">
-                    <p>Zip file: <input id="file-upload" type="file" name="file"/></p>
+                    <p>Zip file: <input id="file-upload" type="file" name="file" accept=".zip"/></p>
                     <input type="hidden" name="assignmentId" />
                 </form>
             </div>
@@ -167,7 +166,6 @@
     <div id="add-assignment-dialog" title="Add new assignment">
         <form id="addAssignment" action="#" th:action="@{/addAssignments}" th:object="${assignment}" method="post">
             <p>Name:      <input type="text" th:field="*{name}" /></p>
-            <p>Due:       <input type="datetime-local" th:field="*{due}" /></p>
             <p>Threshold: <input type="text" th:field="*{threshold}" /></p>
             <p>Language:  <select th:field="*{language}">
                                 <option value="java17">Java</option>
@@ -192,7 +190,7 @@
     <div id="edit-assignment-dialog" title="Update assignment">
         <form action="#" id="editAssignment" th:action="@{/editAssignment}" th:object="${editAssignment}" method="post">
             <p>Name:      <input type="text" th:field="*{name}" /></p>
-            <p>Due:       <input type="datetime-local" th:field="*{due}" /></p>
+
             <p>Threshold: <input type="text" th:field="*{threshold}" /></p>
             <p>Language:  <select th:field="*{language}">
                 <option value="java17">Java</option>
@@ -292,7 +290,7 @@
             $("#editAssignment [name='name']").val($(this).attr("data-name"));
             $("#editAssignment [name='courseId']").val($(this).attr("data-courseId"));
             $("#editAssignment [name='threshold']").val($(this).attr("data-threshold"));
-            $("#editAssignment [name='due']").val($(this).attr("data-due"));
+            //$("#editAssignment [name='due']").val($(this).attr("data-due"));
             var language = $(this).attr("data-language");
             $("#editAssignment [name='language'] option[value='"+language+"']").attr("selected", "selected");
             editDialog.dialog("open");

@@ -50,6 +50,7 @@ public class KittyController {
     StudentCourseService studentCourseService;
 
     String[] terms = new String[]{"fall17", "spring18"};
+    String currentSemester = "spring18";
 
     /**
      * Home page
@@ -175,7 +176,7 @@ public class KittyController {
 
         request.getSession().setAttribute("terms", terms);
 
-        request.getSession().setAttribute("currentTerm", "spring18");
+        request.getSession().setAttribute("currentTerm", currentSemester);
 
         if(user.getUser().getJoinAs().equals("student")) {
 
@@ -196,6 +197,32 @@ public class KittyController {
         return "course";
     }
 
+    @GetMapping("/goCourses")
+    public String goCourses(HttpServletRequest request,
+                            Model model) {
+
+        FetchUserResult user = userService.getUserByUsername(
+                (String) request.getSession().getAttribute("userName"));
+
+        if(user.getUser().getJoinAs().equals("student")) {
+
+            List<StudentCourse> allScs = studentCourseService
+                    .getAllCourses(user.getUser().getUsername());
+
+            model.addAttribute("courses", getCourses(allScs));
+            model.addAttribute("studentCourse", new StudentCourse());
+            model.addAttribute("leftCourses", getLeftCourses(allScs));
+            model.addAttribute("deleteStudentCourse", new StudentCourse());
+            return "course";
+        }
+
+        model.addAttribute("courses", courseService.getAllCourses(user.getUser().getUsername()));
+        model.addAttribute("course", new Course());
+        model.addAttribute("editCourse", new Course());
+        model.addAttribute("deleteCourse", new Course());
+        return "course";
+    }
+
     private List<Course> getLeftCourses(List<StudentCourse> allScs) {
         List<Course> allCoursest = courseService.getAllCourses();
         List<Course> allCourses = new ArrayList<>();
@@ -205,7 +232,8 @@ public class KittyController {
         }
 
         for(Course course : allCoursest) {
-            if(courseIds.contains(course.getCourseId()))
+            if(courseIds.contains(course.getCourseId()) &&
+                    !course.getTerm().equals(currentSemester))
                 continue;
             allCourses.add(course);
         }
@@ -236,7 +264,7 @@ public class KittyController {
                              @ModelAttribute Course course,
                              Model model) {
         course.setUserName((String)request.getSession().getAttribute("userName"));
-        course.setTerm("spring18");
+        course.setTerm(currentSemester);
         courseService.createCourse(course);
         model.addAttribute("courses", courseService.getAllCourses(course.getUserName()));
         model.addAttribute("course", new Course());
@@ -304,6 +332,7 @@ public class KittyController {
     }
 
 
+
     @GetMapping("/signup")
     public String signup(Model model) {
         model.addAttribute("newUser", new User());
@@ -316,7 +345,7 @@ public class KittyController {
                             Model model) {
 
         course.setUserName((String) request.getSession().getAttribute("userName"));
-        course.setTerm("spring18");
+        course.setTerm(currentSemester);
         course.setNumAssignments(0);
         course.setNumStudents(0);
         course.setCourseId("course"+String.valueOf(System.currentTimeMillis() / 1000L));
@@ -391,6 +420,12 @@ public class KittyController {
         Assignment newAss = new Assignment();
         newAss.setCourseId(editAssignment.getCourseId());
 
+        Course course = courseService.getCourseByCourseId(
+                editAssignment.getCourseId());
+
+        model.addAttribute("courseName", course.getName());
+        model.addAttribute("courseCode", course.getCourseCode());
+
         model.addAttribute("assignment", newAss);
         model.addAttribute("assignments", assignments);
         model.addAttribute("editAssignment", new Assignment());
@@ -414,6 +449,8 @@ public class KittyController {
         course.setNumAssignments(course.getNumAssignments() -1);
         courseService.createCourse(course);
 
+        model.addAttribute("courseName", course.getName());
+        model.addAttribute("courseCode", course.getCourseCode());
         model.addAttribute("assignment", newAss);
         model.addAttribute("assignments", assignments);
         model.addAttribute("editAssignment", new Assignment());
