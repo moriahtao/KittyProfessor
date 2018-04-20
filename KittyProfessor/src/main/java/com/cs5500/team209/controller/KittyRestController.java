@@ -25,12 +25,7 @@ public class KittyRestController {
     @Autowired
     private CourseService courseService;
 
-    /**
-     *
-     * @param courseCode
-     * @param courseId
-     * @return
-     */
+
     @RequestMapping(method=GET, path="/getRelatedCourses")
     public String getRelatedCourses(@RequestParam("courseCode") String courseCode,
                                     @RequestParam("courseId") String courseId) {
@@ -46,13 +41,7 @@ public class KittyRestController {
         return str.toString();
     }
 
-    /**
-     *
-     * @param email1
-     * @param email2
-     * @param message
-     * @param filePath
-     */
+
     @PostMapping("sendEmailStudent")
     public void sendEmailStudent(@RequestParam("email1") String email1,
                                  @RequestParam("email2") String email2,
@@ -88,13 +77,6 @@ public class KittyRestController {
         client.sendEmail(request);
     }
 
-    /**
-     *
-     * @param email2
-     * @param email1
-     * @param message
-     * @param link
-     */
     private void sendEmail(String email2,String email1, String message, String link) {
 
         String html_body = "<html>"

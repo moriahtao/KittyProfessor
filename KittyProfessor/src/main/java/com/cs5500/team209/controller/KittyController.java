@@ -1,9 +1,9 @@
 package com.cs5500.team209.controller;
 
-import com.amazonaws.regions.Regions;
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailService;
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailServiceClientBuilder;
-import com.amazonaws.services.simpleemail.model.*;
+import com.amazonaws.services.simpleemail.model.ListVerifiedEmailAddressesResult;
+import com.amazonaws.services.simpleemail.model.VerifyEmailIdentityRequest;
 import com.cs5500.team209.model.*;
 import com.cs5500.team209.model.dto.FetchUserResult;
 import com.cs5500.team209.service.AssignmentService;
@@ -12,6 +12,7 @@ import com.cs5500.team209.service.StudentCourseService;
 import com.cs5500.team209.service.UserService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.context.annotation.Scope;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -22,7 +23,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -167,7 +167,26 @@ public class KittyController {
                         @ModelAttribute Login login,
                         Model model) {
         FetchUserResult user = userService.getUserByUsername(login.getUserName());
-
+        try {
+            if (user.getUser() == null ||
+                    !user.getUser().getPassword().equals(login.getPassword())) {
+                model.addAttribute(new Login());
+                model.addAttribute("InvalidUser", true);
+                return "login";
+            }
+        } catch(Exception e) {
+            model.addAttribute(new Login());
+            model.addAttribute("InvalidUser", true);
+            return "login";
+        }
+        AmazonSimpleEmailService client = AmazonSimpleEmailServiceClientBuilder
+                .standard().withRegion("us-east-1").build();
+        ListVerifiedEmailAddressesResult result = client.listVerifiedEmailAddresses();
+        if(!result.getVerifiedEmailAddresses().contains(user.getUser().getEmail())) {
+            model.addAttribute(new Login());
+            model.addAttribute("InvalidEmail", true);
+            return "login";
+        }
         request.getSession().setAttribute("userName",
                 login.getUserName());
 
@@ -335,6 +354,11 @@ public class KittyController {
 
     @GetMapping("/signup")
     public String signup(Model model) {
+        List<String> allUsers = new ArrayList<>();
+        for(User user: userService.getAllUsers()) {
+            allUsers.add(user.getUsername());
+        }
+        model.addAttribute("allUsers", String.join(",", allUsers));
         model.addAttribute("newUser", new User());
         return "signup";
     }
@@ -462,6 +486,11 @@ public class KittyController {
     @PostMapping("/adduser")
     public String addUser(@ModelAttribute User user, Model model) {
         userService.createUser(user);
+        AmazonSimpleEmailService client = AmazonSimpleEmailServiceClientBuilder
+                .standard().withRegion("us-east-1").build();
+        VerifyEmailIdentityRequest request = new VerifyEmailIdentityRequest()
+                .withEmailAddress(user.getEmail());
+        client.verifyEmailIdentity(request);
         model.addAttribute(new Login());
         return "login";
     }
@@ -474,5 +503,4 @@ public class KittyController {
         }
         return "login";
     }
-
 }

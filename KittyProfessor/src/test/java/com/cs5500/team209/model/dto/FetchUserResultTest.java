@@ -37,7 +37,6 @@ public class FetchUserResultTest {
         FetchUserResult fetchUserResult = new FetchUserResult(user);
         assertEquals("example@gmail", user.getEmail());
         assertEquals("joe", user.getUsername());
-        assertEquals(null, user.getPassword());
         assertEquals("student", user.getJoinAs());
         assertEquals("neu", user.getUniversity());
         assertEquals("joe", user.getFirstName());

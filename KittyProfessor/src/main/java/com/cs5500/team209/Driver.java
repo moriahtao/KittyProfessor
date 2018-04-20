@@ -73,16 +73,16 @@ public class Driver implements CommandLineRunner {
 
 
 		// fetch all users
-		System.out.println("Customers found with findAll():");
-		System.out.println("-------------------------------");
+		logger.info("Customers found with findAll():");
+		logger.info("-------------------------------");
 		for (User user : repository.findAll()) {
-			System.out.println(user);
+			logger.info(user);
 		}
-		System.out.println();
+
 
 		// fetch an individual user
-		System.out.println("Users found with findByUsername('alice'):");
-		System.out.println("--------------------------------");
-		System.out.println(repository.findByUsername("alice"));
+		logger.info("Users found with findByUsername('alice'):");
+		logger.info("--------------------------------");
+		logger.info(repository.findByUsername("alice"));
 	}
 }

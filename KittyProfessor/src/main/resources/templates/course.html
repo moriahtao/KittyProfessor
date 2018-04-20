@@ -281,7 +281,7 @@
                     <select th:field="${studentCourse.courseId}">
                         <option th:each="course1 : ${leftCourses}"
                                 th:value="${course1.courseId}"
-                                th:utext="${course1.name}"/>
+                                th:utext="${course1.name} + ' by ' + ${course1.userName} + ' during '+${course1.term}"/>
                     </select>
                 </p>
             </form>
@@ -382,9 +382,6 @@
         $("[data-term="+$(this).val()+"]").parent("div.column").show();
     });
 </script>
-<script src="node_modules/what-input/dist/what-input.js" type="application/javascript"></script>
-<script src="node_modules/foundation-sites/dist/js/foundation.js" type="application/javascript"></script>
-<script src="static/js/app.js"></script>
 </body>
 <body>
 
