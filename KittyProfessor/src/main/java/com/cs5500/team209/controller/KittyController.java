@@ -1,9 +1,5 @@
 package com.cs5500.team209.controller;
 
-import com.amazonaws.regions.Regions;
-import com.amazonaws.services.simpleemail.AmazonSimpleEmailService;
-import com.amazonaws.services.simpleemail.AmazonSimpleEmailServiceClientBuilder;
-import com.amazonaws.services.simpleemail.model.*;
 import com.cs5500.team209.model.*;
 import com.cs5500.team209.model.dto.FetchUserResult;
 import com.cs5500.team209.service.AssignmentService;
@@ -22,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -335,6 +330,11 @@ public class KittyController {
 
     @GetMapping("/signup")
     public String signup(Model model) {
+        List<String> allUsers = new ArrayList<>();
+        for(User user: userService.getAllUsers()) {
+            allUsers.add(user.getUsername());
+        }
+        model.addAttribute("allUsers", String.join(",", allUsers));
         model.addAttribute("newUser", new User());
         return "signup";
     }

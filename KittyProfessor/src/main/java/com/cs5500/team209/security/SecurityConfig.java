@@ -42,7 +42,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authenticationEntryPoint(restAuthenticationEntryPoint)
                 .and()
                 .authorizeRequests()
-                .antMatchers("/", "/home", "/signup", "/*", "/reports/*").permitAll()
+                .antMatchers("/", "/home", "/signup",
+                        "/sendFeedback", "/contactKitty", "/adduser").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()
