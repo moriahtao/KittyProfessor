@@ -325,7 +325,8 @@ public class SubmissionController {
                             oSubmission.getUsername(),
                             assignment.getName());
                     // save compared report
-                    reportService.createReport(new Report(assignmentId, submissionId,
+                    reportService.createReport(new Report(assignmentT.getAssignmentId(),
+                            submissionId,
                             oSubmission.getSubmissionId(),
                             courseInfo1, courseInfo2,
                             "http://kittyprofessor-report.s3-website-us-east-1.amazonaws.com/"
