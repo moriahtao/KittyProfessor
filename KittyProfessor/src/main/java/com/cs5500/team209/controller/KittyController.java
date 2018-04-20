@@ -167,8 +167,14 @@ public class KittyController {
                         @ModelAttribute Login login,
                         Model model) {
         FetchUserResult user = userService.getUserByUsername(login.getUserName());
-        if(user.getUser() == null ||
-                !user.getUser().getPassword().equals(login.getPassword())){
+        try {
+            if (user.getUser() == null ||
+                    !user.getUser().getPassword().equals(login.getPassword())) {
+                model.addAttribute(new Login());
+                model.addAttribute("InvalidUser", true);
+                return "login";
+            }
+        } catch(Exception e) {
             model.addAttribute(new Login());
             model.addAttribute("InvalidUser", true);
             return "login";

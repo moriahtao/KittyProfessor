@@ -281,7 +281,7 @@
                     <select th:field="${studentCourse.courseId}">
                         <option th:each="course1 : ${leftCourses}"
                                 th:value="${course1.courseId}"
-                                th:utext="${course1.name}"/>
+                                th:utext="${course1.name} + ' by ' + ${course1.userName} + ' during '+${course1.term}"/>
                     </select>
                 </p>
             </form>
