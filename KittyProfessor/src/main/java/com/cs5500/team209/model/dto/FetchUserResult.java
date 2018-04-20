@@ -21,7 +21,7 @@ public class FetchUserResult {
      */
     public FetchUserResult(User user) {
         if(user != null) {
-            user.setPassword(null);
+            //user.setPassword(null);
             this.user = user;
         }
     }
@@ -32,7 +32,7 @@ public class FetchUserResult {
      */
     public FetchUserResult(List<User> users) {
         for (User user : users) {
-            user.setPassword(null);
+            //user.setPassword(null);
         }
         this.userList = users;
     }

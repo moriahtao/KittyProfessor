@@ -1,5 +1,10 @@
 package com.cs5500.team209.controller;
 
+import com.amazonaws.services.simpleemail.AmazonSimpleEmailService;
+import com.amazonaws.services.simpleemail.AmazonSimpleEmailServiceClientBuilder;
+import com.amazonaws.services.simpleemail.model.ListVerifiedEmailAddressesRequest;
+import com.amazonaws.services.simpleemail.model.ListVerifiedEmailAddressesResult;
+import com.amazonaws.services.simpleemail.model.VerifyEmailIdentityRequest;
 import com.cs5500.team209.model.*;
 import com.cs5500.team209.model.dto.FetchUserResult;
 import com.cs5500.team209.service.AssignmentService;
@@ -162,7 +167,20 @@ public class KittyController {
                         @ModelAttribute Login login,
                         Model model) {
         FetchUserResult user = userService.getUserByUsername(login.getUserName());
-
+        if(user.getUser() == null ||
+                !user.getUser().getPassword().equals(login.getPassword())){
+            model.addAttribute(new Login());
+            model.addAttribute("InvalidUser", true);
+            return "login";
+        }
+        AmazonSimpleEmailService client = AmazonSimpleEmailServiceClientBuilder
+                .standard().withRegion("us-east-1").build();
+        ListVerifiedEmailAddressesResult result = client.listVerifiedEmailAddresses();
+        if(!result.getVerifiedEmailAddresses().contains(user.getUser().getEmail())) {
+            model.addAttribute(new Login());
+            model.addAttribute("InvalidEmail", true);
+            return "login";
+        }
         request.getSession().setAttribute("userName",
                 login.getUserName());
 
@@ -462,6 +480,11 @@ public class KittyController {
     @PostMapping("/adduser")
     public String addUser(@ModelAttribute User user, Model model) {
         userService.createUser(user);
+        AmazonSimpleEmailService client = AmazonSimpleEmailServiceClientBuilder
+                .standard().withRegion("us-east-1").build();
+        VerifyEmailIdentityRequest request = new VerifyEmailIdentityRequest()
+                .withEmailAddress(user.getEmail());
+        client.verifyEmailIdentity(request);
         model.addAttribute(new Login());
         return "login";
     }

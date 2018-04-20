@@ -3,6 +3,7 @@ package com.cs5500.team209.service;
 import com.cs5500.team209.model.Assignment;
 import com.cs5500.team209.model.dto.UpdateAssignmentResult;
 import com.cs5500.team209.repository.AssignmentRepository;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -21,12 +22,14 @@ public class AssignmentService {
     @Autowired
     AssignmentRepository assignmentRepository;
 
+    final static Logger logger = Logger.getLogger(AssignmentService.class);
+
     public UpdateAssignmentResult createAssignment(Assignment assignment) {
         List<String> errorMessages = validateAssignment(assignment);
-        System.out.println(errorMessages);
+        logger.info(errorMessages);
         if (errorMessages == null || errorMessages.isEmpty()) {
             Assignment createdAssignment = assignmentRepository.save(assignment);
-            System.out.println("Successfully added");
+            logger.info("Successfully added");
             return new UpdateAssignmentResult(createdAssignment);
         } else {
             return new UpdateAssignmentResult(errorMessages);

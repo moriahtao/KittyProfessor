@@ -43,7 +43,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 .antMatchers("/", "/home", "/signup",
-                        "/sendFeedback", "/contactKitty", "/adduser").permitAll()
+                        "/sendFeedback", "/contactKitty", "/adduser", "/*").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()

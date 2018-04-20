@@ -503,7 +503,7 @@ public class SubmissionController {
      */
     private void extractFolder(String zipFile) throws ZipException, IOException
     {
-        System.out.println(zipFile);
+        logger.info(zipFile);
         int BUFFER = 2048;
         File file = new File(zipFile);
 
