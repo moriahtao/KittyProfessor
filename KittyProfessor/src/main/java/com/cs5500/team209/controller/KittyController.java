@@ -2,7 +2,6 @@ package com.cs5500.team209.controller;
 
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailService;
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailServiceClientBuilder;
-import com.amazonaws.services.simpleemail.model.ListVerifiedEmailAddressesRequest;
 import com.amazonaws.services.simpleemail.model.ListVerifiedEmailAddressesResult;
 import com.amazonaws.services.simpleemail.model.VerifyEmailIdentityRequest;
 import com.cs5500.team209.model.*;
@@ -13,6 +12,7 @@ import com.cs5500.team209.service.StudentCourseService;
 import com.cs5500.team209.service.UserService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.context.annotation.Scope;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -497,5 +497,4 @@ public class KittyController {
         }
         return "login";
     }
-
 }
